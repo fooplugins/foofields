@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width">
+	<title>FooFields.Tabs</title>
+	<link href="css/dashicons.css" rel="stylesheet"/>
+	<link href="css/test.css" rel="stylesheet"/>
+	<link href="css/current.css" rel="stylesheet"/>
+	<link href="../dist/css/foofields.css" rel="stylesheet"/>
+	<script src="../node_modules/jquery/dist/jquery.min.js"></script>
+	<script src="../dist/js/foofields.js"></script>
+	<script>
+		FooFields.on("ready", function(){
+			var select = this.field("field_general_select");
+			if (!!select){
+				console.log("field_general_select", select);
+				select.on("change", function(e, value){
+					console.log("change:field_general_select", value);
+				});
+			}
+			console.log("ready", this);
+		});
+	</script>
+</head>
+<body>
+
+	<div class="meta-box">
+		<h2>Settings Title</h2>
+		<div class="foofields-container">
+			<div id="general" class="foofields-content">
+				<div id="field_general_select" class="foofields-field foofields-type-select foofields-layout-block">
+					<div class="foofields-field-label">
+						<label for="general_select">Select Field</label>
+					</div>
+					<div class="foofields-field-input">
+						<select id="general_select" name="general[select]">
+							<option value="option1">Option 1</option>
+							<option value="option2">Option 2</option>
+							<option value="option3">Option 3</option>
+							<option value="option4">Option 4</option>
+						</select>
+						<span class="foofields-field-description">A test select field</span>
+					</div>
+				</div>
+				<div id="field_general_text"
+					 class="foofields-field foofields-type-text foofields-layout-block"
+					 data-show-when-field="field_general_select"
+					 data-show-when-value="option1">
+					<div class="foofields-field-label">
+						<label for="general_text">Text Field</label>
+					</div>
+					<div class="foofields-field-input">
+						<input id="general_text" name="general[text]" type="text"/>
+						<span class="foofields-field-description">A test text field</span>
+					</div>
+				</div>
+				<div id="field_general_text2"
+					 class="foofields-field foofields-type-text foofields-layout-block"
+					 data-show-when-field="field_general_select"
+					 data-show-when-value="option2"
+					 data-hidden="true">
+					<div class="foofields-field-label">
+						<label for="general_text2">Text Field 2</label>
+					</div>
+					<div class="foofields-field-input">
+						<input id="general_text2" name="general[text2]" type="text"/>
+						<span class="foofields-field-description">A test text field</span>
+					</div>
+				</div>
+				<div id="field_general_text3"
+					 class="foofields-field foofields-type-text foofields-layout-block"
+					 data-show-when-field="field_general_select"
+					 data-show-when-value="option1|option3"
+					 data-show-when-operator="regex">
+					<div class="foofields-field-label">
+						<label for="general_text3">Text Field 3</label>
+					</div>
+					<div class="foofields-field-input">
+						<input id="general_text3" name="general[text3]" type="text"/>
+						<span class="foofields-field-description">A test text field</span>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</body>
+</html>
