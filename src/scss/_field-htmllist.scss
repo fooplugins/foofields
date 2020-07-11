@@ -1,0 +1,21 @@
+// HTML Radios and Checkboxes
+// ------------------------------------
+.foofields-field-input-htmllist {
+  label {
+	display: inline-block;
+	margin-right: 10px;
+	border: solid 3px transparent;
+	background: #aaa;
+	border-radius: 3px;
+	padding: 5px;
+	line-height: 0;
+	margin-bottom: 10px;
+  }
+  input:checked + label {
+	border: solid 3px #444;
+	background: #888;
+  }
+  label:hover {
+	border: solid 3px #444;
+  }
+}
