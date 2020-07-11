@@ -1,0 +1,16 @@
+.foofields-content {
+    display: none;
+    padding: 1em;
+    margin: 0;
+    width: 100%;
+    height: auto;
+}
+.foofields-content.foofields-active {
+    display: inline-block;
+}
+.foofields-tabs-vertical > .foofields-content {
+    width: calc(100% - 150px);
+}
+.foofields-tabs-vertical.foofields-small > .foofields-content {
+    width: calc(100% - 36px);
+}

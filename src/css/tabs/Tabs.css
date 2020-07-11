@@ -1,0 +1,25 @@
+/* FooFields Tabs CSS */
+.foofields-tabs {
+    display: none;
+    position: relative;
+    padding: 0;
+    margin: 0;
+    list-style: none;
+}
+.foofields-tabs-vertical > .foofields-tabs {
+    display: inline-block;
+    width: 150px;
+    border-right: solid 1px transparent;
+}
+.foofields-tabs-vertical.foofields-small > .foofields-tabs {
+    width: 36px;
+}
+
+.foofields-tabs-horizontal {
+    flex-wrap: wrap;
+}
+.foofields-tabs-horizontal > .foofields-tabs {
+    display: block;
+    width: 100%;
+    border-bottom: solid 1px transparent;
+}

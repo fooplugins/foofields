@@ -1,0 +1,40 @@
+.foofields-tab-menu {
+    display: none;
+    position: relative;
+    margin: 0;
+    border-top: 1px solid transparent;
+    width: 150px;
+    text-align: left;
+    padding: 0;
+    list-style: none;
+}
+.foofields-container:not(.foofields-small) .foofields-tab.foofields-active .foofields-tab-menu {
+    display: block;
+}
+.foofields-container.foofields-small .foofields-tab.foofields-show-menu .foofields-tab-menu,
+.foofields-container.foofields-hoverable:not(.foofields-small) .foofields-tab.foofields-show-menu:not(.foofields-active) .foofields-tab-menu {
+    display: block;
+    position: absolute;
+    top: 0;
+    right: 0;
+    transform: translateX(100%);
+    z-index: 11;
+}
+
+.foofields-tab-menu:after {
+    left: -16px;
+    border: solid 8px transparent;
+    content: " ";
+    height: 0;
+    width: 0;
+    position: absolute;
+    pointer-events: none;
+    top: 17px;
+    margin-top: -8px;
+    visibility: hidden;
+    opacity: 0;
+}
+.foofields-container:not(.foofields-small) .foofields-tab:not(.foofields-active):hover .foofields-tab-menu:after {
+    visibility: visible;
+    opacity: 1;
+}
