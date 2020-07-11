@@ -33,7 +33,7 @@ if ( ! class_exists( 'FooPlugins\FooFields\Objects\Movie' ) ) {
 		 *
 		 * @param $slug
 		 *
-		 * @return Plugin | boolean
+		 * @return Movie | boolean
 		 */
 		public static function get_by_slug( $slug ) {
 			$args = array(
@@ -55,7 +55,7 @@ if ( ! class_exists( 'FooPlugins\FooFields\Objects\Movie' ) ) {
 		 *
 		 * @param $post_id
 		 *
-		 * @return Plugin | boolean
+		 * @return Movie | boolean
 		 */
 		public static function get_by_id( $post_id ) {
 			$post = get_post( intval( $post_id ) );
