@@ -11,6 +11,7 @@
 .foofields-tab.foofields-active .foofields-tab-link {
     color: #FFF;
     background-color: #0073aa;
+	box-shadow: none;
 }
 .foofields-hoverable .foofields-tab:not(.foofields-active) .foofields-tab-link:hover {
     color: #00a0d2;

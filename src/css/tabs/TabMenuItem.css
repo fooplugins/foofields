@@ -21,6 +21,10 @@
     font-weight: 400;
     color: inherit;
     text-decoration: none;
+	box-shadow: none;
+}
+.foofields-tab-menu-link:focus {
+	box-shadow: none;
 }
 .foofields-tab-menu-item.foofields-first .foofields-tab-menu-link {
     padding: 8px 12px 4px;
