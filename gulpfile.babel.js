@@ -322,10 +322,82 @@ function processScript( gulpStream, processOptions = {}) {
 		.pipe( gulp.dest( processOptions.scriptDestination ) );
 }
 
+gulp.task( "scss", (done) => {
+	if ( !config.scss ) return done();
+
+	let opt = defaults(config.scss.options, {
+			src: {
+				allowEmpty: true
+			},
+			babel: {
+				presets: [
+					[
+						'@babel/preset-env', // Preset to compile your modern JS to ES5.
+						{
+							targets: { browsers: config.BROWSERS_LIST } // Target browser list to support.
+						}
+					]
+				]
+			}
+		}),
+		files = defaults(config.scss.files, {}),
+		fileNames = Object.keys(files);
+
+	if ( fileNames.length === 0 ) return done();
+
+	let tasks = fileNames.map(function(file){
+		let destination = path.dirname(file),
+			src = files[file];
+
+		return gulp.src(src, opt.src)
+			.pipe( plumber( errorHandler ) )
+			.pipe( sourcemaps.init() )
+			.pipe(
+				sass({
+					errLogToConsole: config.errLogToConsole,
+					outputStyle: config.outputStyle,
+					precision: config.precision
+				})
+			)
+			.on( 'error', sass.logError )
+			.pipe( sourcemaps.write({ includeContent: false }) )
+			.pipe( sourcemaps.init({ loadMaps: true }) )
+			.pipe( autoprefixer( config.BROWSERS_LIST ) )
+			.pipe( sourcemaps.write( './maps' ) )
+			.pipe( lineec() ) // Consistent Line Endings for non UNIX systems.
+			.pipe( gulp.dest( destination ) )
+			.pipe( filter( '**/*.css' ) ) // Filtering stream to only css files.
+			.pipe( mmq({ log: true }) ) // Merge Media Queries only for .min.css version.
+			.pipe( browserSync.stream() ) // Reloads .css if that is enqueued.
+			.pipe( rename({ suffix: ".min" }) )
+			.pipe( minifycss({ maxLineLen: 10 }) )
+			.pipe( lineec() ) // Consistent Line Endings for non UNIX systems.
+			.pipe( gulp.dest( destination ) )
+			.pipe( filter( '**/*.css' ) ) // Filtering stream to only css files.
+			.pipe( browserSync.stream() ); // Reloads .min.css if that is enqueued.
+	});
+
+	return merge( tasks );
+});
+
 gulp.task( "js", (done) => {
 	if ( !config.js ) return done();
 
-	let opt = defaults(config.js.options, {}), // no options atm
+	let opt = defaults(config.js.options, {
+			src: {
+				allowEmpty: true
+			},
+			babel: {
+				presets: [
+					[
+						'@babel/preset-env', // Preset to compile your modern JS to ES5.
+						{
+							targets: { browsers: config.BROWSERS_LIST } // Target browser list to support.
+						}
+					]
+				]
+			}
+		}),
 		files = defaults(config.js.files, {}),
 		fileNames = Object.keys(files);
 
@@ -337,20 +409,9 @@ gulp.task( "js", (done) => {
 			destination = path.dirname(file),
 			src = files[file];
 
-		return gulp.src(src, { allowEmpty: true })
+		return gulp.src(src, opt.src)
 			.pipe( plumber( errorHandler ) )
-			.pipe(
-				babel({
-					presets: [
-						[
-							'@babel/preset-env', // Preset to compile your modern JS to ES5.
-							{
-								targets: { browsers: config.BROWSERS_LIST } // Target browser list to support.
-							}
-						]
-					]
-				})
-			)
+			.pipe( babel(opt.babel) )
 			.pipe( remember( basename ) ) // Bring all files back to stream.
 			.pipe( concat( name ) )
 			.pipe( lineec() ) // Consistent Line Endings for non UNIX systems.
@@ -358,7 +419,7 @@ gulp.task( "js", (done) => {
 			.pipe(
 				rename({
 					basename: basename,
-					suffix: '.min'
+					suffix: ".min"
 				})
 			)
 			.pipe( uglify() )
