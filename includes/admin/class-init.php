@@ -18,7 +18,6 @@ if ( !class_exists( 'FooPlugins\FooFields\Admin\Init' ) ) {
 			new namespace\Settings();
 
 			new namespace\Movie\MetaboxTest();
-			new namespace\Movie\MetaboxTest2();
 		}
 	}
 }
