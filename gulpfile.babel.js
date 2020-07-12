@@ -214,7 +214,7 @@ gulp.task( 'styles', ( done ) => {
 
 		return processStyle(
 			gulp.src( style.styleSRC, { allowEmpty: true }),
-			{ styleDestination: config.styleDestination }
+			{ styleDestination: ( style.styleDestination ? style.styleDestination : config.styleDestination ) }
 		).pipe( notify({ message: '\n\n✅  ===> STYLES — completed!\n', onLast: true }) );
 
 	});
@@ -279,7 +279,7 @@ gulp.task( 'scripts', ( done ) => {
 
 		return processScript(
 			gulp.src( script.scriptSRC, { allowEmpty: true }),
-			{ scriptSRC: script.scriptSRC, scriptDestination: config.scriptDestination, scriptFile: script.scriptFile }
+			{ scriptSRC: script.scriptSRC, scriptDestination: ( script.scriptDestination ? script.scriptDestination : config.scriptDestination ), scriptFile: script.scriptFile }
 		).pipe( notify({ message: '\n\n✅  ===> SCRIPTS — completed!\n', onLast: true }) );
 
 	});
@@ -456,13 +456,13 @@ gulp.task( 'pre-deploy', gulp.series( 'composer-install-deploy', 'translate', 'z
  */
 //gulp.task( 'deploy', gulp.series( 'styles', 'scripts', 'images', 'pre-deploy', 'freemius-deploy' ) );
 
-var replace = require('gulp-string-replace');
+var replace = require( 'gulp-string-replace' );
 
-gulp.task('foo-utils', function() {
-	return gulp.src(["./node_modules/foo-utils/dist/foo-utils.js"])
-		.pipe(replace(new RegExp('FooUtils', 'g'), 'FooFields.utils'))
-		.pipe(rename('foofields.utils.js'))
-		.pipe(gulp.dest('./src/js'))
+gulp.task( 'foo-utils', function() {
+	return gulp.src([ './node_modules/foo-utils/dist/foo-utils.js' ])
+		.pipe( replace( new RegExp( 'FooUtils', 'g' ), 'FooFields.utils' ) )
+		.pipe( rename( 'foofields.utils.js' ) )
+		.pipe( gulp.dest( './src/js' ) )
 		.pipe( notify({message: 'Foo Utils task complete', onLast: true}) );
 });
 
