@@ -37,6 +37,15 @@ module.exports = {
 		}
 	],
 
+	scss: {
+		options: {
+			// ... any options
+		},
+		files: {
+			"./assets/vendor/foofields/foofields.css": "./src/scss/foofields.scss"
+		}
+	},
+
 	js: {
 		options: {
 			// ... any options
