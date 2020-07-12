@@ -385,3 +385,13 @@ gulp.task(
 			.pipe( notify({message: 'Zip task complete', onLast: true}) );
 	}
 );
+
+var replace = require('gulp-string-replace');
+
+gulp.task('foo-utils', function() {
+	return gulp.src(["./node_modules/foo-utils/dist/foo-utils.js"])
+		.pipe(replace(new RegExp('FooUtils', 'g'), 'FooFields.utils'))
+		.pipe(rename('foofields.utils.js'))
+		.pipe(gulp.dest('./dist'))
+		.pipe( notify({message: 'Foo Utils task complete', onLast: true}) );
+});

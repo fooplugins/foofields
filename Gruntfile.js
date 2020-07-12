@@ -141,4 +141,10 @@ module.exports = function ( grunt ) {
 		"jsdoc:all"
 	]);
 
+	// register build task for this project
+	grunt.registerTask("build-foo", [
+		"clean:dist",
+		"foo-utils"
+	]);
+
 };
