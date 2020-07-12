@@ -1,5 +1,5 @@
 {
-    "name": "npm instfoofields",
+    "name": "foofields",
     "description": "A demo plugin to showcase how FooFields work",
     "type": "library",
     "require": {
