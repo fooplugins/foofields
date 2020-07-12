@@ -64,6 +64,7 @@ const beep = require( 'beepbeep' );
 const merge = require( 'merge-stream' );
 const defaults = require( 'lodash.defaults' );
 
+const path = require( 'path' );
 /**
  * Custom Error Handler.
  *
@@ -321,6 +322,53 @@ function processScript( gulpStream, processOptions = {}) {
 		.pipe( gulp.dest( processOptions.scriptDestination ) );
 }
 
+gulp.task( "js", (done) => {
+	if ( !config.js ) return done();
+
+	let opt = defaults(config.js.options, {}), // no options atm
+		files = defaults(config.js.files, {}),
+		fileNames = Object.keys(files);
+
+	if ( fileNames.length === 0 ) return done();
+
+	let tasks = fileNames.map(function(file){
+		let basename = path.basename(file, ".js"),
+			name = path.basename(file),
+			destination = path.dirname(file),
+			src = files[file];
+
+		return gulp.src(src, { allowEmpty: true })
+			.pipe( plumber( errorHandler ) )
+			.pipe(
+				babel({
+					presets: [
+						[
+							'@babel/preset-env', // Preset to compile your modern JS to ES5.
+							{
+								targets: { browsers: config.BROWSERS_LIST } // Target browser list to support.
+							}
+						]
+					]
+				})
+			)
+			.pipe( remember( basename ) ) // Bring all files back to stream.
+			.pipe( concat( name ) )
+			.pipe( lineec() ) // Consistent Line Endings for non UNIX systems.
+			.pipe( gulp.dest( destination ) )
+			.pipe(
+				rename({
+					basename: basename,
+					suffix: '.min'
+				})
+			)
+			.pipe( uglify() )
+			.pipe( lineec() ) // Consistent Line Endings for non UNIX systems.
+			.pipe( gulp.dest( destination ) );
+	});
+
+	return merge( tasks );
+});
+
 /**
  * Task: `images`.
  *
@@ -468,9 +516,9 @@ gulp.task('foo-utils', function() {
 
 gulp.task(
 	'default',
-	gulp.parallel( 'styles', 'scripts', 'images', browsersync, () => {
+	gulp.parallel( 'styles', 'js', 'images', browsersync, () => {
 		gulp.watch( config.watchStyles, gulp.parallel( 'styles' ) ); // Reload on SCSS file changes.
-		gulp.watch( config.watchScripts, gulp.series( 'scripts', reload ) ); // Reload on themeJS file changes.
+		gulp.watch( config.watchScripts, gulp.series( 'js', reload ) ); // Reload on themeJS file changes.
 		gulp.watch( config.imgSRC, gulp.series( 'images', reload ) ); // Reload on adminJS file changes.
 	})
 );
