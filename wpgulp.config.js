@@ -37,6 +37,29 @@ module.exports = {
 		}
 	],
 
+	js: {
+		options: {
+			// ... any options
+		},
+		files: {
+			"./assets/vendor/foofields/foofields.js": [
+				"./src/js/__config.js",
+				"./src/js/foofields.utils.js",
+				"./src/js/__static.js",
+				"./src/js/Instance.js",
+				"./src/js/Component.js",
+				"./src/js/Container.js",
+				"./src/js/Content.js",
+				"./src/js/Fields.js",
+				"./src/js/Field.js",
+				"./src/js/Tab.js",
+				"./src/js/TabMenu.js",
+				"./src/js/TabMenuItem.js",
+				"./src/js/__init.js"
+			]
+		}
+	},
+
 	// Images options.
 	imgSRC: './assets/img/raw/**/*', // Source folder of images which should be optimized and watched. You can also specify types e.g. raw/**.{png,jpg,gif} in the glob.
 	imgDST: './assets/img/', // Destination folder of optimized images. Must be different from the imagesSRC folder.
