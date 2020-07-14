@@ -383,6 +383,18 @@ if ( ! class_exists( 'FooPlugins\FooFields\Admin\Metaboxes\FieldRenderer' ) ) {
 
 					break;
 
+				case 'date':
+					if ( isset( $field['placeholder'] ) ) {
+						$attributes['placeholder'] = $field['placeholder'];
+					}
+					$attributes['type'] = 'date';
+					$attributes['min'] = isset( $field['min'] ) ? $field['min'] : '1900-01-01';
+					$attributes['max'] = isset( $field['max'] ) ? $field['max'] : '';
+					$attributes['value'] = $field['value'];
+					self::render_html_tag( 'input', $attributes );
+
+					break;
+
 				case 'color':
 					$attributes['type'] = 'color';
 					$attributes['value'] = $field['value'];
