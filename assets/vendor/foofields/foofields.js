@@ -19,6 +19,7 @@
       active: "foofields-active",
       first: "foofields-first",
       last: "foofields-last",
+      hidden: "foofields-hidden",
       container: {
         el: "foofields-container",
         content: {
@@ -4859,6 +4860,7 @@ FooFields.utils, FooFields.utils.fn, FooFields.utils.str);
 
       self._super(instance, element, instance.cls.container, instance.sel.container);
 
+      self.id = self.$el.attr("id");
       self.contents = self.$el.children(self.sel.content.el).map(function (i, el) {
         return new _.Content(self, el);
       }).get();
