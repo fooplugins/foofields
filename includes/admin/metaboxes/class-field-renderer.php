@@ -17,6 +17,7 @@ if ( ! class_exists( 'FooPlugins\FooFields\Admin\Metaboxes\FieldRenderer' ) ) {
 
 			$classes[] = 'foofields-container';
 			$classes[] = 'foofields-tabs-vertical';
+			$classes[] = 'foofields-style-metabox';
 
 			//process the field_group based on the state and make any changes if needed
 			self::process_field_group( $field_group, $state );
