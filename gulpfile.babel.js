@@ -413,6 +413,6 @@ gulp.task("copy", function (done) {
 	}, done);
 });
 
-gulp.task("default", gulp.parallel( "copy", "scss", "js", "img", "watch" ));
+gulp.task("default", gulp.series( "copy", gulp.parallel( "scss", "js", "img", "watch" )));
 
 gulp.task("start", gulp.parallel( "default", "browser" ));
