@@ -18,6 +18,7 @@
 			active: "foofields-active",
 			first: "foofields-first",
 			last: "foofields-last",
+			hidden: "foofields-hidden",
 			container: {
 				el: "foofields-container",
 				content: {
