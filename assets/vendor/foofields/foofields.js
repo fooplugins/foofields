@@ -4992,6 +4992,266 @@ FooFields.utils, FooFields.utils.fn, FooFields.utils.str);
 })(FooFields.$, FooFields, FooFields.utils, FooFields.utils.is, FooFields.utils.obj);
 "use strict";
 
+(function ($, _, _utils, _is, _obj) {
+  _.Tab = _.CtnrComponent.extend({
+    construct: function construct(ctnr, el, index) {
+      var self = this;
+
+      self._super(ctnr.instance, ctnr, el, ctnr.cls.tabs.tab, ctnr.sel.tabs.tab);
+
+      self.index = index;
+      self.$link = self.$el.children(self.sel.link).first();
+      self.$icon = self.$link.children(self.sel.icon).first();
+      self.$text = self.$link.children(self.sel.text).first();
+      self.target = _utils.strip(self.$link.attr("href"), "#");
+      self.active = self.$el.hasClass(self.instance.cls.active);
+      self.menu = new _.TabMenu(self, self.$el.children(self.sel.menu.el));
+    },
+    init: function init() {
+      var self = this;
+      self.$el.toggleClass(self.instance.cls.first, self.index === 0).toggleClass(self.instance.cls.last, self.index === self.ctnr.tabs.length - 1);
+      self.$link.on("click.foofields", {
+        self: self
+      }, self.onLinkClick);
+      self.menu.init();
+    },
+    destroy: function destroy() {
+      var self = this;
+      self.$el.removeClass(self.instance.cls.first).removeClass(self.instance.cls.last);
+      self.$link.off(".foofields");
+      self.menu.destroy();
+    },
+    handles: function handles(id) {
+      var self = this;
+      return self.target === id || self.menu.handles(id);
+    },
+    activate: function activate(id) {
+      var self = this;
+      self.$el.toggleClass(self.instance.cls.active, self.active = self.handles(id));
+      if (self.menu.exists) self.menu.activate(id);
+    },
+    onLinkClick: function onLinkClick(e) {
+      e.preventDefault();
+      e.stopPropagation();
+      var self = e.data.self;
+
+      if (self.menu.exists && self.instance.small && !self.instance.hoverable) {
+        self.menu.toggle();
+      } else {
+        self.ctnr.activate(self.target);
+      }
+    }
+  });
+})(FooFields.$, FooFields, FooFields.utils, FooFields.utils.is, FooFields.utils.obj);
+"use strict";
+
+(function ($, _, _utils, _is) {
+  _.TabMenu = _.CtnrComponent.extend({
+    construct: function construct(tab, el) {
+      var self = this;
+
+      self._super(tab.instance, tab.ctnr, el, tab.cls.menu, tab.sel.menu);
+
+      self.tab = tab;
+      self.$header = $("<li/>", {
+        "class": self.cls.header
+      }).append(tab.$text.clone());
+      self.items = self.$el.children(self.sel.item.el).map(function (i, el) {
+        return new _.TabMenuItem(self, el, i);
+      }).get();
+      self.exists = self.items.length > 0;
+      self.visible = tab.$el.hasClass(self.cls.visible);
+      self._enter = null;
+      self._leave = null;
+      self.onDocumentClick = self.onDocumentClick.bind(self);
+      self.onTabMouseEnter = self.onTabMouseEnter.bind(self);
+      self.onTabMouseLeave = self.onTabMouseLeave.bind(self);
+    },
+    init: function init() {
+      var self = this;
+      if (!self.exists) return;
+      self.tab.$el.addClass(self.cls.exists);
+      self.items.forEach(function (item) {
+        item.init();
+      });
+      self.setSmall(self.instance.small);
+      self.setHoverable(self.instance.hoverable);
+      self.instance.on({
+        "small-changed": self.onSmallChanged,
+        "hoverable-changed": self.onHoverableChanged
+      }, self);
+    },
+    destroy: function destroy() {
+      var self = this;
+      if (!self.exists) return;
+      self.instance.off({
+        "small-changed": self.onSmallChanged,
+        "hoverable-changed": self.onHoverableChanged
+      }, self);
+      self.toggle(false);
+      self.setSmall(false);
+      self.setHoverable(false);
+      self.tab.$el.removeClass(self.cls.exists);
+      self.items.forEach(function (item) {
+        item.destroy();
+      });
+    },
+    toggle: function toggle(visible) {
+      var self = this;
+      if (!self.exists) return;
+      self.visible = !_is.undef(visible) ? !!visible : !self.visible;
+      self.tab.$el.toggleClass(self.cls.visible, self.visible);
+      self.ctnr.$el.children(self.ctnr.cls.tabs.el).toggleClass(self.cls.visible, self.visible);
+
+      if (self.visible) {
+        self.instance.$doc.on("click.foofields", self.onDocumentClick);
+      } else {
+        self.instance.$doc.off("click.foofields", self.onDocumentClick);
+      }
+    },
+    item: function item(id) {
+      if (!this.exists) return;
+      return _utils.find(this.items, function (item) {
+        return item.target === id;
+      });
+    },
+    handles: function handles(id) {
+      return this.item(id) instanceof _.TabMenuItem;
+    },
+    activate: function activate(id) {
+      var self = this;
+      if (!self.exists) return;
+      self.items.forEach(function (item) {
+        item.activate(id);
+      });
+    },
+    setSmall: function setSmall(state) {
+      var self = this;
+
+      if (state) {
+        self.$el.prepend(self.$header);
+      } else {
+        self.$header.remove();
+      }
+    },
+    setHoverable: function setHoverable(state) {
+      var self = this;
+
+      if (state) {
+        self.tab.$el.on({
+          "mouseenter.foofields": self.onTabMouseEnter,
+          "mouseleave.foofields": self.onTabMouseLeave
+        });
+      } else {
+        self.tab.$el.off({
+          "mouseenter.foofields": self.onTabMouseEnter,
+          "mouseleave.foofields": self.onTabMouseLeave
+        });
+        clearTimeout(self._enter);
+        clearTimeout(self._leave);
+        self._enter = null;
+        self._leave = null;
+      }
+    },
+    //region Listeners
+
+    /**
+     * @summary Listens for the `small-changed` event.
+     * @memberof FooFields.TabMenu#
+     * @function onSmallChanged
+     * @param {FooFields.utils.Event} e - The event object for the change.
+     * @param {FooFields.Instance} instance - The instance raising the event.
+     * @param {boolean} state - Whether or not the screen is small.
+     */
+    onSmallChanged: function onSmallChanged(e, instance, state) {
+      this.setSmall(state);
+    },
+
+    /**
+     * @summary Listens for the `hoverable-changed` event.
+     * @memberof FooFields.TabMenu#
+     * @function onHoverableChanged
+     * @param {FooFields.utils.Event} e - The event object for the change.
+     * @param {FooFields.Instance} instance - The instance raising the event.
+     * @param {boolean} state - Whether or not hover is supported.
+     */
+    onHoverableChanged: function onHoverableChanged(e, instance, state) {
+      this.setHoverable(state);
+    },
+    //endregion
+    //region Listeners
+    onDocumentClick: function onDocumentClick() {
+      this.toggle(false);
+    },
+    onTabMouseEnter: function onTabMouseEnter() {
+      var self = this;
+      clearTimeout(self._leave);
+      self._leave = null;
+
+      if (self._enter === null) {
+        self._enter = setTimeout(function () {
+          self.toggle(true);
+          self._enter = null;
+        }, 300);
+      }
+    },
+    onTabMouseLeave: function onTabMouseLeave() {
+      var self = this;
+      clearTimeout(self._enter);
+      self._enter = null;
+
+      if (self._leave === null) {
+        self._leave = setTimeout(function () {
+          self.toggle(false);
+          self._leave = null;
+        }, 300);
+      }
+    } //endregion
+
+  });
+})(FooFields.$, FooFields, FooFields.utils, FooFields.utils.is);
+"use strict";
+
+(function ($, _, _utils, _is) {
+  _.TabMenuItem = _.CtnrComponent.extend({
+    construct: function construct(menu, el, index) {
+      var self = this;
+
+      self._super(menu.instance, menu.ctnr, el, menu.cls.item, menu.sel.item);
+
+      self.menu = menu;
+      self.index = index;
+      self.active = self.$el.hasClass(self.instance.cls.active);
+      self.$link = self.$el.children(self.sel.link).first();
+      self.$text = self.$link.children(self.sel.text).first();
+      self.target = _utils.strip(self.$link.attr("href"), "#");
+    },
+    init: function init() {
+      var self = this;
+      self.$el.toggleClass(self.instance.cls.first, self.index === 0).toggleClass(self.instance.cls.last, self.index === self.menu.items.length - 1);
+      self.$link.on("click.foofields", {
+        self: self
+      }, self.onLinkClick);
+    },
+    destroy: function destroy() {
+      var self = this;
+      self.$el.removeClass(self.instance.cls.first).removeClass(self.instance.cls.last);
+      self.$link.off(".foofields");
+    },
+    activate: function activate(id) {
+      var self = this;
+      self.$el.toggleClass(self.instance.cls.active, self.active = self.target === id);
+    },
+    onLinkClick: function onLinkClick(e) {
+      e.preventDefault();
+      e.stopPropagation();
+      var self = e.data.self;
+      self.ctnr.activate(self.target);
+    }
+  });
+})(FooFields.$, FooFields, FooFields.utils, FooFields.utils.is);
+"use strict";
+
 (function ($, _, _utils, _is) {
   _.Content = _.CtnrComponent.extend({
     construct: function construct(ctnr, el) {
@@ -5301,264 +5561,66 @@ FooFields.utils, FooFields.utils.fn, FooFields.utils.str);
 })(FooFields.$, FooFields, FooFields.utils, FooFields.utils.is);
 "use strict";
 
-(function ($, _, _utils, _is, _obj) {
-  _.Tab = _.CtnrComponent.extend({
-    construct: function construct(ctnr, el, index) {
+(function ($, _, _is, _obj) {
+  if (!window.Selectize) {
+    console.log("FooFields.SelectizeField dependency missing.");
+    return;
+  }
+
+  _.SelectizeField = _.Field.extend({
+    setup: function setup() {
+      var self = this;
+      self.$select = self.$input.children("select").first();
+      self.$display = self.$input.children("input[type=hidden]").first();
+
+      _obj.extend(self.opt, self.$select.data());
+
+      self.endpoint = window.ajaxurl + '?' + self.opt.query;
+
+      var options = _obj.extend({}, self.opt.selectize, {
+        onChange: function onChange(value) {
+          if (self.api instanceof window.Selectize) {
+            var selection = self.api.getItem(value);
+            self.$display.val(selection.text());
+          }
+        },
+        load: function load(query, callback) {
+          $.get(self.endpoint, {
+            data: {
+              q: query
+            }
+          }).done(function (response) {
+            callback(response.results);
+          }).fail(function () {
+            callback();
+          });
+        }
+      });
+
+      self.api = self.$select.selectize(options).get(0).selectize;
+      console.log(self.api);
+    },
+    teardown: function teardown() {
       var self = this;
 
-      self._super(ctnr.instance, ctnr, el, ctnr.cls.tabs.tab, ctnr.sel.tabs.tab);
-
-      self.index = index;
-      self.$link = self.$el.children(self.sel.link).first();
-      self.$icon = self.$link.children(self.sel.icon).first();
-      self.$text = self.$link.children(self.sel.text).first();
-      self.target = _utils.strip(self.$link.attr("href"), "#");
-      self.active = self.$el.hasClass(self.instance.cls.active);
-      self.menu = new _.TabMenu(self, self.$el.children(self.sel.menu.el));
-    },
-    init: function init() {
-      var self = this;
-      self.$el.toggleClass(self.instance.cls.first, self.index === 0).toggleClass(self.instance.cls.last, self.index === self.ctnr.tabs.length - 1);
-      self.$link.on("click.foofields", {
-        self: self
-      }, self.onLinkClick);
-      self.menu.init();
-    },
-    destroy: function destroy() {
-      var self = this;
-      self.$el.removeClass(self.instance.cls.first).removeClass(self.instance.cls.last);
-      self.$link.off(".foofields");
-      self.menu.destroy();
-    },
-    handles: function handles(id) {
-      var self = this;
-      return self.target === id || self.menu.handles(id);
-    },
-    activate: function activate(id) {
-      var self = this;
-      self.$el.toggleClass(self.instance.cls.active, self.active = self.handles(id));
-      if (self.menu.exists) self.menu.activate(id);
-    },
-    onLinkClick: function onLinkClick(e) {
-      e.preventDefault();
-      e.stopPropagation();
-      var self = e.data.self;
-
-      if (self.menu.exists && self.instance.small && !self.instance.hoverable) {
-        self.menu.toggle();
-      } else {
-        self.ctnr.activate(self.target);
+      if (self.api instanceof Selectize) {
+        self.api.destroy();
       }
     }
   });
-})(FooFields.$, FooFields, FooFields.utils, FooFields.utils.is, FooFields.utils.obj);
-"use strict";
 
-(function ($, _, _utils, _is) {
-  _.TabMenu = _.CtnrComponent.extend({
-    construct: function construct(tab, el) {
-      var self = this;
-
-      self._super(tab.instance, tab.ctnr, el, tab.cls.menu, tab.sel.menu);
-
-      self.tab = tab;
-      self.$header = $("<li/>", {
-        "class": self.cls.header
-      }).append(tab.$text.clone());
-      self.items = self.$el.children(self.sel.item.el).map(function (i, el) {
-        return new _.TabMenuItem(self, el, i);
-      }).get();
-      self.exists = self.items.length > 0;
-      self.visible = tab.$el.hasClass(self.cls.visible);
-      self._enter = null;
-      self._leave = null;
-      self.onDocumentClick = self.onDocumentClick.bind(self);
-      self.onTabMouseEnter = self.onTabMouseEnter.bind(self);
-      self.onTabMouseLeave = self.onTabMouseLeave.bind(self);
-    },
-    init: function init() {
-      var self = this;
-      if (!self.exists) return;
-      self.tab.$el.addClass(self.cls.exists);
-      self.items.forEach(function (item) {
-        item.init();
-      });
-      self.setSmall(self.instance.small);
-      self.setHoverable(self.instance.hoverable);
-      self.instance.on({
-        "small-changed": self.onSmallChanged,
-        "hoverable-changed": self.onHoverableChanged
-      }, self);
-    },
-    destroy: function destroy() {
-      var self = this;
-      if (!self.exists) return;
-      self.instance.off({
-        "small-changed": self.onSmallChanged,
-        "hoverable-changed": self.onHoverableChanged
-      }, self);
-      self.toggle(false);
-      self.setSmall(false);
-      self.setHoverable(false);
-      self.tab.$el.removeClass(self.cls.exists);
-      self.items.forEach(function (item) {
-        item.destroy();
-      });
-    },
-    toggle: function toggle(visible) {
-      var self = this;
-      if (!self.exists) return;
-      self.visible = !_is.undef(visible) ? !!visible : !self.visible;
-      self.tab.$el.toggleClass(self.cls.visible, self.visible);
-      self.ctnr.$el.children(self.ctnr.cls.tabs.el).toggleClass(self.cls.visible, self.visible);
-
-      if (self.visible) {
-        self.instance.$doc.on("click.foofields", self.onDocumentClick);
-      } else {
-        self.instance.$doc.off("click.foofields", self.onDocumentClick);
-      }
-    },
-    item: function item(id) {
-      if (!this.exists) return;
-      return _utils.find(this.items, function (item) {
-        return item.target === id;
-      });
-    },
-    handles: function handles(id) {
-      return this.item(id) instanceof _.TabMenuItem;
-    },
-    activate: function activate(id) {
-      var self = this;
-      if (!self.exists) return;
-      self.items.forEach(function (item) {
-        item.activate(id);
-      });
-    },
-    setSmall: function setSmall(state) {
-      var self = this;
-
-      if (state) {
-        self.$el.prepend(self.$header);
-      } else {
-        self.$header.remove();
-      }
-    },
-    setHoverable: function setHoverable(state) {
-      var self = this;
-
-      if (state) {
-        self.tab.$el.on({
-          "mouseenter.foofields": self.onTabMouseEnter,
-          "mouseleave.foofields": self.onTabMouseLeave
-        });
-      } else {
-        self.tab.$el.off({
-          "mouseenter.foofields": self.onTabMouseEnter,
-          "mouseleave.foofields": self.onTabMouseLeave
-        });
-        clearTimeout(self._enter);
-        clearTimeout(self._leave);
-        self._enter = null;
-        self._leave = null;
-      }
-    },
-    //region Listeners
-
-    /**
-     * @summary Listens for the `small-changed` event.
-     * @memberof FooFields.TabMenu#
-     * @function onSmallChanged
-     * @param {FooFields.utils.Event} e - The event object for the change.
-     * @param {FooFields.Instance} instance - The instance raising the event.
-     * @param {boolean} state - Whether or not the screen is small.
-     */
-    onSmallChanged: function onSmallChanged(e, instance, state) {
-      this.setSmall(state);
-    },
-
-    /**
-     * @summary Listens for the `hoverable-changed` event.
-     * @memberof FooFields.TabMenu#
-     * @function onHoverableChanged
-     * @param {FooFields.utils.Event} e - The event object for the change.
-     * @param {FooFields.Instance} instance - The instance raising the event.
-     * @param {boolean} state - Whether or not hover is supported.
-     */
-    onHoverableChanged: function onHoverableChanged(e, instance, state) {
-      this.setHoverable(state);
-    },
-    //endregion
-    //region Listeners
-    onDocumentClick: function onDocumentClick() {
-      this.toggle(false);
-    },
-    onTabMouseEnter: function onTabMouseEnter() {
-      var self = this;
-      clearTimeout(self._leave);
-      self._leave = null;
-
-      if (self._enter === null) {
-        self._enter = setTimeout(function () {
-          self.toggle(true);
-          self._enter = null;
-        }, 300);
-      }
-    },
-    onTabMouseLeave: function onTabMouseLeave() {
-      var self = this;
-      clearTimeout(self._enter);
-      self._enter = null;
-
-      if (self._leave === null) {
-        self._leave = setTimeout(function () {
-          self.toggle(false);
-          self._leave = null;
-        }, 300);
-      }
-    } //endregion
-
-  });
-})(FooFields.$, FooFields, FooFields.utils, FooFields.utils.is);
-"use strict";
-
-(function ($, _, _utils, _is) {
-  _.TabMenuItem = _.CtnrComponent.extend({
-    construct: function construct(menu, el, index) {
-      var self = this;
-
-      self._super(menu.instance, menu.ctnr, el, menu.cls.item, menu.sel.item);
-
-      self.menu = menu;
-      self.index = index;
-      self.active = self.$el.hasClass(self.instance.cls.active);
-      self.$link = self.$el.children(self.sel.link).first();
-      self.$text = self.$link.children(self.sel.text).first();
-      self.target = _utils.strip(self.$link.attr("href"), "#");
-    },
-    init: function init() {
-      var self = this;
-      self.$el.toggleClass(self.instance.cls.first, self.index === 0).toggleClass(self.instance.cls.last, self.index === self.menu.items.length - 1);
-      self.$link.on("click.foofields", {
-        self: self
-      }, self.onLinkClick);
-    },
-    destroy: function destroy() {
-      var self = this;
-      self.$el.removeClass(self.instance.cls.first).removeClass(self.instance.cls.last);
-      self.$link.off(".foofields");
-    },
-    activate: function activate(id) {
-      var self = this;
-      self.$el.toggleClass(self.instance.cls.active, self.active = self.target === id);
-    },
-    onLinkClick: function onLinkClick(e) {
-      e.preventDefault();
-      e.stopPropagation();
-      var self = e.data.self;
-      self.ctnr.activate(self.target);
+  _.fields.register("selectize", _.SelectizeField, ".foofields-type-selectize", {
+    query: null,
+    selectize: {
+      valueField: 'id',
+      labelField: 'text',
+      searchField: 'text',
+      maxItems: 1,
+      create: false,
+      options: []
     }
-  });
-})(FooFields.$, FooFields, FooFields.utils, FooFields.utils.is);
+  }, {}, {});
+})(FooFields.$, FooFields, FooFields.utils.is, FooFields.utils.obj);
 "use strict";
 
 (function ($, _, _utils, _is, _obj) {
@@ -5570,3 +5632,64 @@ FooFields.utils, FooFields.utils.fn, FooFields.utils.str);
     _.__instance__.init(window.FOOFIELDS);
   });
 })(FooFields.$, FooFields, FooFields.utils, FooFields.utils.is, FooFields.utils.obj);
+"use strict";
+
+(function ($, _, _is, _obj) {
+  if (!window.Selectize) {
+    console.log("FooFields.Selectize dependency missing.");
+    return;
+  }
+
+  _.Selectize = _.Field.extend({
+    setup: function setup() {
+      var self = this;
+      self.$select = self.$input.children("select").first();
+      self.$display = self.$input.children("input[type=hidden]").first();
+
+      _obj.extend(self.opt, self.$select.data());
+
+      self.endpoint = window.ajaxurl + '?' + self.opt.query;
+
+      var options = _obj.extend({}, self.opt.selectize, {
+        onChange: function onChange(value) {
+          if (self.api instanceof window.Selectize) {
+            var selection = self.api.getItem(value);
+            self.$display.val(selection.text());
+          }
+        },
+        load: function load(query, callback) {
+          $.get(self.endpoint, {
+            data: {
+              q: query
+            }
+          }).done(function (response) {
+            callback(response.results);
+          }).fail(function () {
+            callback();
+          });
+        }
+      });
+
+      self.api = self.$select.selectize(options).get(0).selectize;
+    },
+    teardown: function teardown() {
+      var self = this;
+
+      if (self.api instanceof Selectize) {
+        self.api.destroy();
+      }
+    }
+  });
+
+  _.fields.register("selectize", _.Selectize, ".foofields-type-selectize", {
+    query: null,
+    selectize: {
+      valueField: 'id',
+      labelField: 'text',
+      searchField: 'text',
+      maxItems: 1,
+      create: false,
+      options: []
+    }
+  }, {}, {});
+})(FooFields.$, FooFields, FooFields.utils.is, FooFields.utils.obj);

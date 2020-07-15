@@ -113,7 +113,7 @@ button[data-balloon]{overflow:visible}
 .foofields-field-input-htmllist label{display:inline-block;margin-right:10px;border:solid 3px transparent;background:#aaa;border-radius:3px;padding:5px;line-height:0;margin-bottom:10px}
 .foofields-field-input-htmllist input:checked+label{border:solid 3px #444;background:#888}
 .foofields-field-input-htmllist label:hover{border:solid 3px #444}
-.foofields-field-selectize .selectize-control .selectize-input{-webkit-box-shadow:0 0 0 transparent;box-shadow:0 0 0 transparent;border-radius:4px;border:1px solid #7e8993;background-color:#fff;color:#32373c}
+.foofields-field-input-selectize .selectize-control .selectize-input{-webkit-box-shadow:0 0 0 transparent;box-shadow:0 0 0 transparent;border-radius:4px;border:1px solid #7e8993;background-color:#fff;color:#32373c}
 .foofields-style-metabox .foofields-content{background-color:#FFF}
 .foofields-style-metabox .foofields-tabs{background-color:#f5f5f5}
 .foofields-style-metabox .foofields-tab-link{color:#0073aa}
