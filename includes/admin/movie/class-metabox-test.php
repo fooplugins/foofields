@@ -306,7 +306,7 @@ if ( ! class_exists( 'FooPlugins\FooFields\Admin\Movie\MetaboxTest' ) ) {
 								array(
 									'id'       => 'selectize',
 									'label'    => __( 'selectize Field (autocomplete with a key)', 'foofields' ),
-									'type'     => 'Selectize',
+									'type'     => 'selectize',
 									'placeholder' => __( 'Start typing', 'foofields' ),
 									'query_type' => 'post',
 									'query_data' => FOOFIELDS_CPT_MOVIE

@@ -645,9 +645,7 @@ if ( ! class_exists( 'FooPlugins\FooFields\Admin\Metaboxes\FieldRenderer' ) ) {
 					'name'                   => $field['input_name'] . '[value]',
 					'value'                  => $value['value'],
 					'placeholder'            => $field['placeholder'],
-					'data-selectize-instance',
-					'data-selectize-query'   => $query,
-					'data-selectize-display' => $field['input_id'] . '_display'
+					'data-query'   => $query
 			), $inner, true, false );
 		}
 		/**

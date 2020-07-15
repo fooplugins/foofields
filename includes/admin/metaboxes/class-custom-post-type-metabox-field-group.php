@@ -376,15 +376,17 @@ if ( ! class_exists( 'FooPlugins\FooFields\Admin\Metaboxes\CustomPostTypeMetabox
 		 */
 		function enqueue_field_group_assets() {
 			wp_enqueue_script( 'selectize', $this->metabox['plugin_url'] . 'assets/vendor/selectize/selectize.min.js', array('jquery'), $this->metabox['plugin_version'] );
-			wp_enqueue_script( 'foometafields', $this->metabox['plugin_url'] . 'assets/vendor/foofields/foofields.min.js', array(
+			wp_enqueue_script( 'foometafields', $this->metabox['plugin_url'] . 'assets/vendor/foofields/foofields.js', array(
 				'jquery',
 				'suggest',
 				'wp-color-picker',
 				'selectize'
 			), $this->metabox['plugin_version'] );
 
+			wp_enqueue_style( 'selectize', $this->metabox['plugin_url'] . 'assets/vendor/selectize/selectize.css', array(), $this->metabox['plugin_version'] );
 			wp_enqueue_style( 'foometafields', $this->metabox['plugin_url'] . 'assets/vendor/foofields/foofields.min.css', array(
-				'wp-color-picker'
+				'wp-color-picker',
+				'selectize'
 			), $this->metabox['plugin_version'] );
 		}
 	}

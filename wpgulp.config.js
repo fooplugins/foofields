@@ -47,12 +47,13 @@ module.exports = {
 			"./src/js/Instance.js",
 			"./src/js/Component.js",
 			"./src/js/Container.js",
-			"./src/js/Content.js",
-			"./src/js/Fields.js",
-			"./src/js/Field.js",
 			"./src/js/Tab.js",
 			"./src/js/TabMenu.js",
 			"./src/js/TabMenuItem.js",
+			"./src/js/Content.js",
+			"./src/js/Fields.js",
+			"./src/js/Field.js",
+			"./src/js/fields/*.js",
 			"./src/js/__init.js"
 		]
 	},
