@@ -1,0 +1,109 @@
+// Metabox Style CSS
+// ----------------------------------------------------------------------------
+.foofields-style-metabox {
+  .foofields-content {
+	background-color: #FFF;
+  }
+  .foofields-tabs {
+	background-color: #f5f5f5;
+  }
+  .foofields-tab-link {
+	color: #0073aa;
+  }
+  .foofields-tab.foofields-active {
+	.foofields-tab-link {
+	  color: #FFF;
+	  background-color: #0073aa;
+	}
+  }
+  .foofields-tab {
+	&:not(.foofields-active) {
+	  .foofields-tab-link {
+		&:hover {
+		  color: #00a0d2;
+		}
+	  }
+	}
+  }
+  .foofields-tab-menu {
+	color: #555;
+	background-color: #ddd;
+  }
+  .foofields-tab-menu-item {
+	&:not(.foofields-active) {
+	  .foofields-tab-menu-link {
+		&:hover {
+		  color: #0073aa;
+		}
+	  }
+	}
+  }
+}
+// Vertical CSS
+// ----------------------------------------------------------------------------
+.foofields-tabs-vertical.foofields-style-metabox {
+  .foofields-tabs {
+	border-right-color: #ccd0d4;
+  }
+  .foofields-tab-link {
+	&:after {
+	  border-right-color: #FFF;
+	}
+  }
+  .foofields-tab.foofields-show-menu {
+	&:not(.foofields-active) {
+	  .foofields-tab-link {
+		&:after {
+		  border-right-color: #ddd;
+		}
+	  }
+	}
+  }
+}
+// Horizontal CSS
+// ----------------------------------------------------------------------------
+.foofields-tabs-horizontal.foofields-style-metabox {
+  .foofields-tabs {
+	border-bottom-color: #ccd0d4;
+  }
+  .foofields-tab-link {
+	&:after {
+	  border-bottom-color: #fff;
+	}
+  }
+  .foofields-tab.foofields-has-menu {
+	.foofields-tab-link {
+	  &:after {
+		border-bottom-color: #ccd0d4;
+	  }
+	}
+  }
+  .foofields-tab-menu {
+	border-top-color: #ccd0d4;
+  }
+}
+// Small Screen CSS
+// ----------------------------------------------------------------------------
+@media only screen and (max-width: $small-screen) {
+  .foofields-tabs-vertical.foofields-style-metabox {
+	.foofields-tab.foofields-show-menu {
+	  .foofields-tab-link {
+		&:after {
+		  border-right-color: #ddd;
+		}
+	  }
+	  &:not(.foofields-active) {
+		.foofields-tab-link {
+		  color: #555;
+		  background-color: #ddd;
+		}
+	  }
+	}
+	.foofields-tab.foofields-active {
+	  .foofields-tab-menu-header {
+		color: #FFF;
+		background-color: #0073aa;
+	  }
+	}
+  }
+}

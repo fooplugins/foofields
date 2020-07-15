@@ -1,0 +1,84 @@
+// Tab Menu CSS
+// ----------------------------------------------------------------------------
+.foofields-tab-menu {
+  display: none;
+  position: relative;
+  margin: 0;
+  width: 100%;
+  text-align: left;
+  padding: 0;
+  list-style: none;
+  z-index: 11;
+}
+// Horizontal CSS
+// ----------------------------------------------------------------------------
+.foofields-tabs-horizontal {
+  .foofields-tab-menu {
+	border-top: solid 1px transparent;
+  }
+  .foofields-tab.foofields-active {
+	.foofields-tab-menu {
+	  display: block;
+	  position: absolute;
+	  bottom: 0;
+	  left: 0;
+	  height: $tab-h-menu-height;
+	}
+  }
+  .foofields-tab.foofields-show-menu {
+	&:not(.foofields-active) {
+	  .foofields-tab-menu {
+		display: block;
+		position: absolute;
+		bottom: 0;
+		left: 0;
+		height: $tab-h-menu-height;
+		z-index: 12;
+	  }
+	}
+  }
+  .foofields-tab-menu-item {
+	display: inline-block;
+  }
+}
+// Large Screens CSS
+// ----------------------------------------------------------------------------
+@media only screen and (min-width: $small-screen + 1px) {
+  .foofields-tab.foofields-active {
+	.foofields-tab-menu {
+	  display: block;
+	}
+  }
+  .foofields-tabs-vertical {
+	.foofields-tab.foofields-show-menu {
+	  &:not(.foofields-active) {
+		.foofields-tab-menu {
+		  display: block;
+		  width: $tab-v-width;
+		  position: absolute;
+		  top: 0;
+		  right: 0;
+		  transform: translateX(100%);
+		  z-index: 11;
+		}
+	  }
+	}
+  }
+}
+// Small Screens CSS
+// ----------------------------------------------------------------------------
+@media only screen and (max-width: $small-screen) {
+  .foofields-tabs-vertical {
+	.foofields-tab.foofields-show-menu {
+	  .foofields-tab-menu {
+		display: block;
+		width: $tab-v-width;
+		position: absolute;
+		top: 0;
+		right: 0;
+		transform: translateX(100%);
+		z-index: 11;
+	  }
+	}
+  }
+}

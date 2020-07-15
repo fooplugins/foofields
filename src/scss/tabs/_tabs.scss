@@ -1,0 +1,49 @@
+// Tabs CSS
+// ----------------------------------------------------------------------------
+.foofields-tabs {
+  display: none;
+  position: relative;
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+// Vertical CSS
+// ----------------------------------------------------------------------------
+.foofields-tabs-vertical {
+  >.foofields-tabs {
+	display: inline-block;
+	width: $tab-v-width;
+	border-right: solid 1px transparent;
+  }
+}
+.foofields-tabs-vertical {
+  >.foofields-content {
+	width: calc(100% - #{$tab-v-width});
+  }
+}
+// Horizontal CSS
+// ----------------------------------------------------------------------------
+.foofields-tabs-horizontal {
+  flex-wrap: wrap;
+  >.foofields-tabs {
+	display: block;
+	width: 100%;
+	border-bottom: solid 1px transparent;
+  }
+}
+// Small Screen CSS
+// ----------------------------------------------------------------------------
+@media only screen and (max-width: $small-screen) {
+  .foofields-tabs-vertical {
+	>.foofields-tabs {
+	  width: $tab-v-small-width;
+	}
+  }
+  .foofields-tabs-vertical {
+	>.foofields-content {
+	  width: calc(100% - #{$tab-v-small-width});
+	}
+  }
+}
+
+

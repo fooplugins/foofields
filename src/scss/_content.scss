@@ -1,0 +1,34 @@
+.foofields-content {
+  display: none;
+  padding: $m-sm;
+  margin: 0;
+  width: 100%;
+  height: auto;
+
+  &.foofields-active {
+	display: inline-block;
+  }
+
+  img {
+	max-width: 100%;
+	height: auto;
+  }
+
+  // Reset Wordpress panel styling when we move the meta boxes into a FooMetaField
+  .handlediv,
+  h2.ui-sortable-handle {
+	display: none !important;
+  }
+  .postbox {
+	border: none;
+	box-shadow: none;
+	background: transparent;
+  }
+
+  // Reset featured thumbnail styling
+  #set-post-thumbnail {
+	.attachment-post-thumbnail {
+	  max-width: 250px;
+	}
+  }
+}
