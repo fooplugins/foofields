@@ -21,98 +21,14 @@ if ( ! class_exists( 'FooPlugins\FooFields\Admin\Movie\MetaboxTest' ) ) {
 							'type'   => 'featured_image',
 							'featuredImage' => true
 						),
-						array(
-							'id'     => 'genres',
-							'label'  => __( 'Genres', 'foofields' ),
-							'icon'   => 'dashicons-groups',
-							'type'   => 'taxonomy',
-							'fields' => array(),
-							'taxonomy' => FOOFIELDS_CT_GENRE
-						),
-						array(
-							'id'     => 'nested',
-							'label'  => __( 'Parent', 'foofields' ),
-							'icon'   => 'dashicons-editor-table',
-							'tabs' => array(
-								array(
-									'id'     => 'child1',
-									'label'  => __( 'Child 1', 'foofields' ),
-									'fields' => array(
-										array(
-											'id'       => 'child1help',
-											'label'    => __( 'Help Field', 'foofields' ),
-											'desc'     => __( 'This tab shows an example repeater field for capturing notes. This is powerful when you want the ability to capture an unknown amount of data.', 'foofields' ),
-											'type'     => 'help',
-										),
-										array(
-											'id'       => 'repeater',
-											//'label'    => __( 'Repeater Field', 'foofields' ),
-											'desc'     => __( 'A repeater field', 'foofields' ),
-											'type'     => 'repeater',
-											'button'   => __( 'Add Note', 'foofields' ),
-											'fields'   => array(
-												array(
-													'id'       => 'text',
-													'label'    => __( 'Text Field', 'foofields' ),
-													'desc'     => __( 'A test text field', 'foofields' ),
-													'type'     => 'text',
-												),
-												array(
-													'id'       => 'number',
-													'label'    => __( 'Number Field', 'foofields' ),
-													'desc'     => __( 'A test number field', 'foofields' ),
-													'type'     => 'number',
-												),
-												array(
-													'id'       => 'textarea',
-													'label'    => __( 'Textarea Field', 'foofields' ),
-													'desc'     => __( 'A test textarea field', 'foofields' ),
-													'type'     => 'textarea',
-												),
-												array(
-													'id'       => 'checkbox',
-													'label'    => __( 'Checkbox Field', 'foofields' ),
-													'desc'     => __( 'A test Checkbox field', 'foofields' ),
-													'type'     => 'checkbox',
-												),
-												array(
-													'id'       => 'select',
-													'label'    => __( 'Select Field', 'foofields' ),
-													'desc'     => __( 'A test select field', 'foofields' ),
-													'type'     => 'select',
-													'choices' => array(
-														'option1' => __( 'Option 1', 'foofields' ),
-														'option2' => __( 'Option 2', 'foofields' ),
-														'option3' => __( 'Option 3', 'foofields' ),
-														'option4' => __( 'Option 4', 'foofields' ),
-													)
-												),
-												array(
-													'id'       => 'manage',
-													'type'     => 'manage',
-												),
-											)
-										)
-									)
-								),
-								array(
-									'id'     => 'child2',
-									'label'  => __( 'Child 2', 'foofields' ),
-									'fields' => array(
-										array(
-											'id'       => 'child2text',
-											'label'    => __( 'Another Text Field', 'foofields' ),
-											'type'     => 'text',
-										),
-										array(
-											'id'       => 'child2textarea',
-											'label'    => __( 'More Text', 'foofields' ),
-											'type'     => 'textarea',
-										)
-									)
-								),
-							)
-						),
+//						array(
+//							'id'     => 'genres',
+//							'label'  => __( 'Genres', 'foofields' ),
+//							'icon'   => 'dashicons-groups',
+//							'type'   => 'taxonomy',
+//							'fields' => array(),
+//							'taxonomy' => FOOFIELDS_CT_GENRE
+//						),
 						array(
 							'id'     => 'simplefields',
 							'label'  => __( 'Simple Fields', 'foofields' ),
@@ -294,25 +210,131 @@ if ( ! class_exists( 'FooPlugins\FooFields\Admin\Movie\MetaboxTest' ) ) {
 										)
 									)
 								),
+							)
+						),
+						array(
+							'id'     => 'advfields',
+							'label'  => __( 'Advanced Fields', 'foofields' ),
+							'icon'   => 'dashicons-list-view',
+							'fields' => array(
 								array(
 									'id'       => 'suggest',
 									'label'    => __( 'Suggest Field (autocomplete without a key)', 'foofields' ),
 									'type'     => 'suggest',
 									'default'  => '',
-									'placeholder' => __( 'Start typing', 'foofields' ),
+									'placeholder' => __( 'Start typing to search for movies', 'foofields' ),
 									'query_type' => 'post',
 									'query_data' => FOOFIELDS_CPT_MOVIE
 								),
 								array(
 									'id'       => 'selectize',
-									'label'    => __( 'selectize Field (autocomplete with a key)', 'foofields' ),
+									'label'    => __( 'Selectize Field (autocomplete with a key)', 'foofields' ),
 									'type'     => 'selectize',
-									'placeholder' => __( 'Start typing', 'foofields' ),
-									'query_type' => 'post',
-									'query_data' => FOOFIELDS_CPT_MOVIE
+									'placeholder' => __( 'Start typing to search for actors', 'foofields' ),
+									'query_type' => 'taxonomy',
+									'query_data' => FOOFIELDS_CT_ACTOR
+								),
+								array(
+									'id'       => 'button1',
+									'type'     => 'ajaxbutton',
+									'action'   => 'test_button1',
+									'callback' => array( $this, 'return_success' ),
+									'button'   => __( 'Run Something - Return Success', 'foofields' ),
+								),
+								array(
+									'id'       => 'button2',
+									'type'     => 'ajaxbutton',
+									'action'   => 'test_button2',
+									'callback' => array( $this, 'return_error' ),
+									'button'   => __( 'Run Something - Return Error', 'foofields' ),
 								)
+
 							)
-						)
+						),
+						array(
+							'id'     => 'nested',
+							'label'  => __( 'Parent Tab', 'foofields' ),
+							'icon'   => 'dashicons-editor-table',
+							'tabs' => array(
+								array(
+									'id'     => 'child1',
+									'label'  => __( 'Child 1', 'foofields' ),
+									'fields' => array(
+										array(
+											'id'       => 'child1help',
+											'label'    => __( 'Help Field', 'foofields' ),
+											'desc'     => __( 'This tab shows an example repeater field for capturing notes. This is powerful when you want the ability to capture an unknown amount of data.', 'foofields' ),
+											'type'     => 'help',
+										),
+										array(
+											'id'       => 'repeater',
+											//'label'    => __( 'Repeater Field', 'foofields' ),
+											'desc'     => __( 'A repeater field', 'foofields' ),
+											'type'     => 'repeater',
+											'button'   => __( 'Add Note', 'foofields' ),
+											'fields'   => array(
+												array(
+													'id'       => 'text',
+													'label'    => __( 'Text Field', 'foofields' ),
+													'desc'     => __( 'A test text field', 'foofields' ),
+													'type'     => 'text',
+												),
+												array(
+													'id'       => 'number',
+													'label'    => __( 'Number Field', 'foofields' ),
+													'desc'     => __( 'A test number field', 'foofields' ),
+													'type'     => 'number',
+												),
+												array(
+													'id'       => 'textarea',
+													'label'    => __( 'Textarea Field', 'foofields' ),
+													'desc'     => __( 'A test textarea field', 'foofields' ),
+													'type'     => 'textarea',
+												),
+												array(
+													'id'       => 'checkbox',
+													'label'    => __( 'Checkbox Field', 'foofields' ),
+													'desc'     => __( 'A test Checkbox field', 'foofields' ),
+													'type'     => 'checkbox',
+												),
+												array(
+													'id'       => 'select',
+													'label'    => __( 'Select Field', 'foofields' ),
+													'desc'     => __( 'A test select field', 'foofields' ),
+													'type'     => 'select',
+													'choices' => array(
+														'option1' => __( 'Option 1', 'foofields' ),
+														'option2' => __( 'Option 2', 'foofields' ),
+														'option3' => __( 'Option 3', 'foofields' ),
+														'option4' => __( 'Option 4', 'foofields' ),
+													)
+												),
+												array(
+													'id'       => 'manage',
+													'type'     => 'manage',
+												),
+											)
+										)
+									)
+								),
+								array(
+									'id'     => 'child2',
+									'label'  => __( 'Child 2', 'foofields' ),
+									'fields' => array(
+										array(
+											'id'       => 'child2text',
+											'label'    => __( 'Another Text Field', 'foofields' ),
+											'type'     => 'text',
+										),
+										array(
+											'id'       => 'child2textarea',
+											'label'    => __( 'More Text', 'foofields' ),
+											'type'     => 'textarea',
+										)
+									)
+								),
+							)
+						),
 					)
 				) );
 
@@ -329,6 +351,32 @@ if ( ! class_exists( 'FooPlugins\FooFields\Admin\Movie\MetaboxTest' ) ) {
 				),
 				$field_group
 			);
+		}
+
+		/**
+		 * Runs a successful thing on the server
+		 *
+		 * @param $field
+		 */
+		function return_success( $field ) {
+			$post_id = $this->safe_get_from_post( 'postID' );
+
+			wp_send_json_success( array(
+				'message' => sprintf( __( 'A successful thing was run on the server. Post ID: %s', 'foofields' ), $post_id )
+			) );
+		}
+
+		/**
+		 * Runs a error thing on the server
+		 *
+		 * @param $field
+		 */
+		function return_error( $field ) {
+			$post_id = $this->safe_get_from_post( 'postID' );
+
+			wp_send_json_error( array(
+				'message' => sprintf( __( 'An error occurred on the server. Post ID: %s', 'foofields' ), $post_id )
+			) );
 		}
 	}
 }

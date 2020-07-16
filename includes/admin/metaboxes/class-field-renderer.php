@@ -514,11 +514,10 @@ if ( ! class_exists( 'FooPlugins\FooFields\Admin\Metaboxes\FieldRenderer' ) ) {
 						$button_text = isset( $field['button'] ) ? $field['button'] : __( 'Run' );
 
 						$attributes = array(
-								'id'                    => $field['input_id'],
-								'class'                 => isset( $field['class'] ) ? $field['class'] : 'button button-primary button-large',
-								'href'                  => '#' . $field['input_id'],
-								'data-ajaxbutton',
-								'data-ajaxbutton-nonce' => wp_create_nonce( $field['action'] )
+								'id'         => $field['input_id'],
+								'class'      => isset( $field['class'] ) ? $field['class'] : 'button button-primary button-large',
+								'href'       => '#' . $field['input_id'],
+								'data-nonce' => wp_create_nonce( $field['action'] )
 						);
 
 						if ( isset( $field['value'] ) ) {

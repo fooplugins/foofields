@@ -33,7 +33,7 @@ if ( ! class_exists( 'FooPlugins\FooFields\Admin\Metaboxes\CustomPostTypeMetabox
 			add_action( 'wp_ajax_foometafield_selectize', array( $this, 'ajax_handle_selectize' ) );
 
 			//handle ajaxbutton fields
-			add_action( 'wp_ajax_foometafield_ajaxbutton', array( $this, 'ajax_handle_ajaxbutton' ) );
+			add_action( 'wp_ajax_foofields_ajaxbutton', array( $this, 'ajax_handle_ajaxbutton' ) );
 		}
 
 		/**
@@ -43,14 +43,16 @@ if ( ! class_exists( 'FooPlugins\FooFields\Admin\Metaboxes\CustomPostTypeMetabox
 			$nonce = $this->sanitize_key( 'nonce' );
 
 			if ( null !== $nonce ) {
-				$fields = $this->find_all_fields( 'ajaxbutton' );
+				$fields = $this->find_all_fields_by_type( 'ajaxbutton' );
 
 				foreach ( $fields as $field ) {
 					if ( wp_verify_nonce( $nonce, $field['action'] ) ) {
 						$this->do_action( 'AjaxButton\\' . $field['action'], $field );
 
 						if ( isset( $field['callback'] ) ) {
-							call_user_func( $field['callback'], $field );
+							if ( is_callable( $field['callback'] ) ) {
+								call_user_func( $field['callback'], $field );
+							}
 						}
 						break;
 					}
@@ -58,7 +60,14 @@ if ( ! class_exists( 'FooPlugins\FooFields\Admin\Metaboxes\CustomPostTypeMetabox
 			}
 		}
 
-		function find_all_fields( $field_type, $field_group = false ) {
+		/**
+		 * Finds all fields all fields of a certain type recursively
+		 * @param $field_type
+		 * @param bool $field_group
+		 *
+		 * @return array
+		 */
+		function find_all_fields_by_type( $field_type, $field_group = false ) {
 			if ( false === $field_group ) {
 				$field_group = $this->field_group;
 			}
@@ -67,7 +76,7 @@ if ( ! class_exists( 'FooPlugins\FooFields\Admin\Metaboxes\CustomPostTypeMetabox
 
 			if ( isset( $field_group['tabs'] ) ) {
 				foreach ( $field_group['tabs'] as $tab ) {
-					$found = array_merge( $found, $this->find_all_fields( $field_type, $tab ) );
+					$found = array_merge( $found, $this->find_all_fields_by_type( $field_type, $tab ) );
 				}
 			}
 
