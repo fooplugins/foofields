@@ -5562,76 +5562,60 @@ FooFields.utils, FooFields.utils.fn, FooFields.utils.str);
 "use strict";
 
 (function ($, _, _is, _obj) {
-  if (!window.Selectize) {
-    console.log("FooFields.SelectizeField dependency missing.");
-    return;
-  }
-
-  _.SelectizeField = _.Field.extend({
+  _.AjaxButton = _.Field.extend({
     setup: function setup() {
       var self = this;
-      self.$select = self.$input.children("select").first();
-      self.$display = self.$input.children("input[type=hidden]").first();
+      self.$button = self.$input.find('a:first');
+      self.$spinner = self.$input.find('.spinner');
+      self.$message = self.$input.find('.response-message');
+      self.$button.click(function (e) {
+        e.preventDefault();
+        e.stopPropagation(); //hide the message if previously shown
 
-      _obj.extend(self.opt, self.$select.data());
+        self.$message.hide(); //show the spinner
 
-      self.endpoint = window.ajaxurl + '?' + self.opt.query;
+        self.$spinner.addClass('is-active');
+        var postData = {
+          'action': 'foofields_ajaxbutton',
+          'nonce': $(this).data('nonce')
+        };
 
-      var options = _obj.extend({}, self.opt.selectize, {
-        onChange: function onChange(value) {
-          if (self.api instanceof window.Selectize) {
-            var selection = self.api.getItem(value);
-            self.$display.val(selection.text());
-          }
-        },
-        load: function load(query, callback) {
-          $.get(self.endpoint, {
-            data: {
-              q: query
-            }
-          }).done(function (response) {
-            callback(response.results);
-          }).fail(function () {
-            callback();
-          });
+        if ($('#post_ID').length) {
+          postData.postID = $('#post_ID').val();
         }
+
+        $.ajax({
+          url: window.ajaxurl,
+          type: 'POST',
+          data: postData,
+          error: function error() {
+            self.$message.text('An unexpected error occurred!').addClass('error').show();
+          },
+          success: function success(res) {
+            if (res) {
+              if (res.success) {
+                //output success message
+                if (res.data.message) {
+                  self.$message.text(res.data.message).addClass('success').show();
+                }
+              } else {
+                //output error
+                if (res.data.message) {
+                  self.$message.text(res.data.message).addClass('error').show();
+                }
+              }
+            }
+          },
+          complete: function complete() {
+            self.$spinner.removeClass('is-active');
+          }
+        });
       });
-
-      self.api = self.$select.selectize(options).get(0).selectize;
-      console.log(self.api);
-    },
-    teardown: function teardown() {
-      var self = this;
-
-      if (self.api instanceof Selectize) {
-        self.api.destroy();
-      }
     }
   });
 
-  _.fields.register("selectize", _.SelectizeField, ".foofields-type-selectize", {
-    query: null,
-    selectize: {
-      valueField: 'id',
-      labelField: 'text',
-      searchField: 'text',
-      maxItems: 1,
-      create: false,
-      options: []
-    }
-  }, {}, {});
+  _.fields.register('ajaxbutton', _.AjaxButton, '.foofields-type-ajaxbutton', {}, {}, {});
 })(FooFields.$, FooFields, FooFields.utils.is, FooFields.utils.obj);
-"use strict";
-
-(function ($, _, _utils, _is, _obj) {
-  _.__instance__ = new _.Instance();
-
-  _utils.expose(_.__instance__, _, ["on", "off", "trigger", "init", "destroy", "field"]);
-
-  _utils.ready(function () {
-    _.__instance__.init(window.FOOFIELDS);
-  });
-})(FooFields.$, FooFields, FooFields.utils, FooFields.utils.is, FooFields.utils.obj);
 "use strict";
 
 (function ($, _, _is, _obj) {
@@ -5693,3 +5677,51 @@ FooFields.utils, FooFields.utils.fn, FooFields.utils.str);
     }
   }, {}, {});
 })(FooFields.$, FooFields, FooFields.utils.is, FooFields.utils.obj);
+"use strict";
+
+(function ($, _, _is, _obj) {
+  _.Suggest = _.Field.extend({
+    setup: function setup() {// var self = this;
+      // self.$select = self.$input.children("select").first();
+      // self.$display = self.$input.children("input[type=hidden]").first();
+      // _obj.extend(self.opt, self.$select.data());
+      // self.endpoint = window.ajaxurl + '?' + self.opt.query;
+      // var options = _obj.extend({}, self.opt.selectize, {
+      // 	onChange: function(value){
+      // 		if (self.api instanceof window.Selectize){
+      // 			var selection = self.api.getItem( value );
+      // 			self.$display.val( selection.text() );
+      // 		}
+      // 	},
+      // 	load: function(query, callback){
+      // 		$.get(self.endpoint, {
+      // 			data: { q: query }
+      // 		}).done(function(response){
+      // 			callback(response.results);
+      // 		}).fail(function(){
+      // 			callback();
+      // 		});
+      // 	}
+      // });
+      // self.api = self.$select.selectize(options).get(0).selectize;
+    },
+    teardown: function teardown() {// var self = this;
+      // if (self.api instanceof Selectize){
+      // 	self.api.destroy();
+      // }
+    }
+  });
+
+  _.fields.register("suggest", _.Suggest, ".foofields-type-suggest", {}, {}, {});
+})(FooFields.$, FooFields, FooFields.utils.is, FooFields.utils.obj);
+"use strict";
+
+(function ($, _, _utils, _is, _obj) {
+  _.__instance__ = new _.Instance();
+
+  _utils.expose(_.__instance__, _, ["on", "off", "trigger", "init", "destroy", "field"]);
+
+  _utils.ready(function () {
+    _.__instance__.init(window.FOOFIELDS);
+  });
+})(FooFields.$, FooFields, FooFields.utils, FooFields.utils.is, FooFields.utils.obj);
