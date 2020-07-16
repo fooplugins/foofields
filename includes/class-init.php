@@ -24,8 +24,10 @@ if ( !class_exists( 'FooPlugins\FooFields\Init' ) ) {
 				);
 			});
 
+
 			new namespace\PostTypes\Movie();
 			new namespace\Taxonomies\Genre();
+			new namespace\Taxonomies\Actor();
 
 			if ( is_admin() ) {
 				new namespace\Admin\Init();

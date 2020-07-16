@@ -15,6 +15,7 @@ define( 'FOOFIELDS_CPT_MOVIE', 'foofields_movie' );
 
 //taxonomies
 define( 'FOOFIELDS_CT_GENRE', 'foofields_genre' );
+define( 'FOOFIELDS_CT_ACTOR', 'foofields_actor' );
 
 //post meta
 define( 'FOOFIELDS_MOVIE_META_TEST', '_test' );
