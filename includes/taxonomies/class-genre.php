@@ -23,7 +23,7 @@ if( ! class_exists( 'FooPlugins\FooFields\Taxonomies\Genre' ) ) {
 						'edit_item'         => __( 'Edit Genre', 'foofields' ),
 						'update_item'       => __( 'Update Genre', 'foofields' ),
 						'add_new_item'      => __( 'Add New Genre', 'foofields' ),
-						'new_item_name'     => __( 'New Genre'.' Name', 'foofields' ),
+						'new_item_name'     => __( 'New Genre Name', 'foofields' ),
 						'menu_name'         => __( 'Genres', 'foofields' ),
 					),
 					'hierarchical' 		=> true,

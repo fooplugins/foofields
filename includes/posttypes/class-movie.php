@@ -39,7 +39,7 @@ if ( ! class_exists( 'FooPlugins\FooFields\PostTypes\Movie' ) ) {
 					'show_ui'       => true,
 					'show_in_menu'  => true,
 					'menu_icon'     => 'dashicons-editor-kitchensink',
-					'supports'      => array( 'title', 'thumbnail', 'custom-fields' ),
+					'supports'      => array( 'title', 'thumbnail' )
 				)
 			);
 
