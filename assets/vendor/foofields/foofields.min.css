@@ -4,9 +4,6 @@
 .foofields-content{display:none;padding:1em;margin:0;width:100%;height:auto}
 .foofields-content.foofields-active{display:inline-block}
 .foofields-content img{max-width:100%;height:auto}
-.foofields-content .handlediv,.foofields-content h2.ui-sortable-handle{display:none !important}
-.foofields-content .postbox{border:0;-webkit-box-shadow:none;box-shadow:none;background:transparent}
-.foofields-content #set-post-thumbnail .attachment-post-thumbnail{max-width:250px}
 .foofields-tabs{display:none;position:relative;padding:0;margin:0;list-style:none}
 .foofields-tabs-vertical>.foofields-tabs{display:inline-block;width:150px;border-right:solid 1px transparent}
 .foofields-tabs-vertical>.foofields-content{width:calc(100% - 150px)}
@@ -125,6 +122,9 @@ button[data-balloon]{overflow:visible}
 .foofields-field-input-ajaxbutton .response-message{display:none;line-height:2.30769231;vertical-align:middle;padding:0 10px}
 .foofields-field-input-ajaxbutton .response-message.success{display:inline-block}
 .foofields-field-input-ajaxbutton .response-message.error{display:inline-block;color:#800}
+.foofields-field-input-embed-metabox .handlediv,.foofields-field-input-embed-metabox h2.ui-sortable-handle{display:none !important}
+.foofields-field-input-embed-metabox .postbox{border:0;-webkit-box-shadow:none;box-shadow:none;background:transparent}
+.foofields-field-input-embed-metabox #set-post-thumbnail .attachment-post-thumbnail{max-width:250px}
 .foofields-style-metabox .foofields-content{background-color:#FFF}
 .foofields-style-metabox .foofields-tabs{background-color:#f5f5f5}
 .foofields-style-metabox .foofields-tab-link{color:#0073aa}
