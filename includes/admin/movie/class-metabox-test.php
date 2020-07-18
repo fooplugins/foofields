@@ -13,19 +13,6 @@ if ( ! class_exists( 'FooPlugins\FooFields\Admin\Movie\MetaboxTest' ) ) {
 			$field_group = apply_filters( 'FooPlugins\FooFields\Admin\Movie\MetaboxTest\FieldGroup',
 				array(
 					'tabs' => array(
-						array(
-							'id'     => 'portrait',
-							'label'  => __( 'Portrait', 'foofields' ),
-							'icon'   => 'dashicons-format-image',
-							'fields' => array(
-								array(
-									'id'         => 'move_featured_image',
-									'label'      => __( 'Movie Portrait', 'foofields' ),
-									'type'       => 'embed-metabox',
-									'metabox_id' => 'postimagediv'
-								),
-							)
-						),
 //						array(
 //							'id'     => 'genres',
 //							'label'  => __( 'Genres', 'foofields' ),
@@ -362,6 +349,30 @@ if ( ! class_exists( 'FooPlugins\FooFields\Admin\Movie\MetaboxTest' ) ) {
 											'type'     => 'textarea',
 										)
 									)
+								),
+							)
+						),
+						array(
+							'id'     => 'metaboxes',
+							'label'  => __( 'Metaboxes', 'foofields' ),
+							'icon'   => 'dashicons-format-image',
+							'fields' => array(
+								array(
+									'id'       => 'mb-help',
+									'desc'     => __( 'Metabox content can be embedded into fields.', 'foofields' ),
+									'type'     => 'help',
+								),
+								array(
+									'id'         => 'move_featured_image',
+									'label'      => __( 'Movie Portrait', 'foofields' ),
+									'type'       => 'embed-metabox',
+									'metabox_id' => 'postimagediv'
+								),
+								array(
+									'id'         => 'move_actors',
+									'label'      => __( 'Movie Actors', 'foofields' ),
+									'type'       => 'embed-metabox',
+									'metabox_id' => 'tagsdiv-foofields_actor'
 								),
 							)
 						),
