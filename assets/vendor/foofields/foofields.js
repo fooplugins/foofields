@@ -5619,6 +5619,81 @@ FooFields.utils, FooFields.utils.fn, FooFields.utils.str);
 "use strict";
 
 (function ($, _, _is, _obj) {
+  if (!$.fn.wpColorPicker) {
+    console.log("FooFields.ColorPicker dependency missing.");
+    return;
+  }
+
+  _.ColorPicker = _.Field.extend({
+    setup: function setup() {
+      var self = this;
+      self.$input.children('input[type=text]').wpColorPicker();
+    }
+  });
+
+  _.fields.register("colorpicker", _.ColorPicker, ".foofields-type-colorpicker", {}, {}, {});
+})(FooFields.$, FooFields, FooFields.utils.is, FooFields.utils.obj);
+"use strict";
+
+(function ($, _, _is, _obj) {
+  _.EmbedMetabox = _.Field.extend({
+    setup: function setup() {
+      var self = this;
+      self.$container = self.$input.children("div").first();
+      self.$metabox = $('#' + self.$container.data('metabox'));
+      self.$metabox.removeClass('closed');
+      self.$metabox.detach().appendTo(self.$container);
+    }
+  });
+
+  _.fields.register("embed-metabox", _.EmbedMetabox, ".foofields-type-embed-metabox", {}, {}, {});
+})(FooFields.$, FooFields, FooFields.utils.is, FooFields.utils.obj);
+"use strict";
+
+(function ($, _, _is, _obj) {
+  _.Repeater = _.Field.extend({
+    setup: function setup() {
+      var self = this;
+      self.$addButton = self.$input.find('.foofields-repeater-add:first');
+      self.$container = self.$input.find('.foofields-repeater:first');
+      self.$table = self.$input.find('table:first');
+      self.$addButton.click(function (e) {
+        var $this = $(this),
+            $table = self.$table,
+            addRow = $table.find('tfoot tr').clone();
+        e.preventDefault();
+        e.stopPropagation(); //make sure the inputs are not disabled
+
+        addRow.find(':input').removeAttr('disabled'); //add the new row to the table
+
+        $table.find('tbody').append(addRow); //ensure the no-data message is hidden, and the table is shown
+
+        self.$container.removeClass('foofields-repeater-empty');
+      });
+      self.$input.on('click', '.foofields-repeater-delete', function (e) {
+        var $this = $(this),
+            confirmMessage = $this.data('confirm'),
+            $row = $this.parents('tr:first');
+        e.preventDefault();
+        e.stopPropagation();
+
+        if (confirmMessage && confirm(confirmMessage)) {
+          $row.remove();
+        } //check if no rows are left
+
+
+        if (self.$table.find('tbody tr').length === 0) {
+          self.$container.addClass('foofields-repeater-empty');
+        }
+      });
+    }
+  });
+
+  _.fields.register("repeater", _.Repeater, ".foofields-type-repeater", {}, {}, {});
+})(FooFields.$, FooFields, FooFields.utils.is, FooFields.utils.obj);
+"use strict";
+
+(function ($, _, _is, _obj) {
   if (!window.Selectize) {
     console.log("FooFields.Selectize dependency missing.");
     return;
@@ -5678,38 +5753,6 @@ FooFields.utils, FooFields.utils.fn, FooFields.utils.str);
     }
   }, {}, {});
 })(FooFields.$, FooFields, FooFields.utils.is, FooFields.utils.obj);
-"use strict";
-
-(function ($, _, _is, _obj) {
-  if (!$.fn.suggest) {
-    console.log("FooFields.Suggest dependency missing.");
-    return;
-  }
-
-  _.Suggest = _.Field.extend({
-    setup: function setup() {
-      var self = this;
-      self.$suggest = self.$input.children('input[type=text]').first();
-      self.$suggest.suggest(window.ajaxurl + '?' + self.$suggest.data('suggest-query'), {
-        multiple: $(this).data('suggest-multiple'),
-        multipleSep: $(this).data('suggest-separator')
-      });
-    }
-  });
-
-  _.fields.register("suggest", _.Suggest, ".foofields-type-suggest", {}, {}, {});
-})(FooFields.$, FooFields, FooFields.utils.is, FooFields.utils.obj);
-"use strict";
-
-(function ($, _, _utils, _is, _obj) {
-  _.__instance__ = new _.Instance();
-
-  _utils.expose(_.__instance__, _, ["on", "off", "trigger", "init", "destroy", "field"]);
-
-  _utils.ready(function () {
-    _.__instance__.init(window.FOOFIELDS);
-  });
-})(FooFields.$, FooFields, FooFields.utils, FooFields.utils.is, FooFields.utils.obj);
 "use strict";
 
 (function ($, _, _is, _obj) {
@@ -5796,75 +5839,32 @@ FooFields.utils, FooFields.utils.fn, FooFields.utils.str);
 "use strict";
 
 (function ($, _, _is, _obj) {
-  _.EmbedMetabox = _.Field.extend({
-    setup: function setup() {
-      var self = this;
-      self.$container = self.$input.children("div").first();
-      self.$metabox = $('#' + self.$container.data('metabox'));
-      self.$metabox.removeClass('closed');
-      self.$metabox.detach().appendTo(self.$container);
-    }
-  });
-
-  _.fields.register("embed-metabox", _.EmbedMetabox, ".foofields-type-embed-metabox", {}, {}, {});
-})(FooFields.$, FooFields, FooFields.utils.is, FooFields.utils.obj);
-"use strict";
-
-(function ($, _, _is, _obj) {
-  _.Repeater = _.Field.extend({
-    setup: function setup() {
-      var self = this;
-      self.$addButton = self.$input.find('.foofields-repeater-add:first');
-      self.$container = self.$input.find('.foofields-repeater:first');
-      self.$table = self.$input.find('table:first');
-      self.$addButton.click(function (e) {
-        var $this = $(this),
-            $table = self.$table,
-            addRow = $table.find('tfoot tr').clone();
-        e.preventDefault();
-        e.stopPropagation(); //make sure the inputs are not disabled
-
-        addRow.find(':input').removeAttr('disabled'); //add the new row to the table
-
-        $table.find('tbody').append(addRow); //ensure the no-data message is hidden, and the table is shown
-
-        self.$container.removeClass('foofields-repeater-empty');
-      });
-      self.$input.on('click', '.foofields-repeater-delete', function (e) {
-        var $this = $(this),
-            confirmMessage = $this.data('confirm'),
-            $row = $this.parents('tr:first');
-        e.preventDefault();
-        e.stopPropagation();
-
-        if (confirmMessage && confirm(confirmMessage)) {
-          $row.remove();
-        } //check if no rows are left
-
-
-        if (self.$table.find('tbody tr').length === 0) {
-          self.$container.addClass('foofields-repeater-empty');
-        }
-      });
-    }
-  });
-
-  _.fields.register("repeater", _.Repeater, ".foofields-type-repeater", {}, {}, {});
-})(FooFields.$, FooFields, FooFields.utils.is, FooFields.utils.obj);
-"use strict";
-
-(function ($, _, _is, _obj) {
-  if (!$.fn.wpColorPicker) {
-    console.log("FooFields.ColorPicker dependency missing.");
+  if (!$.fn.suggest) {
+    console.log("FooFields.Suggest dependency missing.");
     return;
   }
 
-  _.ColorPicker = _.Field.extend({
+  _.Suggest = _.Field.extend({
     setup: function setup() {
       var self = this;
-      self.$input.children('input[type=text]').wpColorPicker();
+      self.$suggest = self.$input.children('input[type=text]').first();
+      self.$suggest.suggest(window.ajaxurl + '?' + self.$suggest.data('suggest-query'), {
+        multiple: $(this).data('suggest-multiple'),
+        multipleSep: $(this).data('suggest-separator')
+      });
     }
   });
 
-  _.fields.register("colorpicker", _.ColorPicker, ".foofields-type-colorpicker", {}, {}, {});
+  _.fields.register("suggest", _.Suggest, ".foofields-type-suggest", {}, {}, {});
 })(FooFields.$, FooFields, FooFields.utils.is, FooFields.utils.obj);
+"use strict";
+
+(function ($, _, _utils, _is, _obj) {
+  _.__instance__ = new _.Instance();
+
+  _utils.expose(_.__instance__, _, ["on", "off", "trigger", "init", "destroy", "field"]);
+
+  _utils.ready(function () {
+    _.__instance__.init(window.FOOFIELDS);
+  });
+})(FooFields.$, FooFields, FooFields.utils, FooFields.utils.is, FooFields.utils.obj);

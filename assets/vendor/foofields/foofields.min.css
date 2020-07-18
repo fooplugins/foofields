@@ -125,6 +125,18 @@ button[data-balloon]{overflow:visible}
 .foofields-field-input-embed-metabox .handlediv,.foofields-field-input-embed-metabox h2.ui-sortable-handle{display:none !important}
 .foofields-field-input-embed-metabox .postbox{border:0;-webkit-box-shadow:none;box-shadow:none;background:transparent}
 .foofields-field-input-embed-metabox #set-post-thumbnail .attachment-post-thumbnail{max-width:250px}
+.foofields-content.foofields-cols-2{display:-webkit-box;display:-ms-flexbox;display:flex;-ms-flex-wrap:wrap;flex-wrap:wrap}
+.foofields-content.foofields-cols-2>.foofields-field{padding:1em;-ms-flex-item-align:start;align-self:flex-start;width:50%}
+.foofields-content.foofields-cols-2>.foofields-field.foofields-colspan-2,.foofields-content.foofields-cols-2>.foofields-field.foofields-colspan-3,.foofields-content.foofields-cols-2>.foofields-field.foofields-colspan-4,.foofields-content.foofields-cols-2>.foofields-field.foofields-colspan-5,.foofields-content.foofields-cols-2>.foofields-field.foofields-full-width{width:100%}
+.foofields-content.foofields-cols-3{display:-webkit-box;display:-ms-flexbox;display:flex;-ms-flex-wrap:wrap;flex-wrap:wrap}
+.foofields-content.foofields-cols-3>.foofields-field{padding:1em;-ms-flex-item-align:start;align-self:flex-start;width:33.33%}
+.foofields-content.foofields-cols-3>.foofields-field.foofields-colspan-2{width:66.66%}
+.foofields-content.foofields-cols-3>.foofields-field.foofields-colspan-3,.foofields-content.foofields-cols-3>.foofields-field.foofields-colspan-4,.foofields-content.foofields-cols-3>.foofields-field.foofields-colspan-5,.foofields-content.foofields-cols-3>.foofields-field.foofields-full-width{width:100%}
+.foofields-content.foofields-cols-4{display:-webkit-box;display:-ms-flexbox;display:flex;-ms-flex-wrap:wrap;flex-wrap:wrap}
+.foofields-content.foofields-cols-4>.foofields-field{padding:1em;-ms-flex-item-align:start;align-self:flex-start;width:25%}
+.foofields-content.foofields-cols-4>.foofields-field.foofields-colspan-2{width:50%}
+.foofields-content.foofields-cols-4>.foofields-field.foofields-colspan-3{width:75%}
+.foofields-content.foofields-cols-4>.foofields-field.foofields-colspan-4,.foofields-content.foofields-cols-4>.foofields-field.foofields-colspan-5,.foofields-content.foofields-cols-4>.foofields-field.foofields-full-width{width:100%}
 .foofields-style-metabox .foofields-content{background-color:#FFF}
 .foofields-style-metabox .foofields-tabs{background-color:#f5f5f5}
 .foofields-style-metabox .foofields-tab-link{color:#0073aa}
