@@ -1,6 +1,6 @@
 (function($, _, _is, _obj){
 
-	if (!$.suggest) {
+	if (!$.fn.suggest) {
 		console.log("FooFields.Suggest dependency missing.");
 		return;
 	}
