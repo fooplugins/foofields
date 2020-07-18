@@ -5681,7 +5681,7 @@ FooFields.utils, FooFields.utils.fn, FooFields.utils.str);
 "use strict";
 
 (function ($, _, _is, _obj) {
-  if (!$.suggest) {
+  if (!$.fn.suggest) {
     console.log("FooFields.Suggest dependency missing.");
     return;
   }
@@ -5854,21 +5854,17 @@ FooFields.utils, FooFields.utils.fn, FooFields.utils.str);
 "use strict";
 
 (function ($, _, _is, _obj) {
-  if (!$.suggest) {
-    console.log("FooFields.Suggest dependency missing.");
+  if (!$.fn.wpColorPicker) {
+    console.log("FooFields.ColorPicker dependency missing.");
     return;
   }
 
-  _.Suggest = _.Field.extend({
+  _.ColorPicker = _.Field.extend({
     setup: function setup() {
       var self = this;
-      self.$suggest = self.$input.children('input[type=text]').first();
-      self.$suggest.suggest(window.ajaxurl + '?' + self.$suggest.data('suggest-query'), {
-        multiple: $(this).data('suggest-multiple'),
-        multipleSep: $(this).data('suggest-separator')
-      });
+      self.$input.children('input[type=text]').wpColorPicker();
     }
   });
 
-  _.fields.register("suggest", _.Suggest, ".foofields-type-suggest", {}, {}, {});
+  _.fields.register("colorpicker", _.ColorPicker, ".foofields-type-colorpicker", {}, {}, {});
 })(FooFields.$, FooFields, FooFields.utils.is, FooFields.utils.obj);
