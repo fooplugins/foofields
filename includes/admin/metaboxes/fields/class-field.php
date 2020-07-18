@@ -3,6 +3,7 @@
 namespace FooPlugins\FooFields\Admin\Metaboxes\Fields;
 
 use FooPlugins\FooFields\Admin\Metaboxes\CustomPostTypeMetaboxFieldGroup;
+use FooPlugins\FooFields\Admin\Metaboxes\FieldRenderer;
 
 if ( ! class_exists( 'FooPlugins\FooFields\Admin\Metaboxes\Fields\Field' ) ) {
 
@@ -13,9 +14,12 @@ if ( ! class_exists( 'FooPlugins\FooFields\Admin\Metaboxes\Fields\Field' ) ) {
 		 */
 		protected $metabox_field_group;
 
-		function __construct( $metabox_field_group ) {
+		function __construct( $metabox_field_group, $field_type ) {
 			$this->metabox_field_group = $metabox_field_group;
+			FieldRenderer::register_field_renderer( $field_type, array( $this, 'render' ) );
 		}
+
+		abstract function render ( $field );
 
 		/**
 		 * Find the field for the current ajax callback by verifying the nonce

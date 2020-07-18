@@ -2,15 +2,55 @@
 
 namespace FooPlugins\FooFields\Admin\Metaboxes\Fields;
 
+use FooPlugins\FooFields\Admin\Metaboxes\FieldRenderer;
+
 if ( ! class_exists( 'FooPlugins\FooFields\Admin\Metaboxes\Fields\Selectize' ) ) {
 
 	class Selectize extends Field {
 
-		function __construct( $metabox_field_group ) {
-			parent::__construct( $metabox_field_group );
+		function __construct( $metabox_field_group, $field_type ) {
+			parent::__construct( $metabox_field_group, $field_type );
 
 			//handle ajax selectize fields
 			add_action( 'wp_ajax_foofields_selectize', array( $this, 'ajax_handle_selectize' ) );
+		}
+
+		/**
+		 * Render the selectize field
+		 *
+		 * @param $field
+		 */
+		function render( $field ) {
+			$query  = build_query( array(
+				'action'     => 'foofields_selectize',
+				'nonce'      => wp_create_nonce( $field['input_id'] ),
+			) );
+
+			$value = ( isset( $field['value'] ) && is_array( $field['value'] ) ) ? $field['value'] : array(
+				'value'   => '',
+				'display' => ''
+			);
+
+			FieldRenderer::render_html_tag( 'input', array(
+				'type'  => 'hidden',
+				'id'    => $field['input_id'] . '_display',
+				'name'  => $field['input_name'] . '[display]',
+				'value' => $value['display']
+			) );
+
+			$inner = '';
+
+			if ( isset( $value['value'] ) ) {
+				$inner = '<option value="' . esc_attr( $value['value'] ) . '" selected="selected">' . esc_html( $value['display'] ) . '</option>';
+			}
+
+			FieldRenderer::render_html_tag( 'select', array(
+				'id'          => $field['input_id'],
+				'name'        => $field['input_name'] . '[value]',
+				'value'       => $value['value'],
+				'placeholder' => $field['placeholder'],
+				'data-query'  => $query
+			), $inner, true, false );
 		}
 
 		/**

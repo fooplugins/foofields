@@ -23,20 +23,14 @@ if ( ! class_exists( 'FooPlugins\FooFields\Admin\Metaboxes\CustomPostTypeMetabox
 			//save field group post data
 			add_action( $hook . 'Save', array( $this, 'save_field_group_data' ) );
 
-
-
 			//enqueue assets needed for field groups
 			add_action( $hook . 'EnqueueAssets', array( $this, 'enqueue_field_group_assets' ) );
 
-			//handle ajax auto suggest fields
-			add_action( 'wp_ajax_foofields_suggest', array( $this, 'ajax_handle_autosuggest' ) );
-
-			new namespace\Fields\AjaxButton( $this );
-			new namespace\Fields\Selectize( $this );
-			new namespace\Fields\SelectizeMulti( $this );
+			new namespace\Fields\AjaxButton( $this, 'ajaxbutton' );
+			new namespace\Fields\Selectize( $this, 'selectize' );
+			new namespace\Fields\SelectizeMulti( $this, 'selectize-multi' );
+			new namespace\Fields\Suggest( $this, 'suggest' );
 		}
-
-
 
 		/**
 		 * Finds all fields all fields of a certain type recursively
@@ -80,64 +74,6 @@ if ( ! class_exists( 'FooPlugins\FooFields\Admin\Metaboxes\CustomPostTypeMetabox
 			$id = $this->metabox_id();
 
 			return "foofields_{$id}_{$field['id']}";
-		}
-
-
-
-		/**
-		 * Ajax handler for suggest fields
-		 */
-		function ajax_handle_autosuggest() {
-			if ( wp_verify_nonce( $this->sanitize_key( 'nonce' ), 'foometafield_suggest' ) ) {
-				$s     = $this->sanitize_text( 'q' );
-				$comma = _x( ',', 'page delimiter' );
-				if ( ',' !== $comma ) {
-					$s = str_replace( $comma, ',', $s );
-				}
-				if ( false !== strpos( $s, ',' ) ) {
-					$s = explode( ',', $s );
-					$s = $s[ count( $s ) - 1 ];
-				}
-				$s = trim( $s );
-
-				$results = array();
-
-				$query_type = $this->sanitize_key( 'query_type' );
-				$query_data = $this->sanitize_key( 'query_data' );
-
-				if ( 'post' === $query_type ) {
-
-					$posts = get_posts(
-							array(
-									's'              => $s,
-									'posts_per_page' => 5,
-									'post_type'      => $query_data
-							)
-					);
-
-					foreach ( $posts as $post ) {
-						$results[] = $post->post_title;
-					}
-
-				} else if ( 'taxonomy' == $query_type ) {
-
-					$terms = get_terms(
-							array(
-									'search'         => $s,
-									'taxonomy'       => $query_data,
-									'hide_empty'     => false
-							)
-					);
-
-					foreach ( $terms as $term ) {
-						$results[] = $term->name;
-					}
-				}
-
-				echo join( $results, "\n" );
-			}
-
-			wp_die();
 		}
 
 		/**
