@@ -19,7 +19,15 @@ if ( ! class_exists( 'FooPlugins\FooFields\Admin\Metaboxes\Fields\Field' ) ) {
 			FieldRenderer::register_field_renderer( $field_type, array( $this, 'render' ) );
 		}
 
-		abstract function render ( $field );
+		/**
+		 * Abstract function for rendering the field
+		 *
+		 * @param $field
+		 * @param $attributes
+		 *
+		 * @return mixed
+		 */
+		abstract function render ( $field, $attributes );
 
 		/**
 		 * Find the field for the current ajax callback by verifying the nonce

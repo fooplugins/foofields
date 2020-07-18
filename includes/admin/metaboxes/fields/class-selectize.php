@@ -19,8 +19,9 @@ if ( ! class_exists( 'FooPlugins\FooFields\Admin\Metaboxes\Fields\Selectize' ) )
 		 * Render the selectize field
 		 *
 		 * @param $field
+		 * @param $attributes
 		 */
-		function render( $field ) {
+		function render( $field, $attributes ) {
 			$query  = build_query( array(
 				'action'     => 'foofields_selectize',
 				'nonce'      => wp_create_nonce( $field['input_id'] ),

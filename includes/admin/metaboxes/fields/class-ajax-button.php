@@ -18,8 +18,9 @@ if ( ! class_exists( 'FooPlugins\FooFields\Admin\Metaboxes\Fields\AjaxButton' ) 
 		 * Render the ajax button field
 		 *
 		 * @param $field
+		 * @param $attributes
 		 */
-		function render( $field ) {
+		function render( $field, $attributes ) {
 
 			$button_text = isset( $field['button'] ) ? $field['button'] : __( 'Run' );
 

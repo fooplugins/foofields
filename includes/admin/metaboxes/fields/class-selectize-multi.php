@@ -24,8 +24,9 @@ if ( ! class_exists( 'FooPlugins\FooFields\Admin\Metaboxes\Fields\SelectizeMulti
 		 * Render the selectize multi field
 		 *
 		 * @param $field
+		 * @param $attributes
 		 */
-		function render( $field ) {
+		function render( $field, $attributes ) {
 			global $post;
 			$inner = '';
 
