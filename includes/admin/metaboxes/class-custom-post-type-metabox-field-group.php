@@ -23,42 +23,20 @@ if ( ! class_exists( 'FooPlugins\FooFields\Admin\Metaboxes\CustomPostTypeMetabox
 			//save field group post data
 			add_action( $hook . 'Save', array( $this, 'save_field_group_data' ) );
 
+
+
 			//enqueue assets needed for field groups
 			add_action( $hook . 'EnqueueAssets', array( $this, 'enqueue_field_group_assets' ) );
 
 			//handle ajax auto suggest fields
-			add_action( 'wp_ajax_foometafield_suggest', array( $this, 'ajax_handle_autosuggest' ) );
+			add_action( 'wp_ajax_foofields_suggest', array( $this, 'ajax_handle_autosuggest' ) );
 
-			//handle ajax selectize fields
-			add_action( 'wp_ajax_foometafield_selectize', array( $this, 'ajax_handle_selectize' ) );
-
-			//handle ajaxbutton fields
-			add_action( 'wp_ajax_foofields_ajaxbutton', array( $this, 'ajax_handle_ajaxbutton' ) );
+			new namespace\Fields\AjaxButton( $this );
+			new namespace\Fields\Selectize( $this );
+			new namespace\Fields\SelectizeMulti( $this );
 		}
 
-		/**
-		 * Ajax handler for ajaxbutton fields
-		 */
-		function ajax_handle_ajaxbutton() {
-			$nonce = $this->sanitize_key( 'nonce' );
 
-			if ( null !== $nonce ) {
-				$fields = $this->find_all_fields_by_type( 'ajaxbutton' );
-
-				foreach ( $fields as $field ) {
-					if ( wp_verify_nonce( $nonce, $field['action'] ) ) {
-						$this->do_action( 'AjaxButton\\' . $field['action'], $field );
-
-						if ( isset( $field['callback'] ) ) {
-							if ( is_callable( $field['callback'] ) ) {
-								call_user_func( $field['callback'], $field );
-							}
-						}
-						break;
-					}
-				}
-			}
-		}
 
 		/**
 		 * Finds all fields all fields of a certain type recursively
@@ -92,61 +70,19 @@ if ( ! class_exists( 'FooPlugins\FooFields\Admin\Metaboxes\CustomPostTypeMetabox
 		}
 
 		/**
-		 * Ajax handler for selectize fields
+		 * Returns the ID of the field
+		 *
+		 * @param array $field
+		 *
+		 * @return string
 		 */
-		function ajax_handle_selectize() {
-			if ( wp_verify_nonce( $this->sanitize_key( 'nonce' ), 'foometafield_selectize' ) ) {
-				$s = trim( $this->sanitize_text( 'q' ) );
+		function build_field_id( $field ) {
+			$id = $this->metabox_id();
 
-				$results = array();
-
-				$query_type = $this->sanitize_key( 'query_type' );
-				$query_data = $this->sanitize_key( 'query_data' );
-
-				if ( 'post' === $query_type ) {
-
-					$posts = get_posts(
-							array(
-									's'              => $s,
-									'posts_per_page' => 5,
-									'post_type'      => $query_data
-							)
-					);
-
-					foreach ( $posts as $post ) {
-						$results[] = array(
-								'id' => $post->ID,
-								'text' => $post->post_title
-						);
-					}
-
-				} else if ( 'taxonomy' == $query_type ) {
-
-					$terms = get_terms(
-							array(
-									'search'         => $s,
-									'taxonomy'       => $query_data,
-									'hide_empty'     => false
-							)
-					);
-
-					foreach ( $terms as $term ) {
-						$results[] = array(
-								'id' => $term->ID,
-								'text' => $term->name
-						);
-					}
-				}
-
-				wp_send_json( array(
-						'results' => $results
-				) );
-
-				return;
-			}
-
-			wp_die();
+			return "foofields_{$id}_{$field['id']}";
 		}
+
+
 
 		/**
 		 * Ajax handler for suggest fields
@@ -271,7 +207,7 @@ if ( ! class_exists( 'FooPlugins\FooFields\Admin\Metaboxes\CustomPostTypeMetabox
 		private function get_posted_data( $post_id ) {
 			$full_id = $this->metabox_id();
 
-			$sanitized_data = $this->safe_get_from_post( $full_id, array(), false );
+			$sanitized_data = $this->safe_get_from_request( $full_id, array(), false );
 
 			$data = $this->get_posted_data_recursive( $this->field_group , $sanitized_data );
 
@@ -316,12 +252,7 @@ if ( ! class_exists( 'FooPlugins\FooFields\Admin\Metaboxes\CustomPostTypeMetabox
 						//we have no value set, so check required
 						if ( empty( $value) ) {
 							if ( isset( $field['required'] ) && $field['required'] ) {
-								if ( !isset( $data[ '__errors' ] ) ) {
-									$data[ '__errors' ] = array();
-								}
-								$data[ '__errors' ][ $field['id'] ] = array(
-									'message' => sprintf( __('%s is required!'), $field['label'] )
-								);
+								$data = $this->set_field_error( $data, $field, sprintf( __('%s is required!'), $field['label'] ) );
 							}
 						}
 
@@ -337,6 +268,17 @@ if ( ! class_exists( 'FooPlugins\FooFields\Admin\Metaboxes\CustomPostTypeMetabox
 					$data = array_merge_recursive( $data, $tab_data );
 				}
 			}
+
+			return $data;
+		}
+
+		function set_field_error( $data, $field, $error ) {
+			if ( !isset( $data[ '__errors' ] ) ) {
+				$data[ '__errors' ] = array();
+			}
+			$data[ '__errors' ][ $field['id'] ] = array(
+				'message' => $error
+			);
 
 			return $data;
 		}

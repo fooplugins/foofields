@@ -41,11 +41,11 @@ if ( ! class_exists( 'FooPlugins\FooFields\Admin\Metaboxes\CustomPostTypeMetabox
 		 * Builds up an identifier from post_type and metabox_id
 		 * @return string
 		 */
-		protected function metabox_id() {
+		public function metabox_id() {
 			return $this->metabox['post_type'] . '-' . $this->metabox['metabox_id'];
 		}
 
-		protected function metabox_hook_prefix() {
+		public function metabox_hook_prefix() {
 			return __NAMESPACE__ . '\\' . $this->metabox['post_type'] . '\\' . $this->metabox['metabox_id'] . '\\';
 		}
 
@@ -54,7 +54,7 @@ if ( ! class_exists( 'FooPlugins\FooFields\Admin\Metaboxes\CustomPostTypeMetabox
 		 *
 		 * @param $tag
 		 */
-		protected function do_action( $tag ) {
+		public function do_action( $tag ) {
 			$args = func_get_args();
 
 			if ( isset( $this->metabox['actions'] ) && isset( $this->metabox['actions'][$tag] ) ) {
@@ -78,7 +78,7 @@ if ( ! class_exists( 'FooPlugins\FooFields\Admin\Metaboxes\CustomPostTypeMetabox
 		 *
 		 * @return mixed|void
 		 */
-		protected function apply_filters( $tag, $value ) {
+		public function apply_filters( $tag, $value ) {
 			$args = func_get_args();
 
 			if ( isset( $this->metabox['filters'] ) && isset( $this->metabox['filters'][$tag] ) ) {
@@ -177,7 +177,7 @@ if ( ! class_exists( 'FooPlugins\FooFields\Admin\Metaboxes\CustomPostTypeMetabox
 		 * @param string|array $var Data to sanitize.
 		 * @return string|array
 		 */
-		protected function clean( $var ) {
+		public function clean( $var ) {
 			if ( is_array( $var ) ) {
 				return array_map( array($this, 'clean') , $var );
 			} else {
@@ -194,9 +194,9 @@ if ( ! class_exists( 'FooPlugins\FooFields\Admin\Metaboxes\CustomPostTypeMetabox
 		 *
 		 * @return mixed
 		 */
-		protected function safe_get_from_post( $key, $default = null, $clean = true ) {
-			if ( isset( $_POST[$key] ) ) {
-				$value = wp_unslash( $_POST[$key] );
+		public function safe_get_from_request( $key, $default = null, $clean = true ) {
+			if ( isset( $_REQUEST[$key] ) ) {
+				$value = wp_unslash( $_REQUEST[$key] );
 				if ( $clean ) {
 					return $this->clean( $value );
 				}
@@ -212,7 +212,7 @@ if ( ! class_exists( 'FooPlugins\FooFields\Admin\Metaboxes\CustomPostTypeMetabox
 		 * @param  string $var Data to sanitize.
 		 * @return string
 		 */
-		protected function sanitize_textarea( $var ) {
+		public function sanitize_textarea( $var ) {
 			return implode( "\n", array_map( array( $this, 'clean' ), explode( "\n", $var ) ) );
 		}
 
@@ -222,7 +222,7 @@ if ( ! class_exists( 'FooPlugins\FooFields\Admin\Metaboxes\CustomPostTypeMetabox
 		 *
 		 * @return string|null
 		 */
-		protected function sanitize_key( $key ) {
+		public function sanitize_key( $key ) {
 			if ( isset( $_REQUEST[$key] ) ) {
 				return sanitize_key( wp_unslash( $_REQUEST[ $key ] ) );
 			}
@@ -235,7 +235,7 @@ if ( ! class_exists( 'FooPlugins\FooFields\Admin\Metaboxes\CustomPostTypeMetabox
 		 *
 		 * @return string|null
 		 */
-		protected function sanitize_text( $key ) {
+		public function sanitize_text( $key ) {
 			if ( isset( $_REQUEST[$key] ) ) {
 				return sanitize_text_field( wp_unslash( $_REQUEST[ $key ] ) );
 			}

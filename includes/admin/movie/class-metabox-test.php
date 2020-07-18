@@ -235,16 +235,41 @@ if ( ! class_exists( 'FooPlugins\FooFields\Admin\Movie\MetaboxTest' ) ) {
 									'query_data' => FOOFIELDS_CT_ACTOR
 								),
 								array(
+									'id'       => 'selectize-multi',
+									'label'    => __( 'Selectize Multi Select Field', 'foofields' ),
+									'type'     => 'selectize-multi',
+									'placeholder' => __( 'Choose from a pre-defined set of choices', 'foofields' ),
+									'choices' => array(
+										array( 'value' => 0, 'display' => __( 'option 1', 'foofields' ) ),
+										array( 'value' => 1, 'display' => __( 'option 2', 'foofields' ) ),
+										array( 'value' => 2, 'display' => __( 'option 3', 'foofields' ) ),
+										array( 'value' => 3, 'display' => __( 'option 4', 'foofields' ) ),
+										array( 'value' => 4, 'display' => __( 'option 5', 'foofields' ) ),
+									),
+									'create' => false
+								),
+								array(
+									'id'       => 'selectize-multi-taxonomy',
+									'label'    => __( 'Selectize Multi Select Field (Taxonomy)', 'foofields' ),
+									'type'     => 'selectize-multi',
+									'placeholder' => __( 'Choose from the actor taxonomy', 'foofields' ),
+									//'close_after_select' => true,
+									//'max_items' => 2,
+									'binding' => array(
+										'type' => 'taxonomy',
+										'taxonomy' => FOOFIELDS_CT_ACTOR,
+										'sync_with_post' => true
+									)
+								),
+								array(
 									'id'       => 'button1',
 									'type'     => 'ajaxbutton',
-									'action'   => 'test_button1',
 									'callback' => array( $this, 'return_success' ),
 									'button'   => __( 'Run Something - Return Success', 'foofields' ),
 								),
 								array(
 									'id'       => 'button2',
 									'type'     => 'ajaxbutton',
-									'action'   => 'test_button2',
 									'callback' => array( $this, 'return_error' ),
 									'button'   => __( 'Run Something - Return Error', 'foofields' ),
 								)
@@ -359,7 +384,7 @@ if ( ! class_exists( 'FooPlugins\FooFields\Admin\Movie\MetaboxTest' ) ) {
 		 * @param $field
 		 */
 		function return_success( $field ) {
-			$post_id = $this->safe_get_from_post( 'postID' );
+			$post_id = $this->safe_get_from_request( 'postID' );
 
 			wp_send_json_success( array(
 				'message' => sprintf( __( 'A successful thing was run on the server. Post ID: %s', 'foofields' ), $post_id )
@@ -372,7 +397,7 @@ if ( ! class_exists( 'FooPlugins\FooFields\Admin\Movie\MetaboxTest' ) ) {
 		 * @param $field
 		 */
 		function return_error( $field ) {
-			$post_id = $this->safe_get_from_post( 'postID' );
+			$post_id = $this->safe_get_from_request( 'postID' );
 
 			wp_send_json_error( array(
 				'message' => sprintf( __( 'An error occurred on the server. Post ID: %s', 'foofields' ), $post_id )

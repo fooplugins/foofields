@@ -1,5 +1,5 @@
-.foofields-field-input-selectize {
-  .selectize-control {
+.foofields-field-input-selectize-multi {
+  .selectize-control.multi {
 
 	&.loading {
 	  .selectize-input:after {
@@ -10,9 +10,9 @@
 		filter: alpha(opacity=70);
 		width: 20px;
 		height: 20px;
-		top: 30%;
+		top: 10px;
 		border: none;
-		right: 5px;
+		position: absolute;
 	  }
 	}
 
@@ -24,6 +24,22 @@
 	  color: #32373c;
 	  line-height: 2;
 	  padding: 5px 10px;
+
+	  &.has-items {
+		padding: 6px 8px 3px;
+	  }
+
+	  > div {
+		border-width: 1px;
+		line-height: 1.5;
+		margin-right: 8px;
+	  }
+	}
+
+	&.plugin-remove_button [data-value] .remove {
+	  line-height: 100%;
+	  font-weight: 400;
+	  font-size: 17px;
 	}
   }
 }

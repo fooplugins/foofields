@@ -5628,33 +5628,34 @@ FooFields.utils, FooFields.utils.fn, FooFields.utils.str);
     setup: function setup() {
       var self = this;
       self.$select = self.$input.children("select").first();
-      self.$display = self.$input.children("input[type=hidden]").first();
 
-      _obj.extend(self.opt, self.$select.data());
+      if (self.$select.length) {
+        self.$display = self.$input.children("input[type=hidden]").first();
 
-      self.endpoint = window.ajaxurl + '?' + self.opt.query;
+        _obj.extend(self.opt, self.$select.data());
 
-      var options = _obj.extend({}, self.opt.selectize, {
-        onChange: function onChange(value) {
-          if (self.api instanceof window.Selectize) {
-            var selection = self.api.getItem(value);
-            self.$display.val(selection.text());
-          }
-        },
-        load: function load(query, callback) {
-          $.get(self.endpoint, {
-            data: {
-              q: query
+        self.endpoint = window.ajaxurl + '?' + self.opt.query;
+
+        var options = _obj.extend({}, self.opt.selectize, {
+          onChange: function onChange(value) {
+            if (self.api instanceof window.Selectize) {
+              var selection = self.api.getItem(value);
+              self.$display.val(selection.text());
             }
-          }).done(function (response) {
-            callback(response.results);
-          }).fail(function () {
-            callback();
-          });
-        }
-      });
+          },
+          load: function load(query, callback) {
+            $.get(self.endpoint, {
+              q: query
+            }).done(function (response) {
+              callback(response.results);
+            }).fail(function () {
+              callback();
+            });
+          }
+        });
 
-      self.api = self.$select.selectize(options).get(0).selectize;
+        self.api = self.$select.selectize(options).get(0).selectize;
+      }
     },
     teardown: function teardown() {
       var self = this;
@@ -5725,3 +5726,86 @@ FooFields.utils, FooFields.utils.fn, FooFields.utils.str);
     _.__instance__.init(window.FOOFIELDS);
   });
 })(FooFields.$, FooFields, FooFields.utils, FooFields.utils.is, FooFields.utils.obj);
+"use strict";
+
+(function ($, _, _is, _obj) {
+  if (!window.Selectize) {
+    console.log("FooFields.Selectize dependency missing.");
+    return;
+  }
+
+  _.SelectizeMulti = _.Field.extend({
+    setup: function setup() {
+      var self = this;
+      self.$select = self.$input.children("select").first();
+      self.create = false;
+
+      if (self.$select.data('create')) {
+        self.create = function (input, callback) {
+          this.close();
+          self.$input.children(".selectize-control").addClass('loading');
+          var data = {
+            action: self.$select.data('action'),
+            nonce: self.$select.data('nonce'),
+            add: input
+          };
+          jQuery.ajax({
+            url: window.ajaxurl,
+            cache: false,
+            type: 'POST',
+            data: data,
+            complete: function complete() {
+              self.$input.children(".selectize-control").removeClass('loading');
+            },
+            success: function success(response) {
+              if (typeof response.new !== 'undefined') {
+                callback({
+                  value: response.new.value,
+                  text: response.new.display
+                });
+              } else {
+                callback(false);
+              }
+            },
+            error: function error() {
+              callback(false);
+            }
+          });
+        };
+      }
+
+      if (self.$select.length) {
+        _obj.extend(self.opt, self.$select.data());
+
+        var options = _obj.extend({}, self.opt.selectize, {
+          onChange: function onChange(value) {
+            if (self.api instanceof window.Selectize) {
+              var selection = self.api.getItem(value);
+            }
+          },
+          create: self.create
+        });
+
+        self.api = self.$select.selectize(options).get(0).selectize;
+      }
+    },
+    teardown: function teardown() {
+      var self = this;
+
+      if (self.api instanceof Selectize) {
+        self.api.destroy();
+      }
+    }
+  });
+
+  _.fields.register("selectize-multi", _.SelectizeMulti, ".foofields-type-selectize-multi", {
+    selectize: {
+      plugins: ['remove_button'],
+      delimiter: ', ',
+      createOnBlur: true,
+      maxItems: null,
+      closeAfterSelect: true,
+      items: null
+    }
+  }, {}, {});
+})(FooFields.$, FooFields, FooFields.utils.is, FooFields.utils.obj);
