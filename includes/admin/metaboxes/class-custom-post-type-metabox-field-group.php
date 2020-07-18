@@ -31,6 +31,7 @@ if ( ! class_exists( 'FooPlugins\FooFields\Admin\Metaboxes\CustomPostTypeMetabox
 			new namespace\Fields\SelectizeMulti( $this, 'selectize-multi' );
 			new namespace\Fields\Suggest( $this, 'suggest' );
 			new namespace\Fields\EmbedMetabox( $this, 'embed-metabox' );
+			new namespace\Fields\Repeater( $this, 'repeater' );
 		}
 
 		/**
@@ -177,13 +178,15 @@ if ( ! class_exists( 'FooPlugins\FooFields\Admin\Metaboxes\CustomPostTypeMetabox
 
 						$type = sanitize_title( isset( $field['type'] ) ? $field['type'] : 'text' );
 
+
+
 						//textareas need some special attention
 						if ( 'textarea' === $type ) {
 							$value = $this->sanitize_textarea( $value );
-						} else if ( 'repeater' === $type ) {
-							$value = $this->get_posted_data_for_repeater( $this->clean( $value ) );
 						} else {
 							$value = $this->clean( $value );
+
+							$value = $this->apply_filters( 'GetPostedDataByType\\' . $type, $value );
 						}
 
 						//we have no value set, so check required
@@ -218,46 +221,6 @@ if ( ! class_exists( 'FooPlugins\FooFields\Admin\Metaboxes\CustomPostTypeMetabox
 			);
 
 			return $data;
-		}
-
-		/**
-		 * Gets the data posted for the repeater
-		 *
-		 * @param $sanitized_data
-		 */
-		function get_posted_data_for_repeater( $sanitized_data ) {
-			$results = array();
-			foreach ( array_keys( $sanitized_data ) as $fieldKey ) {
-				foreach ( $sanitized_data[$fieldKey] as $key => $value ) {
-					$results[$key][$fieldKey] = $value;
-				}
-			}
-
-			$current_username = 'unknown';
-			$current_user = wp_get_current_user();
-			if ( $current_user instanceof WP_User ) {
-				$current_username = $current_user->user_login;
-			}
-
-			// stored some extra info for each row
-			// check if each row has an __id field,
-			//   if not then add one, so we can figure out which row to delete later.
-			//   Also add a __created_by field and set to currently logged on user.
-			//   And also a __created field which is the UTC timestamp of when the field was created
-			// if the __id field exists, then we doing an update.
-			//   update the __updated_by field and __updated timestamp fields
-			foreach ( $results as &$result ) {
-				if ( !isset($result['__id'] ) ) {
-					$result['__id'] = wp_generate_password( 10, false, false );
-					$result['__created'] = time();
-					$result['__created_by'] = $current_username;
-				} else {
-					$result['__updated'] = time();
-					$result['__updated_by'] = $current_username;
-				}
-			}
-
-			return $results;
 		}
 
 		/***

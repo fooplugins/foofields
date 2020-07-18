@@ -416,10 +416,6 @@ if ( ! class_exists( 'FooPlugins\FooFields\Admin\Metaboxes\FieldRenderer' ) ) {
 
 					break;
 
-				case 'repeater':
-					self::render_repeater_field( $field );
-					break;
-
 				case 'readonly':
 					$attributes['type'] = 'hidden';
 
@@ -548,95 +544,6 @@ if ( ! class_exists( 'FooPlugins\FooFields\Admin\Metaboxes\FieldRenderer' ) ) {
 				}
 				$i ++;
 			}
-		}
-
-		/**
-		 * Render a nested repeater field
-		 *
-		 * @param $field
-		 */
-		static function render_repeater_field( $field ) {
-			$has_rows = is_array( $field['value'] ) && count( $field['value'] ) > 0;
-
-			self::render_html_tag( 'div', array(
-				'class' => 'foofields-repeater' . ( $has_rows ? '' : ' foofields-repeater-empty' )
-			), null, false );
-
-			self::render_html_tag( 'p', array(
-				'class' => 'foofields-repeater-no-data-message'
-			), isset( $field['no-data-message'] ) ? $field['no-data-message'] : __( 'Nothing found' ) );
-
-			self::render_html_tag('table', array(
-				'class' => 'wp-list-table widefat striped' . ( isset( $field['table-class'] ) ? ' ' . $field['table-class'] : '' )
-			), null, false );
-
-			//render the table column headers
-			echo '<thead><tr>';
-			foreach ( $field['fields'] as $child_field ) {
-				$column_attributes = array();
-				if ( isset( $child_field['width'] ) ) {
-					$column_attributes['width'] = $child_field['width'];
-				}
-				self::render_html_tag( 'th', $column_attributes, isset( $child_field['label'] ) ? $child_field['label'] : '' );
-			}
-			echo '</tr></thead>';
-
-			//render the repeater rows
-			echo '<tbody>';
-			if ( $has_rows ) {
-				$row_index = 0;
-				foreach( $field['value'] as $row ) {
-					$row_index++;
-					echo '<tr>';
-					foreach ( $field['fields'] as $child_field ) {
-						if ( array_key_exists( $child_field['id'], $row ) ) {
-							$child_field['value'] = $row[ $child_field['id'] ];
-						}
-						if ( 'index' === $child_field['type'] ) {
-							$child_field['type'] = 'html';
-							$child_field['html'] = $row_index;
-						}
-						echo '<td>';
-						if ( 'manage' === $child_field['type'] ) {
-							self::render_html_tag( 'a', array(
-								'class' => 'foofields-repeater-delete',
-								'data-confirm' => isset( $child_field['delete-confirmation-message'] ) ? $child_field['delete-confirmation-message'] : __( 'Are you sure?' ),
-								'href' => '#delete',
-								'title' => __('Delete Row')
-							), null, false );
-							self::render_html_tag('span', array( 'class' => 'dashicons dashicons-trash' ) );
-							echo '</a>';
-						} else {
-							$child_field['input_id']   = $field['input_id'] . '_' . $child_field['id'] . '_' . $row_index;
-							$child_field['input_name'] = $field['input_name'] . '[' . $child_field['id'] . '][]';
-							self::render_field( $child_field );
-						}
-						echo '</td>';
-					}
-					echo '</tr>';
-				}
-			}
-			echo '</tbody>';
-
-			//render the repeater footer for adding
-			echo '<tfoot><tr>';
-
-			foreach ( $field['fields'] as $child_field ) {
-				echo '<td>';
-				$child_field['input_id'] = $field['input_id'] . '_' . $child_field['id'];
-				$child_field['input_name'] = $field['input_name'] . '[' . $child_field['id'] . '][]';
-				self::render_field( $child_field, array( 'disabled' => 'disabled' ) );
-				echo '</td>';
-			}
-
-			echo '</tr></tfoot>';
-			echo '</table>';
-
-			self::render_html_tag( 'button', array(
-					'class' => 'button foofields-repeater-add'
-			), isset( $field['button'] ) ? $field['button'] : __('Add') );
-
-			echo '</div>';
 		}
 
 		/**
