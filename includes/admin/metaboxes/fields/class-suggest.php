@@ -2,6 +2,8 @@
 
 namespace FooPlugins\FooFields\Admin\Metaboxes\Fields;
 
+use FooPlugins\FooFields\Admin\Metaboxes\FieldRenderer;
+
 if ( ! class_exists( 'FooPlugins\FooFields\Admin\Metaboxes\Fields\Suggest' ) ) {
 
 	class Suggest extends Field {
@@ -13,8 +15,26 @@ if ( ! class_exists( 'FooPlugins\FooFields\Admin\Metaboxes\Fields\Suggest' ) ) {
 			add_action( 'wp_ajax_foofields_suggest', array( $this, 'ajax_handle_autosuggest' ) );
 		}
 
-		function render( $field ) {
+		function render( $field, $attributes ) {
+			$query  = build_query( array(
+				'nonce'      => wp_create_nonce( $field['input_id'] ),
+				'query_type' => isset( $field['query_type'] ) ? $field['query_type'] : 'post',
+				'query_data' => isset( $field['query_data'] ) ? $field['query_data'] : 'page'
+			) );
 
+			$attributes = wp_parse_args( array(
+				'type'                   => 'text',
+				'id'                     => $field['input_id'],
+				'name'                   => $field['input_name'],
+				'value'                  => $field['value'],
+				'placeholder'            => isset( $field['placeholder'] ) ? $field['placeholder'] : '',
+				'data-suggest',
+				'data-suggest-query'     => $query,
+				'data-suggest-multiple'  => isset( $field['multiple'] ) ? $field['multiple'] : 'false',
+				'data-suggest-separator' => isset( $field['separator'] ) ? $field['separator'] : ','
+			), $attributes );
+
+			FieldRenderer::render_html_tag( 'input', $attributes );
 		}
 
 		/**
