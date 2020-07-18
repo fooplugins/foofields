@@ -15,11 +15,18 @@ if ( ! class_exists( 'FooPlugins\FooFields\Admin\Metaboxes\Fields\Suggest' ) ) {
 			add_action( 'wp_ajax_foofields_suggest', array( $this, 'ajax_handle_autosuggest' ) );
 		}
 
+		/**
+		 * Renders the autosuggest field
+		 *
+		 * @param $field
+		 * @param $attributes
+		 *
+		 * @return mixed|void
+		 */
 		function render( $field, $attributes ) {
 			$query  = build_query( array(
-				'nonce'      => wp_create_nonce( $field['input_id'] ),
-				'query_type' => isset( $field['query_type'] ) ? $field['query_type'] : 'post',
-				'query_data' => isset( $field['query_data'] ) ? $field['query_data'] : 'page'
+				'action'     => 'foofields_suggest',
+				'nonce'      => wp_create_nonce( $field['input_id'] )
 			) );
 
 			$attributes = wp_parse_args( array(
@@ -41,8 +48,11 @@ if ( ! class_exists( 'FooPlugins\FooFields\Admin\Metaboxes\Fields\Suggest' ) ) {
 		 * Ajax handler for suggest fields
 		 */
 		function ajax_handle_autosuggest() {
-			if ( wp_verify_nonce( $this->sanitize_key( 'nonce' ), 'foometafield_suggest' ) ) {
-				$s     = $this->sanitize_text( 'q' );
+			$field = $this->find_field_for_ajax_handler_based_on_nonce( 'suggest' );
+			if ( $field !== false ) {
+				$action = $this->build_field_id( $field );
+
+				$s = $this->sanitize_text( 'q' );
 				$comma = _x( ',', 'page delimiter' );
 				if ( ',' !== $comma ) {
 					$s = str_replace( $comma, ',', $s );
@@ -53,41 +63,47 @@ if ( ! class_exists( 'FooPlugins\FooFields\Admin\Metaboxes\Fields\Suggest' ) ) {
 				}
 				$s = trim( $s );
 
-				$results = array();
+				if ( !empty( $s ) ) {
+					$this->metabox_field_group->do_action( 'Suggest\\' . $action, $s, $field );
 
-				$query_type = $this->sanitize_key( 'query_type' );
-				$query_data = $this->sanitize_key( 'query_data' );
+					if ( isset( $field['query_type'] ) && isset( $field['query_data'] ) ) {
+						$query_type = $field['query_type'];
+						$query_data = $field['query_data'];
 
-				if ( 'post' === $query_type ) {
+						$results = array();
 
-					$posts = get_posts(
-						array(
-							's'              => $s,
-							'posts_per_page' => 5,
-							'post_type'      => $query_data
-						)
-					);
+						if ( 'post' === $query_type ) {
 
-					foreach ( $posts as $post ) {
-						$results[] = $post->post_title;
-					}
+							$posts = get_posts(
+								array(
+									's'              => $s,
+									'posts_per_page' => 5,
+									'post_type'      => $query_data
+								)
+							);
 
-				} else if ( 'taxonomy' == $query_type ) {
+							foreach ( $posts as $post ) {
+								$results[] = $post->post_title;
+							}
 
-					$terms = get_terms(
-						array(
-							'search'         => $s,
-							'taxonomy'       => $query_data,
-							'hide_empty'     => false
-						)
-					);
+						} else if ( 'taxonomy' == $query_type ) {
 
-					foreach ( $terms as $term ) {
-						$results[] = $term->name;
+							$terms = get_terms(
+								array(
+									'search'         => $s,
+									'taxonomy'       => $query_data,
+									'hide_empty'     => false
+								)
+							);
+
+							foreach ( $terms as $term ) {
+								$results[] = $term->name;
+							}
+						}
+
+						echo join( $results, "\n" );
 					}
 				}
-
-				echo join( $results, "\n" );
 			}
 
 			wp_die();

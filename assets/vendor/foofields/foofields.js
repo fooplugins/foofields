@@ -5681,35 +5681,19 @@ FooFields.utils, FooFields.utils.fn, FooFields.utils.str);
 "use strict";
 
 (function ($, _, _is, _obj) {
+  if (!$.suggest) {
+    console.log("FooFields.Suggest dependency missing.");
+    return;
+  }
+
   _.Suggest = _.Field.extend({
-    setup: function setup() {// var self = this;
-      // self.$select = self.$input.children("select").first();
-      // self.$display = self.$input.children("input[type=hidden]").first();
-      // _obj.extend(self.opt, self.$select.data());
-      // self.endpoint = window.ajaxurl + '?' + self.opt.query;
-      // var options = _obj.extend({}, self.opt.selectize, {
-      // 	onChange: function(value){
-      // 		if (self.api instanceof window.Selectize){
-      // 			var selection = self.api.getItem( value );
-      // 			self.$display.val( selection.text() );
-      // 		}
-      // 	},
-      // 	load: function(query, callback){
-      // 		$.get(self.endpoint, {
-      // 			data: { q: query }
-      // 		}).done(function(response){
-      // 			callback(response.results);
-      // 		}).fail(function(){
-      // 			callback();
-      // 		});
-      // 	}
-      // });
-      // self.api = self.$select.selectize(options).get(0).selectize;
-    },
-    teardown: function teardown() {// var self = this;
-      // if (self.api instanceof Selectize){
-      // 	self.api.destroy();
-      // }
+    setup: function setup() {
+      var self = this;
+      self.$suggest = self.$input.children('input[type=text]').first();
+      self.$suggest.suggest(window.ajaxurl + '?' + self.$suggest.data('suggest-query'), {
+        multiple: $(this).data('suggest-multiple'),
+        multipleSep: $(this).data('suggest-separator')
+      });
     }
   });
 
