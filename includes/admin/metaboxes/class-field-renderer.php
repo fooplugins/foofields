@@ -129,13 +129,6 @@ if ( ! class_exists( 'FooPlugins\FooFields\Admin\Metaboxes\FieldRenderer' ) ) {
 		 */
 		static function render_tab( $tab, $container_id, $tab_active, $tab_class = 'foofields-tab', $anchor_class = 'foofields-tab-link' ) {
 			$tab_type = isset( $tab['type'] ) ? $tab['type'] : 'normal';
-			$taxonomy = '';
-			if ( $tab_type === 'taxonomy' && isset( $tab['taxonomy'] ) ) {
-				$taxonomy = ' data-taxonomy="';
-				$taxonomy .= is_taxonomy_hierarchical( $tab['taxonomy'] ) ? 'taxonomy-' : '';
-				$taxonomy .= $tab['taxonomy'];
-				$taxonomy .= '"';
-			}
 
 			$tab_id = $tab['id'];
 
@@ -144,7 +137,7 @@ if ( ! class_exists( 'FooPlugins\FooFields\Admin\Metaboxes\FieldRenderer' ) ) {
 				$tab_id = $tab['tabs'][0]['id'];
 			}
 			?>
-			<li class="<?php echo $tab_class; ?> <?php echo $tab_active; ?>" <?php echo $taxonomy ?>>
+			<li class="<?php echo $tab_class; ?> <?php echo $tab_active; ?>">
 				<a class="<?php echo $anchor_class; ?>" href="#<?php echo $container_id . '-' . $tab_id; ?>">
 					<?php if ( isset( $tab['icon'] ) ) { ?>
 					<span class="foofields-tab-icon dashicons <?php echo $tab['icon']; ?>"></span>
@@ -182,43 +175,8 @@ if ( ! class_exists( 'FooPlugins\FooFields\Admin\Metaboxes\FieldRenderer' ) ) {
 		 * @param $state
 		 */
 		static function render_tab_content( $tab, $container_id, $tab_active, $state ) {
-			$featuredImage = '';
-			if ( isset( $tab['featuredImage'] ) ) {
-				$featuredImage = ' data-feature-image="true"';
-				?>
-				<style>
-					#postimagediv {
-						display: block !important;
-					}
-
-					#adv-settings label[for="postimagediv-hide"] {
-						display: none !important;
-					}
-				</style>
-			<?php } ?>
-
-			<div class="foofields-content <?php echo $tab_active; ?>" id="<?php echo $container_id . '-' . $tab['id']; ?>" <?php echo $featuredImage ?>>
-				<?php if ( isset( $tab['taxonomy'] ) ) {
-					$panel = is_taxonomy_hierarchical( $tab['taxonomy'] ) ? $tab['taxonomy'] . 'div' : 'tagsdiv-' . $tab['taxonomy'];
-					?>
-					<style>
-						/* Hide taxonomy boxes in sidebar and screen options show/hide checkbox labels */
-						#<?php echo $panel; ?>,
-						#adv-settings label[for="<?php echo $panel ?>-hide"] {
-							display: none !important;
-						}
-
-						#taxonomy-<?php echo esc_html( $tab['taxonomy'] ); ?> .category-tabs {
-							display: none !important;
-						}
-
-						#taxonomy-<?php echo esc_html( $tab['taxonomy'] ); ?> .tabs-panel {
-							border: none !important;
-							padding: 0;
-						}
-					</style>
-				<?php } ?>
-
+			?>
+			<div class="foofields-content <?php echo $tab_active; ?>" id="<?php echo $container_id . '-' . $tab['id']; ?>">
 				<?php
 				if ( isset( $tab['fields'] ) ) {
 					self::render_fields( $tab['fields'], $container_id, $state );
@@ -476,7 +434,7 @@ if ( ! class_exists( 'FooPlugins\FooFields\Admin\Metaboxes\FieldRenderer' ) ) {
 					break;
 
 				default:
-					if ( !self::render_registered_field( $type, $field ) ) {
+					if ( !self::render_registered_field( $type, $field, $attributes ) ) {
 						//the field type is not natively supported
 						if ( isset( $field['function'] ) ) {
 							call_user_func( $field['function'], $field );
@@ -514,18 +472,21 @@ if ( ! class_exists( 'FooPlugins\FooFields\Admin\Metaboxes\FieldRenderer' ) ) {
 
 		/**
 		 * Calls a renderer function for a field_type
+		 *
 		 * @param $field_type
+		 * @param $field
+		 * @param $attributes
 		 *
 		 * @return bool
 		 */
-		static function render_registered_field( $field_type, $field ) {
+		static function render_registered_field( $field_type, $field, $attributes ) {
 			global $foofields_registered_renderers;
 
 			if ( is_array( $foofields_registered_renderers ) && array_key_exists( $field_type, $foofields_registered_renderers ) ) {
 				$function = $foofields_registered_renderers[$field_type];
 
 				if ( is_callable( $function ) ) {
-					call_user_func( $function, $field );
+					call_user_func( $function, $field, $attributes );
 					return true;
 				}
 			}
@@ -701,9 +662,11 @@ if ( ! class_exists( 'FooPlugins\FooFields\Admin\Metaboxes\FieldRenderer' ) ) {
 				}
 			}
 			echo implode( ' ', $attributePairs );
-			if ( 'span' === $tag && !isset( $inner ) ) {
-				//make sure that for spans with no content, we still close them correctly
-				$inner = '';
+			if ( !isset( $inner ) ) {
+				if ( 'span' === $tag || 'div' === $tag ) {
+					//make sure that for spans with no content, we still close them correctly
+					$inner = '';
+				}
 			}
 			if ( isset( $inner ) ) {
 				echo '>';

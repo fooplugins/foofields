@@ -30,6 +30,7 @@ if ( ! class_exists( 'FooPlugins\FooFields\Admin\Metaboxes\CustomPostTypeMetabox
 			new namespace\Fields\Selectize( $this, 'selectize' );
 			new namespace\Fields\SelectizeMulti( $this, 'selectize-multi' );
 			new namespace\Fields\Suggest( $this, 'suggest' );
+			new namespace\Fields\EmbedMetabox( $this, 'embed-metabox' );
 		}
 
 		/**
@@ -220,6 +221,7 @@ if ( ! class_exists( 'FooPlugins\FooFields\Admin\Metaboxes\CustomPostTypeMetabox
 		}
 
 		/**
+		 * Gets the data posted for the repeater
 		 *
 		 * @param $sanitized_data
 		 */

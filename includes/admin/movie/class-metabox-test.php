@@ -17,9 +17,14 @@ if ( ! class_exists( 'FooPlugins\FooFields\Admin\Movie\MetaboxTest' ) ) {
 							'id'     => 'portrait',
 							'label'  => __( 'Portrait', 'foofields' ),
 							'icon'   => 'dashicons-format-image',
-							'fields' => array(),
-							'type'   => 'featured_image',
-							'featuredImage' => true
+							'fields' => array(
+								array(
+									'id'         => 'move_featured_image',
+									'label'      => __( 'Movie Portrait', 'foofields' ),
+									'type'       => 'embed-metabox',
+									'metabox_id' => 'postimagediv'
+								),
+							)
 						),
 //						array(
 //							'id'     => 'genres',
