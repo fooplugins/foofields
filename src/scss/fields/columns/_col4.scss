@@ -1,8 +1,8 @@
-.foofields-content.foofields-cols-4 {
+.foofields-content.foofields-active.foofields-cols-4 {
   display: flex;
   flex-wrap: wrap;
   >.foofields-field {
-	padding: $m-sm;
+	padding: 0 $m-sm 0 0;
 	align-self: flex-start;
 	width: 25%;
   }

@@ -175,8 +175,16 @@ if ( ! class_exists( 'FooPlugins\FooFields\Admin\Metaboxes\FieldRenderer' ) ) {
 		 * @param $state
 		 */
 		static function render_tab_content( $tab, $container_id, $tab_active, $state ) {
+			$classes = array();
+			$classes[] = 'foofields-content';
+			if ( !empty( $tab_active ) ) {
+				$classes[] = $tab_active;
+			}
+			if ( isset( $tab['class'] ) ) {
+				$classes[] = $tab['class'];
+			}
 			?>
-			<div class="foofields-content <?php echo $tab_active; ?>" id="<?php echo $container_id . '-' . $tab['id']; ?>">
+			<div class="<?php echo esc_attr( implode( ' ', $classes ) ); ?>" id="<?php echo esc_attr( $container_id . '-' . $tab['id'] ); ?>">
 				<?php
 				if ( isset( $tab['fields'] ) ) {
 					self::render_fields( $tab['fields'], $container_id, $state );
@@ -250,7 +258,7 @@ if ( ! class_exists( 'FooPlugins\FooFields\Admin\Metaboxes\FieldRenderer' ) ) {
 							<label for="foofields_<?php echo $id . '_' . $field['id']; ?>"><?php echo esc_html( $field['label'] ); ?></label>
 							<?php if ( ! empty( $field['tooltip'] ) ) { ?>
 								<span data-balloon-length="large" data-balloon-pos="right"
-									  data-balloon="<?php echo esc_attr( $field['desc'] ); ?>">
+									  data-balloon="<?php echo esc_attr( $field['tooltip'] ); ?>">
 									<i class="dashicons dashicons-editor-help"></i>
 								</span>
 							<?php } ?>

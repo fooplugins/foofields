@@ -30,6 +30,7 @@ if ( ! class_exists( 'FooPlugins\FooFields\Admin\Movie\MetaboxTest' ) ) {
 									'id'       => 'help',
 									'desc'     => __( 'This tab shows all the available fields. This is a help field.', 'foofields' ),
 									'type'     => 'help',
+									'class'    => 'foofields-full-width'
 								),
 								array(
 									'id'       => 'heading',
@@ -266,6 +267,108 @@ if ( ! class_exists( 'FooPlugins\FooFields\Admin\Movie\MetaboxTest' ) ) {
 									'button'   => __( 'Run Something - Return Error', 'foofields' ),
 								)
 
+							)
+						),
+						array(
+							'id'     => 'columns',
+							'label'  => __( 'Columns', 'foofields' ),
+							'icon'   => 'dashicons-editor-table',
+							'class'  => 'foofields-cols-4',
+							'fields' => array(
+								array(
+									'id'       => 'help',
+									'desc'     => __( 'This tab shows how fields can be arranged into columns. The tab can have a "class" or foofields-cols-2, foofields-cols-3 or foofields-cols-4. This particular tab has class of "foofields-cols-4". Fields then get assigned a class of "foofields-colspan-N" where N is the number of columns to span, eg. "foofields-colspan-2".', 'foofields' ),
+									'type'     => 'help',
+									'class'    => 'foofields-full-width'
+								),
+								array(
+									'id'       => 'colheading1',
+									'desc'     => __( '1 Column', 'foofields' ),
+									'type'     => 'heading',
+									'class'    => 'foofields-full-width'
+								),
+								array(
+									'id'       => '12colcell1',
+									'label'    => __( 'Firstname', 'foofields' ),
+									'type'     => 'text',
+									'class'    => 'foofields-full-width',
+									'tooltip'  => __( 'This field has a class of "foofields-full-width"', 'foofields' ),
+								),
+								array(
+									'id'       => 'colheading2',
+									'desc'     => __( '2 Columns', 'foofields' ),
+									'type'     => 'heading',
+									'class'    => 'foofields-full-width'
+								),
+								array(
+									'id'       => '2colcell1',
+									'label'    => __( 'Firstname', 'foofields' ),
+									'type'     => 'text',
+									'class'    => 'foofields-colspan-2',
+									'tooltip'  => __( 'This field has a class of "foofields-colspan-2"', 'foofields' ),
+								),
+								array(
+									'id'       => '2colcell2',
+									'label'    => __( 'Last Name', 'foofields' ),
+									'type'     => 'text',
+									'class'    => 'foofields-colspan-2',
+									'tooltip'  => __( 'This field has a class of "foofields-colspan-2"', 'foofields' ),
+								),
+								array(
+									'id'       => 'colheading3',
+									'desc'     => __( '3 Columns', 'foofields' ),
+									'type'     => 'heading',
+									'class'    => 'foofields-full-width'
+								),
+								array(
+									'id'       => '3colcell1',
+									'label'    => __( 'Firstname', 'foofields' ),
+									'type'     => 'text',
+									'tooltip'  => __( 'This field has no class set', 'foofields' ),
+								),
+								array(
+									'id'       => '3colcell2',
+									'label'    => __( 'Middle', 'foofields' ),
+									'type'     => 'text',
+									'tooltip'  => __( 'This field has no class set', 'foofields' ),
+								),
+								array(
+									'id'       => '3colcell3',
+									'label'    => __( 'Last Name', 'foofields' ),
+									'type'     => 'text',
+									'class'    => 'foofields-colspan-2',
+									'tooltip'  => __( 'This field has a class of "foofields-colspan-2"', 'foofields' ),
+								),
+								array(
+									'id'       => 'colheading4',
+									'desc'     => __( '4 Columns', 'foofields' ),
+									'type'     => 'heading',
+									'class'    => 'foofields-full-width'
+								),
+								array(
+									'id'       => '4colcell1',
+									'label'    => __( 'Line 1', 'foofields' ),
+									'type'     => 'text',
+									'tooltip'  => __( 'This field has no class set', 'foofields' ),
+								),
+								array(
+									'id'       => '4colcell2',
+									'label'    => __( 'Line 2', 'foofields' ),
+									'type'     => 'text',
+									'tooltip'  => __( 'This field has no class set', 'foofields' ),
+								),
+								array(
+									'id'       => '4colcell2',
+									'label'    => __( 'Line 3', 'foofields' ),
+									'type'     => 'text',
+									'tooltip'  => __( 'This field has no class set', 'foofields' ),
+								),
+								array(
+									'id'       => '4colcell3',
+									'label'    => __( 'Line 4', 'foofields' ),
+									'type'     => 'text',
+									'tooltip'  => __( 'This field has no class set', 'foofields' ),
+								),
 							)
 						),
 						array(
