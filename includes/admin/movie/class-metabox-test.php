@@ -13,35 +13,53 @@ if ( ! class_exists( 'FooPlugins\FooFields\Admin\Movie\MetaboxTest' ) ) {
 			$field_group = apply_filters( 'FooPlugins\FooFields\Admin\Movie\MetaboxTest\FieldGroup',
 				array(
 					'tabs' => array(
-//						array(
-//							'id'     => 'genres',
-//							'label'  => __( 'Genres', 'foofields' ),
-//							'icon'   => 'dashicons-groups',
-//							'type'   => 'taxonomy',
-//							'fields' => array(),
-//							'taxonomy' => FOOFIELDS_CT_GENRE
-//						),
 						array(
 							'id'     => 'simplefields',
 							'label'  => __( 'Simple Fields', 'foofields' ),
 							'icon'   => 'dashicons-editor-kitchensink',
 							'fields' => array(
 								array(
-									'id'       => 'help',
-									'desc'     => __( 'This tab shows all the available fields. This is a help field.', 'foofields' ),
-									'type'     => 'help',
-									'class'    => 'foofields-full-width'
-								),
-								array(
-									'id'       => 'heading',
-									'desc'     => __( 'Heading Field', 'foofields' ),
+									'id'       => 'simpleheading',
+									'label'    => __( 'Simple Fields', 'foofields' ),
+									'desc'    => __( 'This tab shows all the simple fields', 'foofields' ),
 									'type'     => 'heading',
 								),
 								array(
-									'id'       => 'singlecolumn',
-									'desc'     => __( 'Another help field but with class set to foometafields-icon foometafields-icon-promo', 'foofields' ),
-									'class'    => 'foometafields-icon-promo',
+									'id'       => 'help',
+									'html'     => __( 'This is a help field.', 'foofields' ),
 									'type'     => 'help',
+								),
+								array(
+									'id'       => 'error',
+									'html'     => __( 'This is an error field.', 'foofields' ),
+									'type'     => 'error',
+								),
+								array(
+									'id'       => 'icon',
+									'html'     => __( 'Icon field. Set the icon to the class name of the dashicon you want. Icon is set to "dashicons-wordpress" for this field.', 'foofields' ),
+									'icon'     => 'dashicons-wordpress',
+									'type'     => 'icon',
+								),
+								array(
+									'id'       => 'icon2',
+									'html'     => __( 'Icon is set to "dashicons-admin-site" for this field. Class set to "icon-green"', 'foofields' ),
+									'icon'     => 'dashicons-admin-site',
+									'class'    => 'icon-green',
+									'type'     => 'icon',
+								),
+								array(
+									'id'       => 'icon3',
+									'html'     => __( 'Icon is set to "dashicons-format-image" for this field. Class set to "icon-red"', 'foofields' ),
+									'icon'     => 'dashicons-format-image',
+									'class'    => 'icon-red',
+									'type'     => 'icon',
+								),
+								array(
+									'id'       => 'icon4',
+									'html'     => __( 'Icon is set to "dashicons-star-filled" for this field. Class set to "icon-yellow"', 'foofields' ),
+									'icon'     => 'dashicons-star-filled',
+									'class'    => 'icon-yellow',
+									'type'     => 'icon',
 								),
 								array(
 									'id'       => 'text',
@@ -275,6 +293,12 @@ if ( ! class_exists( 'FooPlugins\FooFields\Admin\Movie\MetaboxTest' ) ) {
 							'icon'   => 'dashicons-editor-table',
 							'class'  => 'foofields-cols-4',
 							'fields' => array(
+								array(
+									'id'       => 'colheading',
+									'desc'     => __( 'Tab class set to "foofields-cols-4"', 'foofields' ),
+									'type'     => 'heading',
+									'class'    => 'foofields-full-width'
+								),
 								array(
 									'id'       => 'help',
 									'desc'     => __( 'This tab shows how fields can be arranged into columns. The tab can have a "class" or foofields-cols-2, foofields-cols-3 or foofields-cols-4. This particular tab has class of "foofields-cols-4". Fields then get assigned a class of "foofields-colspan-N" where N is the number of columns to span, eg. "foofields-colspan-2".', 'foofields' ),

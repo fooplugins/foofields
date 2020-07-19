@@ -214,9 +214,6 @@ if ( ! class_exists( 'FooPlugins\FooFields\Admin\Metaboxes\FieldRenderer' ) ) {
 				$field_layout                   = isset( $field['layout'] ) ? $field['layout'] : 'block';
 				$field_classes                  = array();
 				$field_classes[]                = 'foofields-field';
-				$field_classes[]                = "foofields-type-{$field_type}";
-				$field_classes[]                = "foofields-id-{$field['id']}";
-				$field_classes[]				= "foofields-layout-{$field_layout}";
 				if ( isset( $field['class'] ) ) {
 					$field_classes[] = $field['class'];
 				}
@@ -237,17 +234,30 @@ if ( ! class_exists( 'FooPlugins\FooFields\Admin\Metaboxes\FieldRenderer' ) ) {
 
 				//check for any special non-editable field types
 				if ( 'help' === $field_type ) {
-					$field['type']   = 'html';
-					$field_classes[] = 'foofields-icon foofields-icon-help';
-					$field['desc']   = '<p>' . esc_html( $field['desc'] ) . '</p>';
+					$field_type = $field['type'] = 'icon';
+					unset( $field['label'] );
+					$field['icon'] = 'dashicons-editor-help';
 				} else if ( 'error' === $field_type ) {
-					$field['type'] = 'html';
-					$field_classes[] = 'foofields-icon foofields-icon-error';
-					$field['desc']   = '<p>' . esc_html( $field['desc'] ) . '</p>';
+					$field_type = $field['type'] = 'icon';
+					unset( $field['label'] );
+					$field['icon'] = 'dashicons-warning';
+					$field_classes[] = 'icon-red';
 				} else if ( 'heading' === $field_type ) {
-					$field['type'] = 'html';
-					$field['desc'] = '<h3>' . esc_html( $field['desc'] ) . '</h3>';
+					$field_type = $field['type'] = 'html';
+					$html = '';
+					if ( isset( $field['label'] ) ) {
+						$html = '<h3>' . esc_html( $field['label'] ) . '</h3>';
+						unset( $field['label'] ); //we do not want to show a label for a heading
+					}
+					if ( isset( $field['desc'] ) ) {
+						$html .= '<p>' . esc_html( $field['desc'] ) . '</p>';
+						unset( $field['desc'] );
+					}
+					$field['html'] = $html;
 				}
+				$field_classes[] = "foofields-type-{$field_type}";
+				$field_classes[] = "foofields-id-{$field['id']}";
+				$field_classes[] = "foofields-layout-{$field_layout}";
 				?>
 				<div class="<?php echo implode( ' ', $field_classes ); ?>"<?php echo $field_row_data_html; ?>>
 					<?php if ( isset( $field['label'] ) ) { ?>
@@ -302,6 +312,20 @@ if ( ! class_exists( 'FooPlugins\FooFields\Admin\Metaboxes\FieldRenderer' ) ) {
 						$field['desc'] = '';
 					} else if ( isset( $field['html'] ) ) {
 						echo $field['html'];
+					}
+					break;
+
+				case 'icon':
+					if ( !isset( $field['icon'] ) ) {
+						echo 'icon field missing value for icon!';
+					} else {
+						self::render_html_tag( 'span', array( 'class' => 'dashicons ' . $field['icon'] ) );
+						if ( isset( $field['desc'] ) ) {
+							echo $field['desc'];
+							$field['desc'] = '';
+						} else if ( isset( $field['html'] ) ) {
+							echo $field['html'];
+						}
 					}
 					break;
 

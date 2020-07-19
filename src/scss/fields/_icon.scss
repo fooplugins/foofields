@@ -1,0 +1,46 @@
+.foofields-field.foofields-type-icon {
+  line-height: 19px;
+  font-size: 14px;
+  text-align: left;
+  padding: 11px 10px;
+  -webkit-box-shadow: 0 1px 1px 0 rgba(0, 0, 0, 0.1);
+  box-shadow: 0 1px 1px 0 rgba(0, 0, 0, 0.1);
+  background-color: #f4f4ff;
+  border-left: 4px solid #1e8cbe;
+
+  .dashicons {
+	margin-right: 8px;
+	color: #1e8cbe;
+
+	&.dashicons-editor-help {
+	  font-size: 22px;
+	}
+  }
+
+  &.icon-green {
+	background-color: #e3ffe0;
+	border-color: #31be4d;
+
+	.dashicons {
+	  color: #31be4d;
+	}
+  }
+
+  &.icon-yellow {
+	background-color: #fff7de;
+	border-color: #ffaa00;
+
+	.dashicons {
+	  color: #ffaa00;
+	}
+  }
+
+  &.icon-red {
+	background-color: #fde6e6;
+	border-color: #bb2f2f;
+
+	.dashicons {
+	  color: #bb2f2f;
+	}
+  }
+}

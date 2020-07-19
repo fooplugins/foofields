@@ -99,15 +99,17 @@ button[data-balloon]{overflow:visible}
 .foofields-field .foofields-repeater table tfoot{display:none}
 .foofields-field .foofields-repeater.foofields-repeater-empty .foofields-repeater-no-data-message{display:block}
 .foofields-field .foofields-repeater.foofields-repeater-empty table{display:none}
-.foofields-field.foofields-icon p{position:relative;display:block;line-height:19px;font-size:14px;text-align:left;padding:11px 10px 11px 40px;margin:5px 0 0 2px;-webkit-box-shadow:0 1px 1px 0 rgba(0,0,0,0.1);box-shadow:0 1px 1px 0 rgba(0,0,0,0.1)}
-.foofields-field.foofields-icon p:before{font:400 30px/1 dashicons !important;speak:none;display:inline-block;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;vertical-align:bottom;position:absolute;left:5px;margin-top:-15px;top:50%;height:1em}
-.foofields-field.foofields-icon-help p{background-color:#f4f4ff;border-left:4px solid #1e8cbe}
-.foofields-field.foofields-icon-help p:before{content:"\f223";color:#1e8cbe}
-.foofields-field.foofields-icon-promo p{background-color:#f7fff6;border-left:4px solid #31be4d}
-.foofields-field.foofields-icon-promo p:before{content:"\f155";color:#31be4d}
-.foofields-field.foofields-icon-error p{background-color:#fde6e6;border-left:4px solid #bb2f2f}
-.foofields-field.foofields-icon-error p:before{content:"\f534";color:#bb2f2f}
 .foofields-field.foofields-type-heading h3{margin:0}
+.foofields-field.foofields-type-heading p{margin-bottom:0}
+.foofields-field.foofields-type-icon{line-height:19px;font-size:14px;text-align:left;padding:11px 10px;-webkit-box-shadow:0 1px 1px 0 rgba(0,0,0,0.1);box-shadow:0 1px 1px 0 rgba(0,0,0,0.1);background-color:#f4f4ff;border-left:4px solid #1e8cbe}
+.foofields-field.foofields-type-icon .dashicons{margin-right:8px;color:#1e8cbe}
+.foofields-field.foofields-type-icon .dashicons.dashicons-editor-help{font-size:22px}
+.foofields-field.foofields-type-icon.icon-green{background-color:#e3ffe0;border-color:#31be4d}
+.foofields-field.foofields-type-icon.icon-green .dashicons{color:#31be4d}
+.foofields-field.foofields-type-icon.icon-yellow{background-color:#fff7de;border-color:#fa0}
+.foofields-field.foofields-type-icon.icon-yellow .dashicons{color:#fa0}
+.foofields-field.foofields-type-icon.icon-red{background-color:#fde6e6;border-color:#bb2f2f}
+.foofields-field.foofields-type-icon.icon-red .dashicons{color:#bb2f2f}
 .foofields-field-input-htmllist label{display:inline-block;margin-right:10px;border:solid 3px transparent;background:#aaa;border-radius:3px;padding:5px;line-height:0;margin-bottom:10px}
 .foofields-field-input-htmllist input:checked+label{border:solid 3px #444;background:#888}
 .foofields-field-input-htmllist label:hover{border:solid 3px #444}
