@@ -1,0 +1,232 @@
+// Container
+// ------------------------------------
+.foofields-container {
+	> div {
+		&:after {
+			display: table;
+			content: "";
+			clear: both;
+		}
+	}
+}
+
+
+// Parent tabs
+// ------------------------------------
+.foofields-tabs {
+	display: block;
+	position: absolute;
+	top: 0;
+	left: 0;
+	bottom: 0;
+	width: 150px;
+	background-color: $gray-100;
+	border-right: solid 1px $gray-200;
+}
+
+.foofields-tab {
+	position: relative;
+	margin: 0;
+	padding: 7px 0;
+	display: block;
+	box-shadow: none;
+	text-decoration: none;
+	line-height: 18px;
+	border-bottom: 1px solid $gray-200;
+	color: $blue;
+	cursor: pointer;
+
+	&:hover {
+		color: $blue-hover;
+		background-color: $gray-300;
+	}
+
+	&.foofields-active {
+		color: $white;
+		background-color: $blue;
+
+		&:after {
+			visibility: visible;
+			opacity: 1;
+		}
+	}
+
+	&:after {
+		right: -1px;
+		border: solid 8px transparent;
+		content: " ";
+		height: 0;
+		width: 0;
+		position: absolute;
+		pointer-events: none;
+		border-right-color: $white;
+		top: 17px;
+		margin-top: -8px;
+		visibility: hidden;
+		opacity: 0;
+	}
+
+	.dashicons {
+		$box: 20px;
+		font-weight: 400;
+		font-variant: normal;
+		text-transform: none;
+		line-height: 1;
+		-webkit-font-smoothing: antialiased;
+		font-size: $box;
+		width: $box;
+		height: $box;
+		vertical-align: middle;
+		margin: 0 3px 3px 8px;
+	}
+
+  	.foofields-tab-error {
+		display: inline-block;
+		vertical-align: top;
+		box-sizing: border-box;
+		margin: 1px 0 -1px 2px;
+		padding: 0 5px;
+		min-width: 18px;
+		height: 18px;
+		border-radius: 9px;
+		background-color: #ca4a1f;
+		color: #fff;
+		font-size: 11px;
+		line-height: 1.6;
+		text-align: center;
+		z-index: 26;
+	}
+}
+
+// Content panel wrapper
+// ------------------------------------
+.foofields-contents {
+	display: block;
+	float: right;
+	width: calc(100% - 150px);
+	background-color: $white;
+	min-height: 400px;
+
+  // Content panel
+  // ------------------------------------
+  .foofields-content {
+	display: none;
+	padding: $m-sm;
+
+	&.foofields-active {
+	  display: block;
+	}
+
+	img {
+	  max-width: 100%;
+	  height: auto;
+	}
+
+	// Reset Wordpress panel styling when we move the meta boxes into a FooMetaField
+	.handlediv,
+	h2.ui-sortable-handle {
+	  display: none !important;
+	}
+	.postbox {
+	  border: none;
+	  box-shadow: none;
+	  background: transparent;
+	}
+
+	// Reset featured thumbnail styling
+	#set-post-thumbnail {
+	  .attachment-post-thumbnail {
+		max-width: 250px;
+	  }
+	}
+  }
+}
+
+
+// Child tabs
+// ------------------------------------
+.foofields-child-tabs {
+	display: none;
+	margin: 7px 0 -7px;
+	color: $gray-400;
+	background-color: $gray-200;
+	border-top: 1px solid $gray-200;
+	width: 150px;
+
+	&:after {
+		left: -16px;
+		border: solid 8px transparent;
+		content: " ";
+		height: 0;
+		width: 0;
+		position: absolute;
+		pointer-events: none;
+		border-right-color: $gray-200;
+		top: 17px;
+		margin-top: -8px;
+		visibility: hidden;
+		opacity: 0;
+	}
+}
+
+.foofields-active .foofields-child-tabs {
+	display: block;
+}
+
+.foofields-tab:not(.foofields-active):hover .foofields-child-tabs {
+	display: block;
+	position: absolute;
+	top: -7px;
+	right: 0;
+	transform: translateX(100%);
+	z-index: 10000;
+}
+
+.foofields-tab:not(.foofields-active):hover
+	.foofields-child-tabs:after {
+	visibility: visible;
+	opacity: 1;
+}
+
+.foofields-child-tab {
+	position: relative;
+	padding: 4px 12px;
+	font-size: 13px;
+	font-weight: 400;
+
+	&:first-child {
+		padding: 8px 12px 4px;
+	}
+
+	&:last-child {
+		padding: 4px 12px 8px;
+	}
+
+	&:not(.foofields-active):hover {
+		color: $blue;
+	}
+
+	&.foofields-active {
+		font-weight: 600;
+	}
+}
+
+@media only screen and (max-width: 900px) {
+	.foofields-tabs,
+	.foofields-child-tabs {
+		width: 50px;
+	}
+	.foofields-tab {
+		text-align: center;
+
+		.dashicons {
+			margin-right: 0;
+		}
+	}
+	.foofields-tab-text {
+		display: none;
+	}
+	.foofields-contents {
+		width: calc(100% - 50px);
+	}
+}

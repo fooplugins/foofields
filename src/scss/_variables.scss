@@ -1,0 +1,41 @@
+$white : #ffffff;
+$gray-100 : #fafafa;
+$gray-200 : #eee;
+$gray-300 : #fafafa;
+$gray-400 : #555;
+$blue: #0073aa;
+$blue-hover : #00a0d2;
+$yellow: #fffce4;
+
+// General Settings
+// ----------------------------------------------------------------------------
+$font-size: 13px;
+$small-screen: 960px;
+
+// Tabs Settings
+// ----------------------------------------------------------------------------
+$tab-v-height: 34px;
+$tab-v-width: 150px;
+$tab-v-small-width: 36px;
+$tab-h-menu-height: 27px;
+$tab-h-width: 150px;
+$tab-h-small-width: 36px;
+
+// Spacers
+// ----------------------------------------------------------------------------
+$spacer: 1em;
+$spacers: ();
+$spacers: map-merge((
+  0: 0,
+  1: ($spacer * .25),
+  2: ($spacer * .5),
+  3: $spacer,
+  4: ($spacer * 1.5),
+  5: ($spacer * 3)
+), $spacers);
+
+$m-0  : map-get($spacers, 1);
+$m-xs  : map-get($spacers, 2);
+$m-sm :  map-get($spacers, 3);
+$m-md  : map-get($spacers, 4);
+$m-lg  : map-get($spacers, 5);

@@ -1,0 +1,98 @@
+// Tab Menu Item CSS
+// ----------------------------------------------------------------------------
+.foofields-tab-menu-item {
+  position: relative;
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+  color: inherit;
+}
+.foofields-tab-menu-header {
+  display: none;
+  list-style-type: none;
+  position: relative;
+  padding: 8px 12px;
+  font-size: 14px;
+  font-weight: 600;
+  color: inherit;
+}
+.foofields-tab-menu-link {
+  position: relative;
+  font-size: 13px;
+  font-weight: 400;
+  color: inherit;
+  outline: none;
+  box-shadow: none;
+  text-decoration: none;
+  &:focus {
+	outline: none;
+	box-shadow: none;
+	text-decoration: none;
+  }
+}
+.foofields-tab-menu-item.foofields-active {
+  .foofields-tab-menu-link {
+	font-weight: 600;
+  }
+}
+// Vertical CSS
+// ----------------------------------------------------------------------------
+.foofields-tabs-vertical {
+  .foofields-tab-menu-header {
+	height: $tab-v-height;
+  }
+  .foofields-tab-menu-item {
+	display: block;
+  }
+  .foofields-tab-menu-link {
+	display: block;
+	padding: 4px 12px;
+  }
+  .foofields-tab-menu-item.foofields-first {
+	.foofields-tab-menu-link {
+	  padding: 8px 12px 4px;
+	}
+  }
+  .foofields-tab-menu-item.foofields-last {
+	.foofields-tab-menu-link {
+	  padding: 4px 12px 8px;
+	}
+  }
+}
+// Horizontal CSS
+// ----------------------------------------------------------------------------
+.foofields-tabs-horizontal {
+  .foofields-tab-menu-item {
+	display: inline-block;
+	&:not(.foofields-first) {
+	  &:before {
+		display: inline-block;
+		content: "|";
+		margin: 0;
+	  }
+	}
+  }
+  .foofields-tab-menu-link {
+	display: inline-block;
+	padding: 4px;
+  }
+  .foofields-tab-menu-item.foofields-first {
+	.foofields-tab-menu-link {
+	  padding: 4px 4px 4px 8px;
+	}
+  }
+  .foofields-tab-menu-item.foofields-last {
+	.foofields-tab-menu-link {
+	  padding: 4px 8px 4px 4px;
+	}
+  }
+}
+// Small Screen CSS
+// ----------------------------------------------------------------------------
+@media only screen and (max-width: $small-screen) {
+  .foofields-tabs-vertical {
+	.foofields-tab-menu-header {
+	  display: block;
+	}
+  }
+}

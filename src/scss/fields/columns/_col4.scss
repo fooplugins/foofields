@@ -1,0 +1,20 @@
+.foofields-content.foofields-active.foofields-cols-4 {
+  display: flex;
+  flex-wrap: wrap;
+  >.foofields-field {
+	padding: 0 $m-sm 0 0;
+	align-self: flex-start;
+	width: 25%;
+  }
+  >.foofields-field.foofields-colspan-2 {
+	width: 50%;
+  }
+  >.foofields-field.foofields-colspan-3 {
+	width: 75%;
+  }
+  >.foofields-field.foofields-colspan-4,
+  >.foofields-field.foofields-colspan-5,
+  >.foofields-field.foofields-full-width {
+	width: 100%;
+  }
+}
