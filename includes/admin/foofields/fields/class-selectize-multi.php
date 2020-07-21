@@ -23,7 +23,7 @@ if ( ! class_exists( __NAMESPACE__ . '\SelectizeMulti' ) ) {
 		 *
 		 * @param $optional_attributes
 		 */
-		function render( $override_attributes = false ) {
+		function render_input( $override_attributes = false ) {
 			global $post;
 			$inner = '';
 
