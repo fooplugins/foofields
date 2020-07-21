@@ -1,41 +1,42 @@
 <?php
 
-namespace FooPlugins\FooFields\Admin\Metaboxes\Fields;
+namespace FooPlugins\FooFields\Admin\FooFields\Fields;
 
-use FooPlugins\FooFields\Admin\Metaboxes\FieldRenderer;
-
-if ( ! class_exists( 'FooPlugins\FooFields\Admin\Metaboxes\Fields\Selectize' ) ) {
+if ( ! class_exists( __NAMESPACE__ . '\Selectize' ) ) {
 
 	class Selectize extends Field {
 
-		function __construct( $metabox_field_group, $field_type ) {
-			parent::__construct( $metabox_field_group, $field_type );
+		function __construct( $container, $type, $field_config ) {
+			parent::__construct( $container, $type, $field_config );
 
 			//handle ajax selectize fields
-			add_action( 'wp_ajax_foofields_selectize', array( $this, 'ajax_handle_selectize' ) );
+			add_action( 'wp_ajax_foofields_selectize_' . $this->unique_id . '-field', array( $this, 'ajax_handle_selectize' ) );
 		}
 
 		/**
 		 * Render the selectize field
 		 *
-		 * @param $field
-		 * @param $attributes
+		 * @param $optional_attributes
 		 */
-		function render( $field, $attributes ) {
+		function render_input( $override_attributes = false ) {
 			$query  = build_query( array(
 				'action'     => 'foofields_selectize',
-				'nonce'      => wp_create_nonce( $field['input_id'] ),
+				'nonce'      => wp_create_nonce( $this->unique_id ),
 			) );
 
-			$value = ( isset( $field['value'] ) && is_array( $field['value'] ) ) ? $field['value'] : array(
-				'value'   => '',
-				'display' => ''
-			);
+			$value = $this->value();
 
-			FieldRenderer::render_html_tag( 'input', array(
+			if ( !is_array( $value ) ) {
+				$value = array(
+					'value'   => '',
+					'display' => ''
+				);
+			}
+
+			self::render_html_tag( 'input', array(
 				'type'  => 'hidden',
-				'id'    => $field['input_id'] . '_display',
-				'name'  => $field['input_name'] . '[display]',
+				'id'    => $this->unique_id . '_display',
+				'name'  => $this->name . '[display]',
 				'value' => $value['display']
 			) );
 
@@ -45,11 +46,11 @@ if ( ! class_exists( 'FooPlugins\FooFields\Admin\Metaboxes\Fields\Selectize' ) )
 				$inner = '<option value="' . esc_attr( $value['value'] ) . '" selected="selected">' . esc_html( $value['display'] ) . '</option>';
 			}
 
-			FieldRenderer::render_html_tag( 'select', array(
-				'id'          => $field['input_id'],
-				'name'        => $field['input_name'] . '[value]',
+			self::render_html_tag( 'select', array(
+				'id'          => $this->unique_id,
+				'name'        => $this->name . '[value]',
 				'value'       => $value['value'],
-				'placeholder' => $field['placeholder'],
+				'placeholder' => $this->config['placeholder'],
 				'data-query'  => $query
 			), $inner, true, false );
 		}
@@ -58,14 +59,13 @@ if ( ! class_exists( 'FooPlugins\FooFields\Admin\Metaboxes\Fields\Selectize' ) )
 		 * Ajax handler for selectize fields
 		 */
 		function ajax_handle_selectize() {
-			$field = $this->find_field_for_ajax_handler_based_on_nonce( 'selectize' );
-			if ( $field !== false ) {
+			if ( $this->verify_nonce() ) {
 				$s = trim( $this->safe_get_from_request( 'q' ) );
 				if ( !empty( $s ) ) {
 					$results = array();
 
-					$query_type = isset( $field['query_type'] ) ? $field['query_type'] : 'post';
-					$query_data = isset( $field['query_data'] ) ? $field['query_data'] : 'page';
+					$query_type = isset( $this->config['query_type'] ) ? $this->config['query_type'] : 'post';
+					$query_data = isset( $this->config['query_data'] ) ? $this->config['query_data'] : 'page';
 
 					if ( 'post' === $query_type ) {
 

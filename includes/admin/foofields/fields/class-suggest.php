@@ -1,55 +1,51 @@
 <?php
 
-namespace FooPlugins\FooFields\Admin\Metaboxes\Fields;
+namespace FooPlugins\FooFields\Admin\FooFields\Fields;
 
-use FooPlugins\FooFields\Admin\Metaboxes\FieldRenderer;
-
-if ( ! class_exists( 'FooPlugins\FooFields\Admin\Metaboxes\Fields\Suggest' ) ) {
+if ( ! class_exists( __NAMESPACE__ . '\Suggest' ) ) {
 
 	class Suggest extends Field {
 
-		function __construct( $metabox_field_group, $field_type ) {
-			parent::__construct( $metabox_field_group, $field_type );
+		function __construct( $container, $type, $field_config ) {
+			parent::__construct( $container, $type, $field_config );
 
 			//handle ajax auto suggest fields
-			add_action( 'wp_ajax_foofields_suggest', array( $this, 'ajax_handle_autosuggest' ) );
+			add_action( 'wp_ajax_foofields_suggest_' . $this->unique_id . '-field', array( $this, 'ajax_handle_autosuggest' ) );
 		}
 
 		/**
 		 * Renders the autosuggest field
 		 *
-		 * @param $field
-		 * @param $attributes
+		 * @param $optional_attributes
 		 *
 		 * @return mixed|void
 		 */
-		function render( $field, $attributes ) {
+		function render_input( $override_attributes = false ) {
 			$query  = build_query( array(
 				'action'     => 'foofields_suggest',
-				'nonce'      => wp_create_nonce( $field['input_id'] )
+				'nonce'      => wp_create_nonce( $this->unique_id )
 			) );
 
-			$attributes = wp_parse_args( array(
+			$attributes = wp_parse_args( $override_attributes, array(
 				'type'                   => 'text',
-				'id'                     => $field['input_id'],
-				'name'                   => $field['input_name'],
-				'value'                  => $field['value'],
+				'id'                     => $this->unique_id,
+				'name'                   => $this->name,
+				'value'                  => $this->value(),
 				'placeholder'            => isset( $field['placeholder'] ) ? $field['placeholder'] : '',
 				'data-suggest',
 				'data-suggest-query'     => $query,
 				'data-suggest-multiple'  => isset( $field['multiple'] ) ? $field['multiple'] : 'false',
 				'data-suggest-separator' => isset( $field['separator'] ) ? $field['separator'] : ','
-			), $attributes );
+			) );
 
-			FieldRenderer::render_html_tag( 'input', $attributes );
+			self::render_html_tag( 'input', $attributes );
 		}
 
 		/**
 		 * Ajax handler for suggest fields
 		 */
 		function ajax_handle_autosuggest() {
-			$field = $this->find_field_for_ajax_handler_based_on_nonce( 'suggest' );
-			if ( $field !== false ) {
+			if ( $this->verify_nonce() ) {
 				$action = $this->build_field_id( $field );
 
 				$s = $this->sanitize_text( 'q' );

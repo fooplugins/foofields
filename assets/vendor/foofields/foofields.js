@@ -5576,7 +5576,7 @@ FooFields.utils, FooFields.utils.fn, FooFields.utils.str);
 
         self.$spinner.addClass('is-active');
         var postData = {
-          'action': 'foofields_ajaxbutton',
+          'action': 'foofields_ajaxbutton_' + self.id,
           'nonce': $(this).data('nonce')
         };
 

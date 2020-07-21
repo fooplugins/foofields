@@ -2,11 +2,12 @@
 
 namespace FooPlugins\FooFields\Admin\Movie;
 
-use FooPlugins\FooFields\Admin\Metaboxes\CustomPostTypeMetaboxFieldGroup;
+
+use FooPlugins\FooFields\Admin\FooFields\Metabox;
 
 if ( ! class_exists( 'FooPlugins\FooFields\Admin\Movie\MetaboxTest' ) ) {
 
-	class MetaboxTest extends CustomPostTypeMetaboxFieldGroup {
+	class MetaboxTest extends Metabox {
 
 		function __construct() {
 			//filter to allow field group to be overridden
@@ -21,42 +22,45 @@ if ( ! class_exists( 'FooPlugins\FooFields\Admin\Movie\MetaboxTest' ) ) {
 								array(
 									'id'       => 'simpleheading',
 									'label'    => __( 'Simple Fields', 'foofields' ),
-									'desc'    => __( 'This tab shows all the simple fields', 'foofields' ),
+									'desc'     => __( 'This tab shows all the simple fields', 'foofields' ),
 									'type'     => 'heading',
+									'data'     => array(
+										//field data options
+									)
 								),
 								array(
 									'id'       => 'help',
-									'html'     => __( 'This is a help field.', 'foofields' ),
+									'text'     => __( 'This is a help field.', 'foofields' ),
 									'type'     => 'help',
 								),
 								array(
 									'id'       => 'error',
-									'html'     => __( 'This is an error field.', 'foofields' ),
+									'text'     => __( 'This is an error field.', 'foofields' ),
 									'type'     => 'error',
 								),
 								array(
 									'id'       => 'icon',
-									'html'     => __( 'Icon field. Set the icon to the class name of the dashicon you want. Icon is set to "dashicons-wordpress" for this field.', 'foofields' ),
+									'text'     => __( 'Icon field. Set the icon to the class name of the dashicon you want. Icon is set to "dashicons-wordpress" for this field.', 'foofields' ),
 									'icon'     => 'dashicons-wordpress',
 									'type'     => 'icon',
 								),
 								array(
 									'id'       => 'icon2',
-									'html'     => __( 'Icon is set to "dashicons-admin-site" for this field. Class set to "icon-green"', 'foofields' ),
+									'text'     => __( 'Icon is set to "dashicons-admin-site" for this field. Class set to "icon-green"', 'foofields' ),
 									'icon'     => 'dashicons-admin-site',
 									'class'    => 'icon-green',
 									'type'     => 'icon',
 								),
 								array(
 									'id'       => 'icon3',
-									'html'     => __( 'Icon is set to "dashicons-format-image" for this field. Class set to "icon-red"', 'foofields' ),
+									'text'     => __( 'Icon is set to "dashicons-format-image" for this field. Class set to "icon-red"', 'foofields' ),
 									'icon'     => 'dashicons-format-image',
 									'class'    => 'icon-red',
 									'type'     => 'icon',
 								),
 								array(
 									'id'       => 'icon4',
-									'html'     => __( 'Icon is set to "dashicons-star-filled" for this field. Class set to "icon-yellow"', 'foofields' ),
+									'text'     => __( 'Icon is set to "dashicons-star-filled" for this field. Class set to "icon-yellow"', 'foofields' ),
 									'icon'     => 'dashicons-star-filled',
 									'class'    => 'icon-yellow',
 									'type'     => 'icon',
@@ -121,6 +125,9 @@ if ( ! class_exists( 'FooPlugins\FooFields\Admin\Movie\MetaboxTest' ) ) {
 									'desc'     => __( 'A test colorpicker field using the colorpicker built into WP', 'foofields' ),
 									'type'     => 'colorpicker',
 								),
+							),
+							'data'   => array(
+								//tab data options
 							)
 						),
 						array(
@@ -295,19 +302,19 @@ if ( ! class_exists( 'FooPlugins\FooFields\Admin\Movie\MetaboxTest' ) ) {
 							'fields' => array(
 								array(
 									'id'       => 'colheading',
-									'desc'     => __( 'Tab class set to "foofields-cols-4"', 'foofields' ),
+									'label'     => __( 'Tab class set to "foofields-cols-4"', 'foofields' ),
 									'type'     => 'heading',
 									'class'    => 'foofields-full-width'
 								),
 								array(
-									'id'       => 'help',
-									'desc'     => __( 'This tab shows how fields can be arranged into columns. The tab can have a "class" or foofields-cols-2, foofields-cols-3 or foofields-cols-4. This particular tab has class of "foofields-cols-4". Fields then get assigned a class of "foofields-colspan-N" where N is the number of columns to span, eg. "foofields-colspan-2".', 'foofields' ),
+									'id'       => 'colhelp',
+									'text'     => __( 'This tab shows how fields can be arranged into columns. The tab can have a "class" or foofields-cols-2, foofields-cols-3 or foofields-cols-4. This particular tab has class of "foofields-cols-4". Fields then get assigned a class of "foofields-colspan-N" where N is the number of columns to span, eg. "foofields-colspan-2".', 'foofields' ),
 									'type'     => 'help',
 									'class'    => 'foofields-full-width'
 								),
 								array(
 									'id'       => 'colheading1',
-									'desc'     => __( '1 Column', 'foofields' ),
+									'label'     => __( '1 Column', 'foofields' ),
 									'type'     => 'heading',
 									'class'    => 'foofields-full-width'
 								),
@@ -320,7 +327,7 @@ if ( ! class_exists( 'FooPlugins\FooFields\Admin\Movie\MetaboxTest' ) ) {
 								),
 								array(
 									'id'       => 'colheading2',
-									'desc'     => __( '2 Columns', 'foofields' ),
+									'label'     => __( '2 Columns', 'foofields' ),
 									'type'     => 'heading',
 									'class'    => 'foofields-full-width'
 								),
@@ -340,7 +347,7 @@ if ( ! class_exists( 'FooPlugins\FooFields\Admin\Movie\MetaboxTest' ) ) {
 								),
 								array(
 									'id'       => 'colheading3',
-									'desc'     => __( '3 Columns', 'foofields' ),
+									'label'     => __( '3 Columns', 'foofields' ),
 									'type'     => 'heading',
 									'class'    => 'foofields-full-width'
 								),
@@ -365,7 +372,7 @@ if ( ! class_exists( 'FooPlugins\FooFields\Admin\Movie\MetaboxTest' ) ) {
 								),
 								array(
 									'id'       => 'colheading4',
-									'desc'     => __( '4 Columns', 'foofields' ),
+									'label'     => __( '4 Columns', 'foofields' ),
 									'type'     => 'heading',
 									'class'    => 'foofields-full-width'
 								),
@@ -515,9 +522,10 @@ if ( ! class_exists( 'FooPlugins\FooFields\Admin\Movie\MetaboxTest' ) ) {
 					'meta_key'       => FOOFIELDS_MOVIE_META_TEST,
 					'text_domain'    => FOOFIELDS_SLUG,
 					'plugin_url'     => FOOFIELDS_URL,
-					'plugin_version' => FOOFIELDS_VERSION
-				),
-				$field_group
+					'plugin_version' => FOOFIELDS_VERSION,
+					//'layout'         => 'foofields-tabs-vertical',
+					'fields'         => $field_group
+				)
 			);
 		}
 

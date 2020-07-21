@@ -1,41 +1,32 @@
 <?php
 
-namespace FooPlugins\FooFields\Admin\Metaboxes\Fields;
+namespace FooPlugins\FooFields\Admin\FooFields\Fields;
 
-use FooPlugins\FooFields\Admin\Metaboxes\FieldRenderer;
 use WP_User;
 
-if ( ! class_exists( 'FooPlugins\FooFields\Admin\Metaboxes\Fields\Repeater' ) ) {
+if ( ! class_exists( __NAMESPACE__ . '\Repeater' ) ) {
 
 	class Repeater extends Field {
-
-		function __construct( $metabox_field_group, $field_type ) {
-			parent::__construct( $metabox_field_group, $field_type );
-
-			$hook = $this->metabox_field_group->metabox_hook_prefix();
-
-			add_filter( $hook . 'GetPostedDataByType\repeater', array( $this, 'get_posted_data_for_repeater' ), 10, 1 );
-		}
-
 		/**
 		 * Render the repeater field
-		 * @param $field
-		 * @param $attributes
 		 *
 		 * @return mixed|void
 		 */
-		function render( $field, $attributes ) {
-			$has_rows = is_array( $field['value'] ) && count( $field['value'] ) > 0;
+		function render_input( $override_attributes = false ) {
+			$field = $this->config;
+			$value = $this->value();
 
-			FieldRenderer::render_html_tag( 'div', array(
+			$has_rows = is_array( $value ) && count( $value ) > 0;
+
+			self::render_html_tag( 'div', array(
 				'class' => 'foofields-repeater' . ( $has_rows ? '' : ' foofields-repeater-empty' )
 			), null, false );
 
-			FieldRenderer::render_html_tag( 'p', array(
+			self::render_html_tag( 'p', array(
 				'class' => 'foofields-repeater-no-data-message'
 			), isset( $field['no-data-message'] ) ? $field['no-data-message'] : __( 'Nothing found' ) );
 
-			FieldRenderer::render_html_tag('table', array(
+			self::render_html_tag('table', array(
 				'class' => 'wp-list-table widefat striped' . ( isset( $field['table-class'] ) ? ' ' . $field['table-class'] : '' )
 			), null, false );
 
@@ -46,7 +37,7 @@ if ( ! class_exists( 'FooPlugins\FooFields\Admin\Metaboxes\Fields\Repeater' ) ) 
 				if ( isset( $child_field['width'] ) ) {
 					$column_attributes['width'] = $child_field['width'];
 				}
-				FieldRenderer::render_html_tag( 'th', $column_attributes, isset( $child_field['label'] ) ? $child_field['label'] : '' );
+				self::render_html_tag( 'th', $column_attributes, isset( $child_field['label'] ) ? $child_field['label'] : '' );
 			}
 			echo '</tr></thead>';
 
@@ -54,7 +45,7 @@ if ( ! class_exists( 'FooPlugins\FooFields\Admin\Metaboxes\Fields\Repeater' ) ) 
 			echo '<tbody>';
 			if ( $has_rows ) {
 				$row_index = 0;
-				foreach( $field['value'] as $row ) {
+				foreach( $value as $row ) {
 					$row_index++;
 					echo '<tr>';
 					foreach ( $field['fields'] as $child_field ) {
@@ -69,9 +60,11 @@ if ( ! class_exists( 'FooPlugins\FooFields\Admin\Metaboxes\Fields\Repeater' ) ) 
 						if ( 'manage' === $child_field['type'] ) {
 							$this->render_delete_button( $child_field );
 						} else {
-							$child_field['input_id']   = $field['input_id'] . '_' . $child_field['id'] . '_' . $row_index;
-							$child_field['input_name'] = $field['input_name'] . '[' . $child_field['id'] . '][]';
-							FieldRenderer::render_field( $child_field );
+							$child_field['id'] = $field['id'] . '_' . $child_field['id'] . '_' . $row_index;
+							$field_object = $this->container->create_field_instance( $child_field['type'], $child_field );
+							$field_object->render_input( array(
+									'name' => $this->container->get_field_name( $field ) . '[' . $child_field['id'] . '][]'
+							) );
 						}
 						echo '</td>';
 					}
@@ -88,9 +81,12 @@ if ( ! class_exists( 'FooPlugins\FooFields\Admin\Metaboxes\Fields\Repeater' ) ) 
 				if ( 'manage' === $child_field['type'] ) {
 					$this->render_delete_button( $child_field );
 				} else {
-					$child_field['input_id']   = $field['input_id'] . '_' . $child_field['id'];
-					$child_field['input_name'] = $field['input_name'] . '[' . $child_field['id'] . '][]';
-					FieldRenderer::render_field( $child_field, array( 'disabled' => 'disabled' ) );
+					$child_field['id'] = $field['id'] . '_' . $child_field['id'];
+					$field_object = $this->container->create_field_instance( $child_field['type'], $child_field );
+					$field_object->render_input( array(
+						'name' => $this->container->get_field_name( $field ) . '[' . $child_field['id'] . '][]',
+						'disabled' => 'disabled' )
+					);
 				}
 				echo '</td>';
 			}
@@ -98,7 +94,7 @@ if ( ! class_exists( 'FooPlugins\FooFields\Admin\Metaboxes\Fields\Repeater' ) ) 
 			echo '</tr></tfoot>';
 			echo '</table>';
 
-			FieldRenderer::render_html_tag( 'button', array(
+			self::render_html_tag( 'button', array(
 				'class' => 'button foofields-repeater-add'
 			), isset( $field['button'] ) ? $field['button'] : __('Add') );
 
@@ -106,13 +102,13 @@ if ( ! class_exists( 'FooPlugins\FooFields\Admin\Metaboxes\Fields\Repeater' ) ) 
 		}
 
 		function render_delete_button( $field ) {
-			FieldRenderer::render_html_tag( 'a', array(
+			self::render_html_tag( 'a', array(
 				'class' => 'foofields-repeater-delete',
 				'data-confirm' => isset( $field['delete-confirmation-message'] ) ? $field['delete-confirmation-message'] : __( 'Are you sure?' ),
 				'href' => '#delete',
 				'title' => __('Delete Row')
 			), null, false );
-			FieldRenderer::render_html_tag('span', array( 'class' => 'dashicons dashicons-trash' ) );
+			self::render_html_tag('span', array( 'class' => 'dashicons dashicons-trash' ) );
 			echo '</a>';
 		}
 
@@ -120,8 +116,10 @@ if ( ! class_exists( 'FooPlugins\FooFields\Admin\Metaboxes\Fields\Repeater' ) ) 
 		 * Gets the data posted for the repeater
 		 *
 		 * @param $sanitized_data
+		 *
+		 * @return array
 		 */
-		function get_posted_data_for_repeater( $sanitized_data ) {
+		function process_posted_value( $sanitized_data ) {
 			$results = array();
 			foreach ( array_keys( $sanitized_data ) as $fieldKey ) {
 				foreach ( $sanitized_data[$fieldKey] as $key => $value ) {

@@ -110,9 +110,10 @@ button[data-balloon]{overflow:visible}
 .foofields-field.foofields-type-icon.icon-yellow .dashicons{color:#fa0}
 .foofields-field.foofields-type-icon.icon-red{background-color:#fde6e6;border-color:#bb2f2f}
 .foofields-field.foofields-type-icon.icon-red .dashicons{color:#bb2f2f}
-.foofields-field-input-htmllist label{display:inline-block;margin-right:10px;border:solid 3px transparent;background:#aaa;border-radius:3px;padding:5px;line-height:0;margin-bottom:10px}
-.foofields-field-input-htmllist input:checked+label{border:solid 3px #444;background:#888}
-.foofields-field-input-htmllist label:hover{border:solid 3px #444}
+.foofields-type-radiolist .foofields-field-input label,.foofields-type-checkboxlist .foofields-field-input label{display:inline-block;margin-right:10px;padding:5px;line-height:0}
+.foofields-type-htmllist .foofields-field-input label{display:inline-block;margin-right:10px;border:solid 3px transparent;background:#aaa;border-radius:3px;padding:5px;line-height:0;margin-bottom:10px}
+.foofields-type-htmllist .foofields-field-input input:checked+label{border:solid 3px #444;background:#888}
+.foofields-type-htmllist .foofields-field-input label:hover{border:solid 3px #444}
 .foofields-field-input-selectize .selectize-control.loading .selectize-input:after{background:url(/wp-admin/images/spinner.gif) no-repeat;background-size:20px 20px;display:inline-block;opacity:.7;filter:alpha(opacity=70);width:20px;height:20px;top:30%;border:0;right:5px}
 .foofields-field-input-selectize .selectize-control .selectize-input{-webkit-box-shadow:0 0 0 transparent;box-shadow:0 0 0 transparent;border-radius:4px;border:1px solid #7e8993;background-color:#fff;color:#32373c;line-height:2;padding:5px 10px}
 .foofields-field-input-selectize-multi .selectize-control.multi.loading .selectize-input:after{background:url(/wp-admin/images/spinner.gif) no-repeat;background-size:20px 20px;display:inline-block;opacity:.7;filter:alpha(opacity=70);width:20px;height:20px;top:10px;border:0;position:absolute}
