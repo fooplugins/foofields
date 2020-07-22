@@ -11,8 +11,6 @@
 			self.$select = self.$input.children("select").first();
 			if ( self.$select.length ) {
 				self.$display = self.$input.children("input[type=hidden]").first();
-				_obj.extend(self.opt, self.$select.data());
-				self.endpoint = window.ajaxurl + '?' + self.opt.query;
 				var options = _obj.extend({}, self.opt.selectize, {
 					onChange: function (value) {
 						if (self.api instanceof window.Selectize) {
@@ -21,7 +19,7 @@
 						}
 					},
 					load: function (query, callback) {
-						$.get(self.endpoint, {
+						$.get(window.ajaxurl + '?' + self.opt.query, {
 							q: query
 						}).done(function (response) {
 							callback(response.results);

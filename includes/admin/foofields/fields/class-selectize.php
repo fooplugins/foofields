@@ -6,11 +6,31 @@ if ( ! class_exists( __NAMESPACE__ . '\Selectize' ) ) {
 
 	class Selectize extends Field {
 
+		protected $query;
+
 		function __construct( $container, $type, $field_config ) {
 			parent::__construct( $container, $type, $field_config );
 
+			$this->query = isset( $field_config['query'] ) ? $field_config['query'] : false;
+
 			//handle ajax selectize fields
-			add_action( 'wp_ajax_foofields_selectize_' . $this->unique_id . '-field', array( $this, 'ajax_handle_selectize' ) );
+			add_action( $this->field_ajax_action_name(), array( $this, 'ajax_handle_selectize' ) );
+		}
+
+		/**
+		 * Override the data attributes
+		 * @return array
+		 */
+		function data_attributes() {
+			$data_attributes = parent::data_attributes();
+			$data_attributes['data-query'] = build_query( array(
+				'action'     => $this->field_action_name(),
+				'nonce'      => $this->create_nonce()
+			) );
+			if ( isset( $this->placeholder ) ) {
+				$data_attributes['data-selectize'] = $this->process_data_attribute( 'selectize', array( 'placeholder' => $this->placeholder ) );
+			}
+			return $data_attributes;
 		}
 
 		/**
@@ -19,10 +39,6 @@ if ( ! class_exists( __NAMESPACE__ . '\Selectize' ) ) {
 		 * @param $optional_attributes
 		 */
 		function render_input( $override_attributes = false ) {
-			$query  = build_query( array(
-				'action'     => 'foofields_selectize',
-				'nonce'      => wp_create_nonce( $this->unique_id ),
-			) );
 
 			$value = $this->value();
 
@@ -49,9 +65,7 @@ if ( ! class_exists( __NAMESPACE__ . '\Selectize' ) ) {
 			self::render_html_tag( 'select', array(
 				'id'          => $this->unique_id,
 				'name'        => $this->name . '[value]',
-				'value'       => $value['value'],
-				'placeholder' => $this->config['placeholder'],
-				'data-query'  => $query
+				'value'       => $value['value']
 			), $inner, true, false );
 		}
 
@@ -64,49 +78,53 @@ if ( ! class_exists( __NAMESPACE__ . '\Selectize' ) ) {
 				if ( !empty( $s ) ) {
 					$results = array();
 
-					$query_type = isset( $this->config['query_type'] ) ? $this->config['query_type'] : 'post';
-					$query_data = isset( $this->config['query_data'] ) ? $this->config['query_data'] : 'page';
+					$this->container->do_action( 'Suggest\\' . $this->unique_id, $s, $this );
 
-					if ( 'post' === $query_type ) {
+					if ( is_array( $this->query ) ) {
+						$query_type = $this->query['type'];
+						$query_data = $this->query['data'];
 
-						$posts = get_posts(
-							array(
-								's'              => $s,
-								'posts_per_page' => 5,
-								'post_type'      => $query_data
-							)
-						);
+						if ( 'post' === $query_type ) {
 
-						foreach ( $posts as $post ) {
-							$results[] = array(
-								'id' => $post->ID,
-								'text' => $post->post_title
+							$posts = get_posts(
+								array(
+									's'              => $s,
+									'posts_per_page' => 5,
+									'post_type'      => $query_data
+								)
 							);
+
+							foreach ( $posts as $post ) {
+								$results[] = array(
+									'id'   => $post->ID,
+									'text' => $post->post_title
+								);
+							}
+
+						} else if ( 'taxonomy' == $query_type ) {
+
+							$terms = get_terms(
+								array(
+									'search'     => $s,
+									'taxonomy'   => $query_data,
+									'hide_empty' => false
+								)
+							);
+
+							foreach ( $terms as $term ) {
+								$results[] = array(
+									'id'   => $term->term_id,
+									'text' => $term->name
+								);
+							}
 						}
 
-					} else if ( 'taxonomy' == $query_type ) {
+						wp_send_json( array(
+							'results' => $results
+						) );
 
-						$terms = get_terms(
-							array(
-								'search'         => $s,
-								'taxonomy'       => $query_data,
-								'hide_empty'     => false
-							)
-						);
-
-						foreach ( $terms as $term ) {
-							$results[] = array(
-								'id' => $term->term_id,
-								'text' => $term->name
-							);
-						}
+						return;
 					}
-
-					wp_send_json( array(
-						'results' => $results
-					) );
-
-					return;
 				}
 			}
 		}
