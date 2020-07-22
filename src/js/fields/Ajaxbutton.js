@@ -17,8 +17,8 @@
 				self.$spinner.addClass( 'is-active' );
 
 				var postData = {
-					'action': 'foofields_ajaxbutton_' + self.id,
-					'nonce': $( this ).data( 'nonce' )
+					'action': 'foofields_' + self.id,
+					'nonce': self.opt.nonce
 				};
 
 				if ( $( '#post_ID' ).length ) {

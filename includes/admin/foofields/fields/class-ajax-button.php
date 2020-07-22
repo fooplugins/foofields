@@ -9,7 +9,17 @@ if ( ! class_exists( __NAMESPACE__ . '\AjaxButton' ) ) {
 			parent::__construct( $container, $type, $field_config );
 
 			//handle ajaxbutton field callbacks
-			add_action( 'wp_ajax_foofields_ajaxbutton_' . $this->unique_id . '-field', array( $this, 'ajax_handle_ajaxbutton' ) );
+			add_action( $this->field_ajax_action_name(), array( $this, 'ajax_handle_ajaxbutton' ) );
+		}
+
+		/**
+		 * Override the data attributes
+		 * @return array
+		 */
+		function data_attributes() {
+			$data_attributes = parent::data_attributes();
+			$data_attributes['data-nonce'] = $this->create_nonce();
+			return $data_attributes;
 		}
 
 		/**
@@ -22,8 +32,7 @@ if ( ! class_exists( __NAMESPACE__ . '\AjaxButton' ) ) {
 			$attributes = array(
 				'id'         => $this->unique_id,
 				'class'      => isset( $this->config['button_class'] ) ? $this->config['button_class'] : 'button button-primary button-large',
-				'href'       => '#' . $this->unique_id,
-				'data-nonce' => wp_create_nonce( $this->unique_id )
+				'href'       => '#' . $this->unique_id
 			);
 
 			$value = $this->value();
@@ -43,8 +52,7 @@ if ( ! class_exists( __NAMESPACE__ . '\AjaxButton' ) ) {
 		 */
 		function ajax_handle_ajaxbutton() {
 			if ( $this->verify_nonce() ) {
-				$action = $this->container->container_id() . '_' . $this->config['id'];
-				$this->container->do_action( 'AjaxButton\\' . $action, $this );
+				$this->container->do_action( 'AjaxButton\\' . $this->unique_id, $this );
 
 				if ( isset( $this->config['callback'] ) ) {
 					if ( is_callable( $this->config['callback'] ) ) {
