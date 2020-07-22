@@ -55,8 +55,14 @@
 				.find(":input").attr("disabled", !self.visible);
 		},
 		val: function(){
-			var self = this;
-			return self.opt.valueAttribute !== null ? self.$value.attr(self.opt.valueAttribute) : self.$value.val();
+			var self = this, $inputs = self.$value;
+			if (_is.string(self.opt.valueFilter)){
+				$inputs = $inputs.filter(self.opt.valueFilter);
+			}
+			return $inputs.map(function(){
+				var $el = $(this);
+				return self.opt.valueAttribute !== null ? $el.attr(self.opt.valueAttribute) : $el.val();
+			}).get().join(',');
 		},
 		onValueChanged: function(e){
 			var self = e.data.self;
@@ -90,6 +96,7 @@
 		showWhenOperator: null,
 		changeSelector: ":input",
 		valueSelector: ":input",
+		valueFilter: null,
 		valueAttribute: null
 	}, {
 		el: "foofields-field",
