@@ -6,12 +6,32 @@ if ( ! class_exists( __NAMESPACE__ . '\Suggest' ) ) {
 
 	class Suggest extends Field {
 
+		protected $query;
+
 		function __construct( $container, $type, $field_config ) {
 			parent::__construct( $container, $type, $field_config );
 
+			$this->query = isset( $field_config['query'] ) ? $field_config['query'] : false;
+
 			//handle ajax auto suggest fields
-			add_action( 'wp_ajax_foofields_suggest_' . $this->unique_id . '-field', array( $this, 'ajax_handle_autosuggest' ) );
+ 			add_action( $this->field_ajax_action_name(), array( $this, 'ajax_handle_autosuggest' ) );
 		}
+
+		/**
+		 * Override the data attributes
+		 * @return array
+		 */
+		function data_attributes() {
+			$data_attributes = parent::data_attributes();
+			$data_attributes['data-query'] = build_query( array(
+				'action'     => $this->field_action_name(),
+				'nonce'      => $this->create_nonce()
+			) );
+			$data_attributes['data-multiple'] = isset( $field['multiple'] ) ? $field['multiple'] : 'false';
+			$data_attributes['data-separator'] = isset( $field['separator'] ) ? $field['separator'] : ',';
+			return $data_attributes;
+		}
+
 
 		/**
 		 * Renders the autosuggest field
@@ -21,21 +41,12 @@ if ( ! class_exists( __NAMESPACE__ . '\Suggest' ) ) {
 		 * @return mixed|void
 		 */
 		function render_input( $override_attributes = false ) {
-			$query  = build_query( array(
-				'action'     => 'foofields_suggest',
-				'nonce'      => wp_create_nonce( $this->unique_id )
-			) );
-
 			$attributes = wp_parse_args( $override_attributes, array(
-				'type'                   => 'text',
-				'id'                     => $this->unique_id,
-				'name'                   => $this->name,
-				'value'                  => $this->value(),
-				'placeholder'            => isset( $field['placeholder'] ) ? $field['placeholder'] : '',
-				'data-suggest',
-				'data-suggest-query'     => $query,
-				'data-suggest-multiple'  => isset( $field['multiple'] ) ? $field['multiple'] : 'false',
-				'data-suggest-separator' => isset( $field['separator'] ) ? $field['separator'] : ','
+				'type'        => 'text',
+				'id'          => $this->unique_id,
+				'name'        => $this->name,
+				'value'       => $this->value(),
+				'placeholder' => $this->placeholder,
 			) );
 
 			self::render_html_tag( 'input', $attributes );
@@ -46,7 +57,6 @@ if ( ! class_exists( __NAMESPACE__ . '\Suggest' ) ) {
 		 */
 		function ajax_handle_autosuggest() {
 			if ( $this->verify_nonce() ) {
-				$action = $this->build_field_id( $field );
 
 				$s = $this->sanitize_text( 'q' );
 				$comma = _x( ',', 'page delimiter' );
@@ -60,11 +70,11 @@ if ( ! class_exists( __NAMESPACE__ . '\Suggest' ) ) {
 				$s = trim( $s );
 
 				if ( !empty( $s ) ) {
-					$this->metabox_field_group->do_action( 'Suggest\\' . $action, $s, $field );
+					$this->container->do_action( 'Suggest\\' . $this->unique_id, $s, $this );
 
-					if ( isset( $field['query_type'] ) && isset( $field['query_data'] ) ) {
-						$query_type = $field['query_type'];
-						$query_data = $field['query_data'];
+					if ( is_array( $this->query ) ) {
+						$query_type = $this->query['type'];
+						$query_data = $this->query['data'];
 
 						$results = array();
 
@@ -99,6 +109,7 @@ if ( ! class_exists( __NAMESPACE__ . '\Suggest' ) ) {
 
 						echo join( $results, "\n" );
 					}
+
 				}
 			}
 
