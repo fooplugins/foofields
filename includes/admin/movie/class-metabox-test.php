@@ -265,20 +265,33 @@ if ( ! class_exists( 'FooPlugins\FooFields\Admin\Movie\MetaboxTest' ) ) {
 							'fields' => array(
 								array(
 									'id'       => 'suggest',
-									'label'    => __( 'Suggest Field (autocomplete without a key)', 'foofields' ),
+									'label'    => __( 'Suggest Field (autocomplete using movies)', 'foofields' ),
 									'type'     => 'suggest',
-									'default'  => '',
 									'placeholder' => __( 'Start typing to search for movies', 'foofields' ),
-									'query_type' => 'post',
-									'query_data' => FOOFIELDS_CPT_MOVIE
+									'query' => array(
+										'type' => 'post',
+										'data' => FOOFIELDS_CPT_MOVIE
+									)
+								),
+								array(
+									'id'       => 'suggest2',
+									'label'    => __( 'Suggest Field (autocomplete using taxonomy actor)', 'foofields' ),
+									'type'     => 'suggest',
+									'placeholder' => __( 'Start typing to search for actors', 'foofields' ),
+									'query' => array(
+										'type' => 'taxonomy',
+										'data' => FOOFIELDS_CT_ACTOR
+									)
 								),
 								array(
 									'id'       => 'selectize',
 									'label'    => __( 'Selectize Field (autocomplete with a key)', 'foofields' ),
 									'type'     => 'selectize',
 									'placeholder' => __( 'Start typing to search for actors', 'foofields' ),
-									'query_type' => 'taxonomy',
-									'query_data' => FOOFIELDS_CT_ACTOR
+									'query' => array(
+										'type' => 'taxonomy',
+										'data' => FOOFIELDS_CT_ACTOR
+									)
 								),
 								array(
 									'id'       => 'selectize-multi',
