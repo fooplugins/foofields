@@ -28,7 +28,7 @@ if ( ! class_exists( __NAMESPACE__ . '\Selectize' ) ) {
 				'nonce'      => $this->create_nonce()
 			) );
 			if ( isset( $this->placeholder ) ) {
-				$data_attributes['data-selectize'] = $this->process_data_attribute( 'selectize', array( 'placeholder' => $this->placeholder ) );
+				$data_attributes['data-selectize'] = array( 'placeholder' => $this->placeholder );
 			}
 			return $data_attributes;
 		}
