@@ -20,6 +20,7 @@
       first: "foofields-first",
       last: "foofields-last",
       hidden: "foofields-hidden",
+      selected: "foofields-selected",
       container: {
         el: "foofields-container",
         content: {
@@ -5509,8 +5510,17 @@ FooFields.utils, FooFields.utils.fn, FooFields.utils.str);
       self.$el.toggleClass(self.instance.cls.hidden, !self.visible).find(":input").attr("disabled", !self.visible);
     },
     val: function val() {
-      var self = this;
-      return self.opt.valueAttribute !== null ? self.$value.attr(self.opt.valueAttribute) : self.$value.val();
+      var self = this,
+          $inputs = self.$value;
+
+      if (_is.string(self.opt.valueFilter)) {
+        $inputs = $inputs.filter(self.opt.valueFilter);
+      }
+
+      return $inputs.map(function () {
+        var $el = $(this);
+        return self.opt.valueAttribute !== null ? $el.attr(self.opt.valueAttribute) : $el.val();
+      }).get().join(',');
     },
     onValueChanged: function onValueChanged(e) {
       var self = e.data.self;
@@ -5551,6 +5561,7 @@ FooFields.utils, FooFields.utils.fn, FooFields.utils.str);
     showWhenOperator: null,
     changeSelector: ":input",
     valueSelector: ":input",
+    valueFilter: null,
     valueAttribute: null
   }, {
     el: "foofields-field",
@@ -5576,8 +5587,8 @@ FooFields.utils, FooFields.utils.fn, FooFields.utils.str);
 
         self.$spinner.addClass('is-active');
         var postData = {
-          'action': 'foofields_ajaxbutton_' + self.id,
-          'nonce': $(this).data('nonce')
+          'action': 'foofields_' + self.id,
+          'nonce': self.opt.nonce
         };
 
         if ($('#post_ID').length) {
@@ -5848,9 +5859,9 @@ FooFields.utils, FooFields.utils.fn, FooFields.utils.str);
     setup: function setup() {
       var self = this;
       self.$suggest = self.$input.children('input[type=text]').first();
-      self.$suggest.suggest(window.ajaxurl + '?' + self.$suggest.data('suggest-query'), {
-        multiple: $(this).data('suggest-multiple'),
-        multipleSep: $(this).data('suggest-separator')
+      self.$suggest.suggest(window.ajaxurl + '?' + self.opt.query, {
+        multiple: self.opt.mulitple,
+        multipleSep: self.opt.separator
       });
     }
   });
@@ -5868,3 +5879,30 @@ FooFields.utils, FooFields.utils.fn, FooFields.utils.str);
     _.__instance__.init(window.FOOFIELDS);
   });
 })(FooFields.$, FooFields, FooFields.utils, FooFields.utils.is, FooFields.utils.obj);
+"use strict";
+
+(function ($, _, _is, _obj) {
+  _.HtmlList = _.Field.extend({
+    updateSelected: function updateSelected() {
+      var self = this;
+      self.$change.each(function () {
+        var $el = $(this);
+        $el.parent('label').toggleClass(self.instance.cls.selected, $el.is(self.opt.valueFilter));
+      });
+    },
+    setup: function setup() {
+      this.updateSelected();
+    },
+    onValueChanged: function onValueChanged(e) {
+      var self = e.data.self;
+      self.updateSelected();
+      self.trigger("change", [self.val(), self]);
+    }
+  });
+
+  _.fields.register("htmllist", _.HtmlList, ".foofields-type-htmllist,.foofields-type-radiolist,.foofields-type-checkboxlist", {
+    changeSelector: "[type='checkbox'],[type='radio']",
+    valueSelector: "[type='checkbox'],[type='radio']",
+    valueFilter: ":checked"
+  }, {}, {});
+})(FooFields.$, FooFields, FooFields.utils.is, FooFields.utils.obj);
