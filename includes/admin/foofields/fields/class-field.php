@@ -109,15 +109,11 @@ if ( ! class_exists( __NAMESPACE__ . '\Field' ) ) {
 		 * @return array|mixed
 		 */
 		function data_attributes() {
-			$data_attributes = array();
 			if ( isset( $this->config['data'] ) && is_array( $this->config['data'] ) ) {
-				foreach ( $this->config['data'] as $key => $data_attribute ) {
-					$processed = $this->process_data_attribute( $key, $data_attribute );
-					$data_attributes['data-' . $key] = is_array( $processed ) ? json_encode( $processed ) : $processed;
-				}
+				return $this->config['data'];
 			}
 
-			return $data_attributes;
+			return array();
 		}
 
 		/**
@@ -131,7 +127,28 @@ if ( ! class_exists( __NAMESPACE__ . '\Field' ) ) {
 			if ( 'show-when' === $key && is_array( $value ) ) {
 				$value['field'] = $this->container->get_unique_id( array( 'id' => $value['field'] ) ) . '-field';
 			}
-			return $value;
+			return is_array( $value ) ? json_encode( $value ) : $value;
+		}
+
+		/***
+		 * Process all data attributes before they are rendered
+		 *
+		 * @param $data_attributes
+		 *
+		 * @return array
+		 */
+		function process_data_attributes( $data_attributes ) {
+			$result = array();
+			if ( is_array( $data_attributes ) && count( $data_attributes ) > 0 ) {
+				foreach ( $data_attributes as $key => $value ) {
+					$process_value = $this->process_data_attribute( $key, $value );
+					if ( strpos( $key, 'data-') !== 0 ) {
+						$key = 'data-' . $key;
+					}
+					$result[$key] = $process_value;
+				}
+			}
+			return $result;
 		}
 
 		/**
@@ -156,8 +173,9 @@ if ( ! class_exists( __NAMESPACE__ . '\Field' ) ) {
 				'class' => implode( ' ', $this->classes )
 			);
 			$data_attributes = $this->data_attributes();
+
 			if ( count( $data_attributes ) > 0 ) {
-				$field_attributes = array_merge( $field_attributes, $data_attributes );
+				$field_attributes = array_merge( $field_attributes, $this->process_data_attributes( $data_attributes ) );
 			}
 
 			self::render_html_tag('div', $field_attributes, null, false );
