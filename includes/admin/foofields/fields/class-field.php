@@ -71,6 +71,8 @@ if ( ! class_exists( __NAMESPACE__ . '\Field' ) ) {
 
 		protected $default;
 
+		protected $placeholder;
+
 		/**
 		 * Field constructor.
 		 *
@@ -93,6 +95,7 @@ if ( ! class_exists( __NAMESPACE__ . '\Field' ) ) {
 			$this->tooltip     = isset( $field_config['tooltip'] ) ? $field_config['tooltip'] : null;
 			$this->choices     = isset( $field_config['choices'] ) ? $field_config['choices'] : array();
 			$this->default     = isset( $field_config['default'] ) ? $field_config['default'] : null;
+			$this->placeholder = isset( $field_config['placeholder'] ) ? $field_config['placeholder'] : null;
 
 			$this->classes[] = 'foofields-field';
 			if ( isset( $field_config['class'] ) ) {
@@ -400,6 +403,15 @@ if ( ! class_exists( __NAMESPACE__ . '\Field' ) ) {
 		}
 
 		/**
+		 * Create a nonce for the field
+		 *
+		 * @return false|string
+		 */
+		protected function create_nonce() {
+			return wp_create_nonce( $this->unique_id );
+		}
+
+		/**
 		 * Get the value of the field from an array of posted data
 		 * @param $sanitized_form_data
 		 *
@@ -439,10 +451,6 @@ if ( ! class_exists( __NAMESPACE__ . '\Field' ) ) {
 			return $this->id;
 		}
 
-		public function field_action_name() {
-			return $this->container->container_id() . '_' . $this->id;
-		}
-
 		/**
 		 * Validates the field based on a value
 		 *
@@ -458,6 +466,24 @@ if ( ! class_exists( __NAMESPACE__ . '\Field' ) ) {
 			}
 
 			return $this->error !== false;
+		}
+
+		/**
+		 * Builds up an ajax action for the field
+		 *
+		 * @return string
+		 */
+		function field_ajax_action_name() {
+			return 'wp_ajax_' . $this->field_action_name();
+		}
+
+		/**
+		 * Builds up the action name used in ajax calls
+		 *
+		 * @return string
+		 */
+		function field_action_name() {
+			return 'foofields_' . $this->unique_id . '-field';
 		}
 	}
 }
