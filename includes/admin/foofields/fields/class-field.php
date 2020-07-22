@@ -178,32 +178,50 @@ if ( ! class_exists( __NAMESPACE__ . '\Field' ) ) {
 		 */
 		function render_tooltip() {
 			if ( isset( $this->tooltip ) ) {
-				$length = 'large';
-				$position = 'right';
 				$icon = 'dashicons-editor-help';
-				$tooltip = $this->tooltip;
+				$tooltip_attributes = $this->get_tooltip_attributes( $this->tooltip, 'right', 'large' );
 				if ( is_array( $this->tooltip ) ) {
-					if ( isset( $this->tooltip['length'] ) ) {
-						$length = $this->tooltip['length'];
-					}
-					if ( isset( $this->tooltip['position'] ) ) {
-						$position = $this->tooltip['position'];
-					}
 					if ( isset( $this->tooltip['icon'] ) ) {
 						$icon = $this->tooltip['icon'];
 					}
-					if ( isset( $this->tooltip['text'] ) ) {
-						$tooltip = $this->tooltip['text'];
-					}
 				}
-				self::render_html_tag( 'span', array(
-					'data-balloon-length' => $length,
-					'data-balloon-pos' => $position,
-					'data-balloon' => $tooltip
-				), null, false );
+				self::render_html_tag( 'span', $tooltip_attributes, null, false );
 				self::render_html_tag( 'i', array( 'class' => 'dashicons ' . $icon ) );
 				echo '</span>';
 			}
+		}
+
+		/**
+		 * Get data attributes for a tooltip from some tooltip config
+		 *
+		 * @param $tooltip_config
+		 * @param string $default_position
+		 * @param string $default_length
+		 *
+		 * @return array
+		 */
+		function get_tooltip_attributes( $tooltip_config, $default_position = 'down', $default_length = 'small' ) {
+			$tooltip = $tooltip_config;
+			$position = $default_position;
+			$length = $default_length;
+
+			if ( is_array( $tooltip_config ) ) {
+				if ( isset( $tooltip_config['length'] ) ) {
+					$length = $tooltip_config['length'];
+				}
+				if ( isset( $tooltip_config['position'] ) ) {
+					$position = $tooltip_config['position'];
+				}
+				if ( isset( $tooltip_config['text'] ) ) {
+					$tooltip = $tooltip_config['text'];
+				}
+			}
+
+			return array(
+				'data-balloon-length' => $length,
+				'data-balloon-pos' => $position,
+				'data-balloon' => $tooltip
+			);
 		}
 
 		/**

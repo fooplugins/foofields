@@ -70,6 +70,12 @@ if ( ! class_exists( 'FooPlugins\FooFields\Admin\Movie\MetaboxTest' ) ) {
 									'label'    => __( 'Block Field', 'foofields' ),
 									'desc'     => __( 'This field should have the label above the input', 'foofields' ),
 									'type'     => 'text',
+									'tooltip'  => array(
+										'text' => __('A tooltip to help the user'),
+										'length' => 'small',
+										'position' => 'top',
+										'icon' => 'dashicons-star-filled'
+									)
 								),
 								array(
 									'id'       => 'text1',
@@ -140,8 +146,22 @@ if ( ! class_exists( 'FooPlugins\FooFields\Admin\Movie\MetaboxTest' ) ) {
 									'label'    => __( 'Radio Fields Inline', 'foofields' ),
 									'desc'     => __( 'Radio Fields Inline', 'foofields' ),
 									'layout'   => 'inline',
+									'stacked'  => false,
 									'type'     => 'radiolist',
-									'spacer'   => '',
+									'choices' => array(
+										'option1' => __( 'Option 1', 'foofields' ),
+										'option2' => __( 'Option 2', 'foofields' ),
+										'option3' => __( 'Option 3', 'foofields' ),
+										'option4' => __( 'Option 4', 'foofields' ),
+									)
+								),
+								array(
+									'id'       => 'radioinlinestacked',
+									'label'    => __( 'Radio Fields Inline Stacked', 'foofields' ),
+									'desc'     => __( 'Radio Fields Inline', 'foofields' ),
+									'layout'   => 'inline',
+									'stacked'  => true,
+									'type'     => 'radiolist',
 									'choices' => array(
 										'option1' => __( 'Option 1', 'foofields' ),
 										'option2' => __( 'Option 2', 'foofields' ),
@@ -164,10 +184,10 @@ if ( ! class_exists( 'FooPlugins\FooFields\Admin\Movie\MetaboxTest' ) ) {
 								),
 								array(
 									'id'       => 'radiostacked',
-									'label'    => __( 'Radio Fields Stacked', 'foofields' ),
-									'desc'     => __( 'Radio Fields Stacked', 'foofields' ),
+									'label'    => __( 'Radio Block Stacked', 'foofields' ),
+									'desc'     => __( 'Radio Block Stacked', 'foofields' ),
 									'type'     => 'radiolist',
-									// 'spacer'   => '',
+									'stacked'  => true,
 									'choices' => array(
 										'option1' => __( 'Option 1', 'foofields' ),
 										'option2' => __( 'Option 2', 'foofields' ),
@@ -180,6 +200,7 @@ if ( ! class_exists( 'FooPlugins\FooFields\Admin\Movie\MetaboxTest' ) ) {
 									'label'    => __( 'Checkboxlist stacked', 'foofields' ),
 									'desc'     => __( 'A test checkboxlist field', 'foofields' ),
 									'type'     => 'checkboxlist',
+									'stacked'  => false,
 									'choices' => array(
 										'option1' => __( 'Option 1', 'foofields' ),
 										'option2' => __( 'Option 2', 'foofields' ),
@@ -189,7 +210,7 @@ if ( ! class_exists( 'FooPlugins\FooFields\Admin\Movie\MetaboxTest' ) ) {
 								),
 								array(
 									'id'       => 'htmllist',
-									'label'    => __( 'HTML List Field (radio)', 'foofields' ),
+									'label'    => __( 'HTML List (radio)', 'foofields' ),
 									'desc'     => __( 'A test html list field', 'foofields' ),
 									'type'     => 'htmllist',
 									'spacer'   => '',
@@ -207,7 +228,7 @@ if ( ! class_exists( 'FooPlugins\FooFields\Admin\Movie\MetaboxTest' ) ) {
 								),
 								array(
 									'id'       => 'htmllist2',
-									'label'    => __( 'HTML List Field (checkbox)', 'foofields' ),
+									'label'    => __( 'HTML List (checkbox)', 'foofields' ),
 									'list-type'=> 'checkbox',
 									'desc'     => __( 'A test html list field', 'foofields' ),
 									'type'     => 'htmllist',

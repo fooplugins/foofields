@@ -31,25 +31,19 @@ if ( ! class_exists( __NAMESPACE__ . '\InputList' ) ) {
 
 		function render_input( $override_attributes = false ) {
 			$i      = 0;
-			$spacer = isset( $this->config['spacer'] ) ? $this->config['spacer'] : '<div class="foofields-spacer"></div>';
 			foreach ( $this->config['choices'] as $value => $item ) {
-				$label_attributes = array(
-					'for' => $this->unique_id . $i
-				);
-				$encode = true;
+				$label_attributes = array();
+				$inner = null;
 				if ( is_array( $item ) ) {
-					$label = $item['label'];
+					$inner = $item['label'];
 					if ( isset( $item['tooltip'] ) ) {
-						$label_attributes['data-balloon'] = $item['tooltip'];
-						$label_attributes['data-balloon-length'] = isset( $item['tooltip-length'] ) ? $item['tooltip-length'] : 'small';
-						$label_attributes['data-balloon-pos'] = isset( $item['tooltip-position'] ) ? $item['tooltip-position'] : 'down';
+						$label_attributes = array_merge( $label_attributes, $this->get_tooltip_attributes( $item['tooltip'] ) );
 					}
 					if ( isset( $item['html'] ) ) {
-						$label = wp_kses_post( $item['html'] );
-						$encode = false;
+						$inner = wp_kses_post( $item['html'] );
 					}
 				} else {
-					$label = $item;
+					$inner = '<span>' . esc_html( $item ) . '</span>';
 				}
 				$input_attributes = array(
 					'name' => $this->name,
@@ -58,10 +52,6 @@ if ( ! class_exists( __NAMESPACE__ . '\InputList' ) ) {
 					'value' => $value,
 					'tabindex' => $i
 				);
-
-				if ( $this->type === 'htmllist' ) {
-					$input_attributes['style'] = 'display:none';
-				}
 
 				$field_value = $this->value();
 
@@ -76,12 +66,10 @@ if ( ! class_exists( __NAMESPACE__ . '\InputList' ) ) {
 						$input_attributes['checked'] = 'checked';
 					}
 				}
-
+				self::render_html_tag( 'label', $label_attributes, null, false );
 				self::render_html_tag( 'input', $input_attributes );
-				self::render_html_tag( 'label', $label_attributes, $label, true, $encode );
-				if ( $i < count( $this->config['choices'] ) - 1 ) {
-					echo $spacer;
-				}
+				echo $inner;
+				echo '</label>';
 				$i ++;
 			}
 		}
