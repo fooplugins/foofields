@@ -6,6 +6,8 @@ if ( ! class_exists( __NAMESPACE__ . '\SelectizeMulti' ) ) {
 
 	class SelectizeMulti extends Field {
 
+		protected $selected_values = null;
+
 		function __construct( $container, $type, $field_config ) {
 			parent::__construct( $container, $type, $field_config );
 
@@ -15,27 +17,22 @@ if ( ! class_exists( __NAMESPACE__ . '\SelectizeMulti' ) ) {
 			add_action( $hook . 'AfterSavePostMeta', array( $this, 'save_taxonomy_mapping' ), 10, 2 );
 
 			//handle ajax selectize multiple add
-			add_action( 'wp_ajax_foofields_selectize_multi_add_' . $this->unique_id . '-field', array( $this, 'ajax_handle_selectize_multi_add' ) );
+			add_action( $this->field_ajax_action_name(), array( $this, 'ajax_handle_selectize_multi_add' ) );
 		}
 
 		/**
 		 * Render the selectize multi field
 		 *
-		 * @param $optional_attributes
+		 * @param $override_attributes
 		 */
 		function render_input( $override_attributes = false ) {
-			global $post;
-			$inner = '';
+			$inner = '<option value=""></option>';
 
-			$field_value = $this->value();
+			$choices = array();
 
-			$selected_values = is_array( $field_value ) ? $field_value : array();
-
-			if ( isset( $this->config['binding'] ) &&
-			     isset( $this->config['binding']['type'] ) &&
-			     $this->config['binding']['type'] === 'taxonomy' &&
-			     isset( $this->config['binding']['taxonomy'] ) ) {
-
+			if ( isset( $this->config['choices'] ) ) {
+				$choices = $this->config['choices'];
+			} else if ( $this->is_bound_to_taxonomy() ) {
 				$taxonomy = $this->config['binding']['taxonomy'];
 
 				$terms = get_terms( array(
@@ -43,39 +40,69 @@ if ( ! class_exists( __NAMESPACE__ . '\SelectizeMulti' ) ) {
 					'hide_empty' => false,
 				) );
 
-				$this->config['choices'] = array();
+				$choices = array();
 
 				foreach ( $terms as $term ) {
-					$this->config['choices'][] = array(
+					$choices[] = array(
 						'value' => $term->term_id,
 						'display' => $term->name
 					);
 				}
+			}
+
+			//build up options
+			foreach ( $choices as $choice ) {
+				$selected = in_array( $choice['value'], $this->get_selected_values() ) ? ' selected="selected"' : '';
+				$inner .= '<option value="' . esc_attr( $choice['value'] ) . '"' . $selected . '>' . esc_html( $choice['display'] ) . '</option>';
+			}
+
+			self::render_html_tag( 'select', array(
+				'id'          => $this->unique_id,
+				'name'        => $this->name . '[]'
+			), $inner, true, false );
+		}
+
+		function get_selected_values() {
+			if ( isset( $this->selected_values ) ) {
+				return $this->selected_values;
+			}
+
+			global $post;
+
+			$field_value = $this->value();
+
+			$this->selected_values = is_array( $field_value ) ? $field_value : array();
+
+			if ( $this->is_bound_to_taxonomy() ) {
+
+				$taxonomy = $this->config['binding']['taxonomy'];
 
 				//get related terms for the current post (if there is one)
 				if ( isset( $post ) &&
-				     count( $selected_values ) === 0 &&
+				     count( $this->selected_values ) === 0 &&
 				     isset( $this->config['binding']['sync_with_post'] ) &&
 				     $this->config['binding']['sync_with_post'] ) {
 
 					$related_terms = get_the_terms( $post, $taxonomy );
 
 					if ( $related_terms !== false && !is_wp_error( $related_terms ) ) {
-						$selected_values = wp_list_pluck( $related_terms, 'term_id' );
+						$this->selected_values = wp_list_pluck( $related_terms, 'term_id' );
 					}
 				}
 			}
 
-			//build up options
-			if ( isset( $this->config['choices'] ) ) {
-				foreach ( $this->config['choices'] as $choice ) {
-					$selected = in_array( $choice['value'], $selected_values ) ? ' selected="selected"' : '';
-					$inner .= '<option value="' . esc_attr( $choice['value'] ) . '"' . $selected . '>' . esc_html( $choice['display'] ) . '</option>';
-				}
-			}
+			return $this->selected_values;
+		}
+
+		function data_attributes() {
+			$data_attributes = parent::data_attributes();
+
+			$data_attributes['nonce'] = $this->create_nonce();
+			$data_attributes['action'] = $this->field_action_name();
+			$data_attributes['create'] = isset( $this->config['create'] ) ? $this->config['create'] : false;
 
 			$selectize_options = array(
-				'items' => $selected_values,
+				'items' => $this->get_selected_values(),
 				'closeAfterSelect' => isset( $this->config['close_after_select'] ) ? $this->config['close_after_select'] : true
 			);
 
@@ -83,15 +110,13 @@ if ( ! class_exists( __NAMESPACE__ . '\SelectizeMulti' ) ) {
 				$selectize_options['maxItems'] = $this->config['max_items'];
 			}
 
-			self::render_html_tag( 'select', array(
-				'id'          => $this->unique_id,
-				'name'        => $this->name . '[]',
-				'placeholder' => $this->config['placeholder'],
-				'data-action' => 'foofields_selectize_multi_add',
-				'data-nonce'  => wp_create_nonce( $this->unique_id ),
-				'data-create' => isset( $this->config['create'] ) ? $this->config['create'] : false,
-				'data-selectize'  => json_encode( $selectize_options )
-			), $inner, true, false );
+			if ( isset( $this->placeholder ) ) {
+				$selectize_options['placeholder'] = $this->placeholder;
+			}
+
+			$data_attributes['selectize'] = $selectize_options;
+
+			return $data_attributes;
 		}
 
 		/**
@@ -101,12 +126,8 @@ if ( ! class_exists( __NAMESPACE__ . '\SelectizeMulti' ) ) {
 		 * @param $state
 		 */
 		function save_taxonomy_mapping( $post_id, $state ) {
-			if ( isset( $this->config['binding'] ) &&
-			     isset( $this->config['binding']['type'] ) &&
-			     $this->config['binding']['type'] === 'taxonomy' &&
-			     isset( $this->config['binding']['taxonomy'] ) &&
-			     isset( $this->config['binding']['sync_with_post'] ) &&
-			     $this->config['binding']['sync_with_post'] ) {
+
+			if ( $this->is_bound_to_taxonomy_and_synced() ) {
 
 				$taxonomy = $this->config['binding']['taxonomy'];
 
@@ -128,6 +149,19 @@ if ( ! class_exists( __NAMESPACE__ . '\SelectizeMulti' ) ) {
 			}
 		}
 
+		function is_bound_to_taxonomy() {
+			return isset( $this->config['binding'] ) &&
+			       isset( $this->config['binding']['type'] ) &&
+			       $this->config['binding']['type'] === 'taxonomy' &&
+			       isset( $this->config['binding']['taxonomy'] );
+		}
+
+		function is_bound_to_taxonomy_and_synced() {
+			return $this->is_bound_to_taxonomy() &&
+			       isset( $this->config['binding']['sync_with_post'] ) &&
+			       $this->config['binding']['sync_with_post'];
+		}
+
 		/**
 		 * Ajax handler for Selectize Multi fields add
 		 */
@@ -144,10 +178,7 @@ if ( ! class_exists( __NAMESPACE__ . '\SelectizeMulti' ) ) {
 						}
 					}
 
-					if ( isset( $this->config['binding'] ) &&
-					     isset( $this->config['binding']['type'] ) &&
-					     $this->config['binding']['type'] === 'taxonomy' &&
-					     isset( $this->config['binding']['taxonomy'] ) ) {
+					if ( $this->is_bound_to_taxonomy() ) {
 
 						$taxonomy = $this->config['binding']['taxonomy'];
 

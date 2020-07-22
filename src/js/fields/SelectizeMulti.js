@@ -10,13 +10,13 @@
 			var self = this;
 			self.$select = self.$input.children("select").first();
 			self.create = false;
-			if ( self.$select.data('create') ) {
+			if ( self.opt.create ) {
 				self.create = function(input, callback) {
 					this.close();
 					self.$input.children(".selectize-control").addClass('loading');
 					var data = {
-						action: self.$select.data('action'),
-						nonce: self.$select.data('nonce'),
+						action: self.opt.action,
+						nonce: self.opt.nonce,
 						add: input
 					};
 

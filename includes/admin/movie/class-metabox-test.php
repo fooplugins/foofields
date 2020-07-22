@@ -304,14 +304,14 @@ if ( ! class_exists( 'FooPlugins\FooFields\Admin\Movie\MetaboxTest' ) ) {
 										array( 'value' => 2, 'display' => __( 'option 3', 'foofields' ) ),
 										array( 'value' => 3, 'display' => __( 'option 4', 'foofields' ) ),
 										array( 'value' => 4, 'display' => __( 'option 5', 'foofields' ) ),
-									),
-									'create' => false
+									)
 								),
 								array(
 									'id'       => 'selectize-multi-taxonomy',
 									'label'    => __( 'Selectize Multi Select Field (Taxonomy)', 'foofields' ),
 									'type'     => 'selectize-multi',
 									'placeholder' => __( 'Choose from the actor taxonomy', 'foofields' ),
+									'create' => true,
 									//'close_after_select' => true,
 									//'max_items' => 2,
 									'binding' => array(
