@@ -25,8 +25,15 @@ if ( ! class_exists( 'FooPlugins\FooFields\Admin\Movie\MetaboxTest' ) ) {
 									'desc'     => __( 'This tab shows all the simple fields', 'foofields' ),
 									'type'     => 'heading',
 									'data'     => array(
-										//field data options
+										'show-when' => array (
+											'field' => 'text',
+											'value' => '',
+											'operator' => '!=='
+										),
+										'another-option' => '1234',
+										'something' => 'abcd'
 									)
+									//data-show-when="{\"field\": \"text\", \"value\": \"\", \"operator\": \"!==\"}" data-another-option="1234" data-something="abcd"
 								),
 								array(
 									'id'       => 'help',
