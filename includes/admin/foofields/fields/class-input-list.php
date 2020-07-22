@@ -9,6 +9,7 @@ if ( ! class_exists( __NAMESPACE__ . '\InputList' ) ) {
 	class InputList extends Field {
 
 		protected $list_type = 'radio';
+		protected $stacked = false;
 
 		/**
 		 * Field constructor.
@@ -26,6 +27,14 @@ if ( ! class_exists( __NAMESPACE__ . '\InputList' ) ) {
 
 			if ( 'checkboxlist' === $this->type ) {
 				$this->list_type = 'checkbox';
+			}
+			$this->stacked = isset( $field_config['stacked'] ) && $field_config['stacked'];
+		}
+
+		function pre_render(){
+			parent::pre_render();
+			if ( $this->stacked ){
+				$this->classes[] = 'foofields-stacked';
 			}
 		}
 
