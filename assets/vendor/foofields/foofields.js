@@ -5662,6 +5662,33 @@ FooFields.utils, FooFields.utils.fn, FooFields.utils.str);
 "use strict";
 
 (function ($, _, _is, _obj) {
+  _.HtmlList = _.Field.extend({
+    updateSelected: function updateSelected() {
+      var self = this;
+      self.$change.each(function () {
+        var $el = $(this);
+        $el.parent('label').toggleClass(self.instance.cls.selected, $el.is(self.opt.valueFilter));
+      });
+    },
+    setup: function setup() {
+      this.updateSelected();
+    },
+    onValueChanged: function onValueChanged(e) {
+      var self = e.data.self;
+      self.updateSelected();
+      self.trigger("change", [self.val(), self]);
+    }
+  });
+
+  _.fields.register("htmllist", _.HtmlList, ".foofields-type-htmllist,.foofields-type-radiolist,.foofields-type-checkboxlist", {
+    changeSelector: "[type='checkbox'],[type='radio']",
+    valueSelector: "[type='checkbox'],[type='radio']",
+    valueFilter: ":checked"
+  }, {}, {});
+})(FooFields.$, FooFields, FooFields.utils.is, FooFields.utils.obj);
+"use strict";
+
+(function ($, _, _is, _obj) {
   _.Repeater = _.Field.extend({
     setup: function setup() {
       var self = this;
@@ -5718,10 +5745,6 @@ FooFields.utils, FooFields.utils.fn, FooFields.utils.str);
       if (self.$select.length) {
         self.$display = self.$input.children("input[type=hidden]").first();
 
-        _obj.extend(self.opt, self.$select.data());
-
-        self.endpoint = window.ajaxurl + '?' + self.opt.query;
-
         var options = _obj.extend({}, self.opt.selectize, {
           onChange: function onChange(value) {
             if (self.api instanceof window.Selectize) {
@@ -5730,7 +5753,7 @@ FooFields.utils, FooFields.utils.fn, FooFields.utils.str);
             }
           },
           load: function load(query, callback) {
-            $.get(self.endpoint, {
+            $.get(window.ajaxurl + '?' + self.opt.query, {
               q: query
             }).done(function (response) {
               callback(response.results);
@@ -5778,13 +5801,13 @@ FooFields.utils, FooFields.utils.fn, FooFields.utils.str);
       self.$select = self.$input.children("select").first();
       self.create = false;
 
-      if (self.$select.data('create')) {
+      if (self.opt.create) {
         self.create = function (input, callback) {
           this.close();
           self.$input.children(".selectize-control").addClass('loading');
           var data = {
-            action: self.$select.data('action'),
-            nonce: self.$select.data('nonce'),
+            action: self.opt.action,
+            nonce: self.opt.nonce,
             add: input
           };
           jQuery.ajax({
@@ -5879,30 +5902,3 @@ FooFields.utils, FooFields.utils.fn, FooFields.utils.str);
     _.__instance__.init(window.FOOFIELDS);
   });
 })(FooFields.$, FooFields, FooFields.utils, FooFields.utils.is, FooFields.utils.obj);
-"use strict";
-
-(function ($, _, _is, _obj) {
-  _.HtmlList = _.Field.extend({
-    updateSelected: function updateSelected() {
-      var self = this;
-      self.$change.each(function () {
-        var $el = $(this);
-        $el.parent('label').toggleClass(self.instance.cls.selected, $el.is(self.opt.valueFilter));
-      });
-    },
-    setup: function setup() {
-      this.updateSelected();
-    },
-    onValueChanged: function onValueChanged(e) {
-      var self = e.data.self;
-      self.updateSelected();
-      self.trigger("change", [self.val(), self]);
-    }
-  });
-
-  _.fields.register("htmllist", _.HtmlList, ".foofields-type-htmllist,.foofields-type-radiolist,.foofields-type-checkboxlist", {
-    changeSelector: "[type='checkbox'],[type='radio']",
-    valueSelector: "[type='checkbox'],[type='radio']",
-    valueFilter: ":checked"
-  }, {}, {});
-})(FooFields.$, FooFields, FooFields.utils.is, FooFields.utils.obj);
