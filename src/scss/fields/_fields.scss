@@ -1,9 +1,8 @@
 // Input field wrapper
 // ------------------------------------
 .foofields-field {
-  $padding-field: 5px 10px;
-
   display: flex;
+  padding: 0;
   margin-bottom: $m-md;
 
   &:last-child {
@@ -14,41 +13,24 @@
   // ------------------------------------
   .foofields-label {
 	flex: 1;
-	font-weight: bold;
+	font-weight: 600;
+	padding: $padded;
   }
 
   .foofields-field-input {
 	flex: 1;
+	padding: $padded;
 
 	label {
 	  vertical-align: text-bottom;
 	}
   }
 
-  .foofields-field-input-radio {
-	display: flex;
-  }
-
-
   // Field layouts
   // ------------------------------------
   // Stacked label and field
   &.foofields-layout-block {
 	flex-direction: column;
-
-	.foofields-label {
-	  padding: 0 0 5px 0;
-	}
-
-	.foofields-field-input-radiolist,
-	.foofields-field-input-checkboxlist {
-	  display: block;
-
-	  .foofields-spacer {
-		display: block;
-		height: $m-xs;
-	  }
-	}
   }
 
   // Inline label and fields
@@ -57,25 +39,6 @@
 
 	.foofields-label {
 	  max-width: 150px;
-	  padding: 8px 0;
-	}
-
-	.foofields-field-input {
-	  padding: 8px 0;
-	}
-
-	.foofields-field-input-radiolist,
-	.foofields-field-input-checkboxlist {
-	  flex-direction: row;
-	  align-items: center;
-
-	  label {
-		margin-right: $m-sm;
-	  }
-
-	  .foofields-spacer {
-		display: none;
-	  }
 	}
   }
 
@@ -92,21 +55,18 @@
   select,
   textarea {
 	width: 100%;
-	padding: $padding-field;
   }
 
   textarea {
 	min-height: 100px;
   }
 
-
   .foofields-field-description {
 	font-style: italic;
-	padding: 5px 10px;
-	margin-top: 4px;
+	padding: $padded;
 	display: block;
-	background-color: $yellow;
 	flex: 1;
+	min-width: 100%;
   }
 
   .foofields-repeater {

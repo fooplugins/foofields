@@ -1,26 +1,28 @@
-.foofields-field-input-ajaxbutton {
-  .spinner {
-	float: none;
-	display: none;
+.foofields-type-ajaxbutton {
+  .foofields-field-input {
+	.spinner {
+	  float: none;
+	  display: none;
 
-	&.is-active {
-	  display: inline-block;
-	}
-  }
-
-  .response-message {
-	display: none;
-	line-height: 2.30769231; /* 30px */
-	vertical-align: middle;
-	padding: 0 10px;
-
-	&.success {
-	  display: inline-block;
+	  &.is-active {
+		display: inline-block;
+	  }
 	}
 
-	&.error {
-	  display: inline-block;
-	  color: #800;
+	.response-message {
+	  display: none;
+	  line-height: 2.30769231; /* 30px */
+	  vertical-align: middle;
+	  padding: 0 10px;
+
+	  &.success {
+		display: inline-block;
+	  }
+
+	  &.error {
+		display: inline-block;
+		color: #800;
+	  }
 	}
   }
 }

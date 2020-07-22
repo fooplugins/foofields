@@ -3,11 +3,27 @@
 .foofields-type-radiolist,
 .foofields-type-checkboxlist {
   .foofields-field-input {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	flex-wrap: wrap;
+
 	label {
 	  display: inline-block;
-	  margin-right: 10px;
+	  margin-right: $m-sm;
 	  padding: 5px;
-	  line-height: 0;
+	  line-height: 1;
+	}
+  }
+  &.foofields-stacked {
+	.foofields-field-input {
+	  flex-direction: column;
+	  align-items: flex-start;
+
+	  label {
+		display: block;
+		margin-right: 0;
+	  }
 	}
   }
 }
