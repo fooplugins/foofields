@@ -103,7 +103,9 @@ if ( ! class_exists( __NAMESPACE__ . '\Base' ) ) {
 			$attributes     = array_map( 'esc_attr', $attributes );
 			$attributePairs = [];
 			foreach ( $attributes as $key => $val ) {
-				if ( is_int( $key ) ) {
+				if ( is_null( $val ) ) {
+					continue;
+				} else if ( is_int( $key ) ) {
 					$attributePairs[] = esc_attr( $val );
 				} else {
 					$val              = esc_attr( $val );
