@@ -18,6 +18,13 @@ if ( ! class_exists( __NAMESPACE__ . '\Textarea' ) ) {
 			self::render_html_tag( 'textarea', $attributes, esc_textarea( $this->value() ), true, false );
 		}
 
+		/**
+		 * Textareas need some special sanitization
+		 *
+		 * @param $unsanitized_value
+		 *
+		 * @return array|string
+		 */
 		function process_posted_value( $unsanitized_value ) {
 			return $this->sanitize_textarea( $unsanitized_value );
 		}
