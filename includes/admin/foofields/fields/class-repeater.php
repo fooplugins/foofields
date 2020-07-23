@@ -2,18 +2,47 @@
 
 namespace FooPlugins\FooFields\Admin\FooFields\Fields;
 
+use FooPlugins\FooFields\Admin\FooFields\Container;
 use WP_User;
 
 if ( ! class_exists( __NAMESPACE__ . '\Repeater' ) ) {
 
 	class Repeater extends Field {
+
+		protected $add_button_text;
+		protected $no_data_message;
+		protected $table_clsss;
+		protected $fields = false;
+
+		/**
+		 * Field constructor.
+		 *
+		 * @param $container Container
+		 * @param $type string
+		 * @param $field_config array
+		 */
+		function __construct( $container, $type, $field_config ) {
+			parent::__construct( $container, $type, $field_config );
+
+			$this->add_button_text = isset( $field_config['add_button_text'] ) ? $field_config['add_button_text'] : __( 'Nothing found', $container->text_domain );
+			$this->no_data_message = isset( $field_config['no_data_message'] ) ? $field_config['no_data_message'] : __( 'Nothing found', $container->text_domain );
+			$this->table_clsss = isset( $field_config['table_clsss'] ) ? $field_config['table_clsss'] : '';
+			if ( isset( $field_config['fields'] ) ) {
+				$this->fields = $field_config['fields'];
+			}
+		}
+
 		/**
 		 * Render the repeater field
 		 *
 		 * @return mixed|void
 		 */
 		function render_input( $override_attributes = false ) {
-			$field = $this->config;
+			if ( false === $this->fields ) {
+				echo __( 'ERROR No fields for repeater!', $this->container->text_domain );
+				return;
+			}
+
 			$value = $this->value();
 
 			$has_rows = is_array( $value ) && count( $value ) > 0;
@@ -24,15 +53,15 @@ if ( ! class_exists( __NAMESPACE__ . '\Repeater' ) ) {
 
 			self::render_html_tag( 'p', array(
 				'class' => 'foofields-repeater-no-data-message'
-			), isset( $field['no-data-message'] ) ? $field['no-data-message'] : __( 'Nothing found' ) );
+			), $this->no_data_message );
 
 			self::render_html_tag('table', array(
-				'class' => 'wp-list-table widefat striped' . ( isset( $field['table-class'] ) ? ' ' . $field['table-class'] : '' )
+				'class' => 'wp-list-table widefat striped ' . $this->table_clsss
 			), null, false );
 
 			//render the table column headers
 			echo '<thead><tr>';
-			foreach ( $field['fields'] as $child_field ) {
+			foreach ( $this->fields as $child_field ) {
 				$column_attributes = array();
 				if ( isset( $child_field['width'] ) ) {
 					$column_attributes['width'] = $child_field['width'];
@@ -48,7 +77,7 @@ if ( ! class_exists( __NAMESPACE__ . '\Repeater' ) ) {
 				foreach( $value as $row ) {
 					$row_index++;
 					echo '<tr>';
-					foreach ( $field['fields'] as $child_field ) {
+					foreach ( $this->fields as $child_field ) {
 						if ( array_key_exists( $child_field['id'], $row ) ) {
 							$child_field['value'] = $row[ $child_field['id'] ];
 						}
@@ -57,15 +86,11 @@ if ( ! class_exists( __NAMESPACE__ . '\Repeater' ) ) {
 							$child_field['html'] = $row_index;
 						}
 						echo '<td>';
-						if ( 'manage' === $child_field['type'] ) {
-							$this->render_delete_button( $child_field );
-						} else {
-							$child_field['id'] = $field['id'] . '_' . $child_field['id'] . '_' . $row_index;
-							$field_object = $this->container->create_field_instance( $child_field['type'], $child_field );
-							$field_object->render_input( array(
-									'name' => $this->container->get_field_name( $field ) . '[' . $child_field['id'] . '][]'
-							) );
-						}
+						$child_field['id'] = $this->unique_id . '_' . $child_field['id'] . '_' . $row_index;
+						$field_object = $this->container->create_field_instance( $child_field['type'], $child_field );
+						$field_object->render_input( array(
+								'name' => $this->name . '[' . $child_field['id'] . '][]'
+						) );
 						echo '</td>';
 					}
 					echo '</tr>';
@@ -76,18 +101,14 @@ if ( ! class_exists( __NAMESPACE__ . '\Repeater' ) ) {
 			//render the repeater footer for adding
 			echo '<tfoot><tr>';
 
-			foreach ( $field['fields'] as $child_field ) {
+			foreach ( $this->fields as $child_field ) {
 				echo '<td>';
-				if ( 'manage' === $child_field['type'] ) {
-					$this->render_delete_button( $child_field );
-				} else {
-					$child_field['id'] = $field['id'] . '_' . $child_field['id'];
-					$field_object = $this->container->create_field_instance( $child_field['type'], $child_field );
-					$field_object->render_input( array(
-						'name' => $this->container->get_field_name( $field ) . '[' . $child_field['id'] . '][]',
-						'disabled' => 'disabled' )
-					);
-				}
+				$child_field['id'] = $this->unique_id . '_' . $child_field['id'];
+				$field_object = $this->container->create_field_instance( $child_field['type'], $child_field );
+				$field_object->render_input( array(
+					'name' => $this->name . '[' . $child_field['id'] . '][]',
+					'disabled' => 'disabled' )
+				);
 				echo '</td>';
 			}
 
@@ -96,20 +117,9 @@ if ( ! class_exists( __NAMESPACE__ . '\Repeater' ) ) {
 
 			self::render_html_tag( 'button', array(
 				'class' => 'button foofields-repeater-add'
-			), isset( $field['button'] ) ? $field['button'] : __('Add') );
+			), $this->add_button_text );
 
 			echo '</div>';
-		}
-
-		function render_delete_button( $field ) {
-			self::render_html_tag( 'a', array(
-				'class' => 'foofields-repeater-delete',
-				'data-confirm' => isset( $field['delete-confirmation-message'] ) ? $field['delete-confirmation-message'] : __( 'Are you sure?' ),
-				'href' => '#delete',
-				'title' => __('Delete Row')
-			), null, false );
-			self::render_html_tag('span', array( 'class' => 'dashicons dashicons-trash' ) );
-			echo '</a>';
 		}
 
 		/**
