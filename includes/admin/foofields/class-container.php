@@ -46,6 +46,8 @@ if ( ! class_exists( __NAMESPACE__ . '\Container' ) ) {
 
 		protected $validation_errors = array();
 
+		const STATE_KEY = '__state';
+
 		protected $show_rules = array(
 			'tabs'   => array(),
 			'fields' => array()
@@ -402,6 +404,13 @@ if ( ! class_exists( __NAMESPACE__ . '\Container' ) ) {
 
 			self::render_html_tag( 'div', array( 'class' => implode( ' ', $this->get_container_classes() ) ), null, false );
 
+			//render the state input
+			self::render_html_tag( 'input', array(
+				'type' => 'hidden',
+				'name' => $this->container_id() . '[' . self::STATE_KEY . ']',
+				'value' => $this->container_last_state_value()
+			) );
+
 			$this->render_tabs( $this->config['fields'] );
 
 			$this->render_contents( $this->config['fields'] );
@@ -482,6 +491,14 @@ if ( ! class_exists( __NAMESPACE__ . '\Container' ) ) {
 			if ( !$this->show_rule_is_visible( $tab_id, 'tabs' ) ) {
 				$tab_classes[] = 'foofields-hidden';
 			}
+
+			$last_state = $this->container_last_state_value();
+			$content_id = $tab_id . '-content';
+
+			if ( $last_state === $content_id ) {
+				$tab_classes[] = 'foofields-active';
+			}
+
 			$tab_attributes = array(
 				'id' => $tab_id . '-tab',
 				'class' => implode(' ', $tab_classes )
@@ -493,7 +510,7 @@ if ( ! class_exists( __NAMESPACE__ . '\Container' ) ) {
 			}
 
 			self::render_html_tag( 'li', $tab_attributes, null, false );
-			self::render_html_tag( 'a', array( 'class' => $anchor_class, 'href' => '#' . $tab_id . '-content' ), null, false );
+			self::render_html_tag( 'a', array( 'class' => $anchor_class, 'href' => '#' . $content_id ), null, false );
 			if ( isset( $tab['icon'] ) ) {
 				self::render_html_tag( 'span', array( 'class' => 'foofields-tab-icon dashicons ' . $tab['icon'] ) );
 			}
@@ -528,6 +545,13 @@ if ( ! class_exists( __NAMESPACE__ . '\Container' ) ) {
 				$classes[] = $content['class'];
 			}
 			$content_id = $this->get_unique_id( $content ) . '-content';
+
+			$last_state = $this->container_last_state_value();
+
+			if ( $last_state === $content_id ) {
+				$classes[] = 'foofields-active';
+			}
+
 			self::render_html_tag( 'div', array(
 				'class' => implode( ' ', $classes ),
 				'id'    => $content_id
@@ -584,6 +608,21 @@ if ( ! class_exists( __NAMESPACE__ . '\Container' ) ) {
 		}
 
 		/**
+		 * Returns the saved state for the container
+		 *
+		 * @return mixed|string
+		 */
+		function container_last_state_value() {
+			$state = $this->get_state();
+
+			if ( array_key_exists( self::STATE_KEY, $state ) ) {
+				return $state[self::STATE_KEY];
+			}
+
+			return '';
+		}
+
+		/**
 		 * Get the sanitized posted data for the container
 		 *
 		 * @param $post_id
@@ -615,6 +654,11 @@ if ( ! class_exists( __NAMESPACE__ . '\Container' ) ) {
 				if ( isset( $posted_field_data ) ) {
 					$posted_data[ $field->field_data_key() ] = $posted_field_data;
 				}
+			}
+
+			//get the container last state
+			if ( array_key_exists( self::STATE_KEY, $sanitized_data ) ) {
+				$posted_data[self::STATE_KEY] = $sanitized_data[self::STATE_KEY];
 			}
 
 			return $posted_data;

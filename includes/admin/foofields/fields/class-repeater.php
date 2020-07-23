@@ -24,7 +24,7 @@ if ( ! class_exists( __NAMESPACE__ . '\Repeater' ) ) {
 		function __construct( $container, $type, $field_config ) {
 			parent::__construct( $container, $type, $field_config );
 
-			$this->add_button_text = isset( $field_config['add_button_text'] ) ? $field_config['add_button_text'] : __( 'Nothing found', $container->text_domain );
+			$this->add_button_text = isset( $field_config['add_button_text'] ) ? $field_config['add_button_text'] : __( 'Add', $container->text_domain );
 			$this->no_data_message = isset( $field_config['no_data_message'] ) ? $field_config['no_data_message'] : __( 'Nothing found', $container->text_domain );
 			$this->table_clsss = isset( $field_config['table_clsss'] ) ? $field_config['table_clsss'] : '';
 			if ( isset( $field_config['fields'] ) ) {
@@ -75,25 +75,14 @@ if ( ! class_exists( __NAMESPACE__ . '\Repeater' ) ) {
 			if ( $has_rows ) {
 				$row_index = 0;
 				foreach( $value as $row ) {
-					$row_index++;
 					echo '<tr>';
 					foreach ( $this->fields as $child_field ) {
-						if ( array_key_exists( $child_field['id'], $row ) ) {
-							$child_field['value'] = $row[ $child_field['id'] ];
-						}
-						if ( 'index' === $child_field['type'] ) {
-							$child_field['type'] = 'html';
-							$child_field['html'] = $row_index;
-						}
 						echo '<td>';
-						$child_field['id'] = $this->unique_id . '_' . $child_field['id'] . '_' . $row_index;
-						$field_object = $this->container->create_field_instance( $child_field['type'], $child_field );
-						$field_object->render_input( array(
-								'name' => $this->name . '[' . $child_field['id'] . '][]'
-						) );
+						$this->render_repeater_child_field( $child_field, $row, $row_index );
 						echo '</td>';
 					}
 					echo '</tr>';
+					$row_index++;
 				}
 			}
 			echo '</tbody>';
@@ -103,12 +92,7 @@ if ( ! class_exists( __NAMESPACE__ . '\Repeater' ) ) {
 
 			foreach ( $this->fields as $child_field ) {
 				echo '<td>';
-				$child_field['id'] = $this->unique_id . '_' . $child_field['id'];
-				$field_object = $this->container->create_field_instance( $child_field['type'], $child_field );
-				$field_object->render_input( array(
-					'name' => $this->name . '[' . $child_field['id'] . '][]',
-					'disabled' => 'disabled' )
-				);
+				$this->render_repeater_child_field( $child_field );
 				echo '</td>';
 			}
 
@@ -122,6 +106,48 @@ if ( ! class_exists( __NAMESPACE__ . '\Repeater' ) ) {
 			echo '</div>';
 		}
 
+		function render_repeater_child_field( $field_config, $row_state = array(), $row_index = -1) {
+			$in_footer = $row_index === -1;
+
+			if ( array_key_exists( $field_config['id'], $row_state ) ) {
+				$field_config['value'] = $row_state[ $field_config['id'] ];
+			}
+			if ( 'index' === $field_config['type'] ) {
+				$field_config['type'] = 'html';
+				$field_config['html'] = $in_footer ? '' : ($row_index + 1);
+			}
+			$field_id = $field_config['id'];
+			$field_config['id'] = $this->unique_id . '_' . $field_config['id'];
+			if ( !$in_footer ) {
+				$field_config['id'] .= '_' . $row_index;
+				$field_config['row_index'] = $row_index;
+				$field_config['original_id'] = $field_id;
+			}
+
+			$field_object = $this->container->create_field_instance( $field_config['type'], $field_config );
+			if ( !$in_footer ) {
+				$field_object->override_value_function = array( $this, 'get_repeater_field_value' );
+			}
+			$field_object->name = $this->name . '[' . $field_id . '][]';
+			$field_object->render( false, $in_footer ? array( 'disabled' => 'disabled' ) : false );
+		}
+
+		function get_repeater_field_value( $repeater_field_config ) {
+			$state = $this->value();
+
+			$row_index = intval( $repeater_field_config['row_index'] );
+
+			if ( array_key_exists( $row_index, $state ) ) {
+				$row_state = $state[ $row_index ];
+
+				if ( array_key_exists( $repeater_field_config['original_id'], $row_state ) ) {
+					return $row_state[$repeater_field_config['original_id']];
+				}
+			}
+
+			return '';
+		}
+
 		/**
 		 * Gets the data posted for the repeater
 		 *
@@ -129,10 +155,12 @@ if ( ! class_exists( __NAMESPACE__ . '\Repeater' ) ) {
 		 *
 		 * @return array
 		 */
-		function process_posted_value( $sanitized_data ) {
+		function get_posted_value( $sanitized_data ) {
+			$repeater_data = parent::get_posted_value( $sanitized_data );
+
 			$results = array();
-			foreach ( array_keys( $sanitized_data ) as $fieldKey ) {
-				foreach ( $sanitized_data[$fieldKey] as $key => $value ) {
+			foreach ( array_keys( $repeater_data ) as $fieldKey ) {
+				foreach ( $repeater_data[$fieldKey] as $key => $value ) {
 					$results[$key][$fieldKey] = $value;
 				}
 			}

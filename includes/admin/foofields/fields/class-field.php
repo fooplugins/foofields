@@ -73,6 +73,8 @@ if ( ! class_exists( __NAMESPACE__ . '\Field' ) ) {
 
 		protected $placeholder;
 
+		public $override_value_function;
+
 		/**
 		 * Field constructor.
 		 *
@@ -135,8 +137,11 @@ if ( ! class_exists( __NAMESPACE__ . '\Field' ) ) {
 
 		/**
 		 * function for rendering the entire field
+		 *
+		 * @param bool $render_label
+		 * @param bool $override_attributes
 		 */
-		function render() {
+		function render( $render_label = true, $override_attributes = false ) {
 			$field_attributes = array(
 				'id' => $this->unique_id . '-field',
 				'class' => implode( ' ', $this->classes )
@@ -149,8 +154,10 @@ if ( ! class_exists( __NAMESPACE__ . '\Field' ) ) {
 
 			self::render_html_tag('div', $field_attributes, null, false );
 
-			$this->render_label();
-			$this->render_input_container();
+			if ( $render_label ) {
+				$this->render_label();
+			}
+			$this->render_input_container( $override_attributes );
 
 			echo '</div>';
 		}
@@ -224,11 +231,13 @@ if ( ! class_exists( __NAMESPACE__ . '\Field' ) ) {
 
 		/**
 		 * Render the field input container
+		 *
+		 * @param bool $override_attributes
 		 */
-		function render_input_container() {
+		function render_input_container( $override_attributes = false ) {
 			self::render_html_tag( 'div', array( 'class' => 'foofields-field-input' ), null, false );
 
-			$this->render_input();
+			$this->render_input( $override_attributes );
 
 			$this->render_description();
 
@@ -372,6 +381,10 @@ if ( ! class_exists( __NAMESPACE__ . '\Field' ) ) {
 		 * @return mixed|string
 		 */
 		function value() {
+			if ( isset( $this->override_value_function ) && is_callable( $this->override_value_function ) ) {
+				return call_user_func( $this->override_value_function, $this->config );
+			}
+
 			return $this->container->get_state_value( $this->config );
 		}
 

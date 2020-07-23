@@ -518,7 +518,7 @@ if ( ! class_exists( 'FooPlugins\FooFields\Admin\Movie\MetaboxTest' ) ) {
 										array(
 											'id'       => 'child1help',
 											'label'    => __( 'Help Field', 'foofields' ),
-											'desc'     => __( 'This tab shows an example repeater field for capturing notes. This is powerful when you want the ability to capture an unknown amount of data.', 'foofields' ),
+											'text'     => __( 'This tab shows a repeater field for capturing notes. This is powerful when you want the ability to capture an unknown amount of data.', 'foofields' ),
 											'type'     => 'help',
 										),
 										array(
@@ -526,8 +526,12 @@ if ( ! class_exists( 'FooPlugins\FooFields\Admin\Movie\MetaboxTest' ) ) {
 											//'label'    => __( 'Repeater Field', 'foofields' ),
 											'desc'     => __( 'A repeater field', 'foofields' ),
 											'type'     => 'repeater',
-											'button'   => __( 'Add Note', 'foofields' ),
+											'add_button_text'   => __( 'Add Note', 'foofields' ),
 											'fields'   => array(
+												array(
+													'id' => 'index',
+													'type' => 'index'
+												),
 												array(
 													'id'       => 'text',
 													'label'    => __( 'Text Field', 'foofields' ),
