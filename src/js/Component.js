@@ -1,4 +1,4 @@
-(function($, _, _utils, _is){
+(function($, _, _utils, _is, _obj){
 
 	_.Component = _utils.EventClass.extend({
 		construct: function(instance, element, classes, selectors){
@@ -50,6 +50,68 @@
 			 * @type {FooFields.Container}
 			 */
 			self.ctnr = ctnr;
+
+			self.opt = _obj.extend({
+				showWhen: {
+					field: null,
+					value: null,
+					operator: null
+				}
+			}, self.$el.data());
+
+			self.visible = !self.$el.hasClass(self.instance.cls.hidden);
+
+			self._showWhenField = null;
+		},
+		init: function(){
+			this.setupVisibilityRules();
+		},
+		destroy: function(){
+			this.teardownVisibilityRules();
+			this._super();
+		},
+		toggle: function(state){
+			var self = this;
+			self.visible = _is.boolean(state) ? state : !self.visible;
+			self.$el.toggleClass(self.instance.cls.hidden, !self.visible);
+		},
+		setupVisibilityRules: function(){
+			var self = this;
+			self.toggle(self.visible);
+			if (self.opt.showWhen.field !== null){
+				var field = self.instance.field(self.opt.showWhen.field);
+				if (field instanceof _.Field){
+					self._showWhenField = field;
+					self._showWhenField.on("change", self.onShowWhenFieldChanged, self);
+				}
+			}
+		},
+		teardownVisibilityRules: function(){
+			var self = this;
+			if (self._showWhenField instanceof _.Field){
+				self._showWhenField.off("change", self.onShowWhenFieldChanged, self);
+			}
+		},
+		checkVisibilityRules: function(value){
+			var self = this, testValue = self.opt.showWhen.value, visible;
+			switch (self.opt.showWhen.operator) {
+				case "!==":
+					visible = value !== testValue;
+					break;
+				case "regex":
+					visible = new RegExp(testValue).test(value);
+					break;
+				case "indexOf":
+					visible = value.indexOf(testValue) !== -1;
+					break;
+				default:
+					visible = value === testValue;
+					break;
+			}
+			return visible;
+		},
+		onShowWhenFieldChanged: function(e, value){
+			this.toggle(this.checkVisibilityRules(value));
 		}
 	});
 
@@ -57,5 +119,6 @@
 	FooFields.$,
 	FooFields,
 	FooFields.utils,
-	FooFields.utils.is
+	FooFields.utils.is,
+	FooFields.utils.obj
 );

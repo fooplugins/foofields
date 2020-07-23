@@ -5,6 +5,13 @@
 			var self = this;
 			self._super(ctnr.instance, ctnr, el, ctnr.cls.tabs.tab, ctnr.sel.tabs.tab);
 			self.index = index;
+			self.opt = _obj.extend({
+				showWhen: {
+					field: null,
+					value: null,
+					operator: null
+				}
+			}, self.$el.data());
 
 			self.$link = self.$el.children(self.sel.link).first();
 			self.$icon = self.$link.children(self.sel.icon).first();
@@ -20,6 +27,7 @@
 			self.$el.toggleClass(self.instance.cls.first, self.index === 0)
 				.toggleClass(self.instance.cls.last, self.index === self.ctnr.tabs.length - 1);
 			self.$link.on("click.foofields", {self: self}, self.onLinkClick);
+			self._super();
 			self.menu.init();
 		},
 		destroy: function(){
@@ -27,6 +35,7 @@
 			self.$el.removeClass(self.instance.cls.first)
 				.removeClass(self.instance.cls.last);
 			self.$link.off(".foofields");
+			self._super();
 			self.menu.destroy();
 		},
 		handles: function(id){
@@ -47,6 +56,9 @@
 			} else {
 				self.ctnr.activate(self.target);
 			}
+		},
+		onShowWhenFieldChanged: function(e, value){
+			this.ctnr.toggle(this.target, this.checkVisibilityRules(value));
 		}
 	});
 

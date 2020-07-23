@@ -89,6 +89,18 @@
 				content.activate(id);
 			});
 		},
+		toggle: function(id, state){
+			var self = this;
+			if (_is.string(id)){
+				id = _utils.strip(id, "#");
+				self.tabs.forEach(function(tab){
+					if (tab.target === id) tab.toggle(state);
+				});
+				self.contents.forEach(function (content) {
+					if (content.id === id) content.toggle(state);
+				});
+			}
+		},
 		field: function(id){
 			var self = this, field;
 			for (var i = 0, l = self.contents.length; i < l; i++){
