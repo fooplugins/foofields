@@ -56,7 +56,11 @@ if ( ! class_exists( __NAMESPACE__ . '\AjaxButton' ) ) {
 
 				if ( isset( $this->config['callback'] ) ) {
 					if ( is_callable( $this->config['callback'] ) ) {
-						call_user_func( $this->config['callback'], $this );
+						if ( false === call_user_func( $this->config['callback'], $this ) ) {
+							wp_send_json_error( array(
+								'message' => __( 'An unexpected error occurred!', $this->container->text_domain )
+							) );
+						}
 					}
 				}
 			}
