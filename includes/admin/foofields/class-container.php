@@ -26,11 +26,30 @@ if ( ! class_exists( __NAMESPACE__ . '\Container' ) ) {
 		 */
 		protected $state = null;
 
+		/**
+		 * The textdomain of the plugin
+		 * @var string
+		 */
 		public $text_domain;
+
+		/**
+		 * The base URL of the plugin. Used for building URL's for enqueue asset calls
+		 * @var mixed
+		 */
 		public $plugin_url;
+
+		/**
+		 * The version of the plugin. Used for versioning enqueue asset calls
+		 * @var mixed
+		 */
 		public $plugin_version;
 
 		protected $validation_errors = array();
+
+		protected $show_rules = array(
+			'tabs'   => array(),
+			'fields' => array()
+		);
 
 		const field_type_mappings = array(
 			'ajaxbutton'      => __NAMESPACE__ . '\Fields\AjaxButton',
@@ -47,6 +66,7 @@ if ( ! class_exists( __NAMESPACE__ . '\Container' ) ) {
 			'checkboxlist'    => __NAMESPACE__ . '\Fields\InputList',
 			'radiolist'       => __NAMESPACE__ . '\Fields\InputList',
 			'htmllist'        => __NAMESPACE__ . '\Fields\InputList',
+			'repeater-delete' => __NAMESPACE__ . '\Fields\RepeaterDelete'
 		);
 
 		function __construct( $config ) {
@@ -114,6 +134,9 @@ if ( ! class_exists( __NAMESPACE__ . '\Container' ) ) {
 			if ( isset( $config['tabs'] ) ) {
 				foreach ( $config['tabs'] as &$tab ) {
 					$this->parse_config( $tab );
+
+					//check if the tab has any data show rules
+					$this->show_rule_add( $tab, 'tabs' );
 				}
 			}
 
@@ -121,8 +144,67 @@ if ( ! class_exists( __NAMESPACE__ . '\Container' ) ) {
 				foreach ( $config['fields'] as &$field ) {
 					$field_type = isset( $field['type'] ) ? $field['type'] : 'unknown';
 					$this->create_field_instance( $field_type,$field );
+
+					//check if the field has any data show rules
+					$this->show_rule_add( $field, 'fields' );
 				}
 			}
+		}
+
+		/**
+		 * Add show rules to an array for easier access later
+		 *
+		 * @param $config
+		 * @param $config_type
+		 */
+		function show_rule_add( $config, $config_type ) {
+			if ( isset( $config['data'] ) && isset( $config['data']['show-when'] ) ) {
+				$this->show_rules[$config_type][ $this->get_unique_id($config) ] = $config['data']['show-when'];
+			}
+		}
+
+		/***
+		 * Determined if the tab/field config is visible
+		 *
+		 * @param $unique_id
+		 * @param $type
+		 *
+		 * @return bool
+		 */
+		function show_rule_is_visible( $unique_id, $type ) {
+			if ( array_key_exists( $unique_id, $this->show_rules[$type] ) ) {
+				//we have show when rules for the tab/fields
+
+				$show_rule = $this->show_rules[$type][$unique_id];
+				$show_rule_value = $show_rule['value'];
+				$show_rule_operator = isset( $show_rule['operator'] ) ? $show_rule['operator'] : '===';
+				$show_rule_field_id = $this->get_unique_id( array( 'id' => $show_rule['field'] ) );
+				$show_rule_field = $this->fields[$show_rule_field_id];
+				$show_rule_field_value = $show_rule_field->value();
+
+				if ( '===' === $show_rule_operator ) {
+					if ( $show_rule_value === $show_rule_field_value ) {
+						return true;
+					}
+				} else if ( '!==' === $show_rule_operator ) {
+					if ( $show_rule_value !== $show_rule_field_value ) {
+						return true;
+					}
+				} else if ( 'indexOf' === $show_rule_operator ) {
+					if ( strpos( $show_rule_field_value, $show_rule_value ) !== false ) {
+						return true;
+					}
+				} else if ( 'regex' === $show_rule_operator ) {
+					if ( preg_match( $show_rule_value, $show_rule_field_value ) === 1 ) {
+						return true;
+					}
+				}
+				//otherwise it should not be visible
+				return false;
+			}
+
+			//always visible by default
+			return true;
 		}
 
 		/**
@@ -151,6 +233,8 @@ if ( ! class_exists( __NAMESPACE__ . '\Container' ) ) {
 				$field_instance = new Field( $this, $field_type, $field_config );
 			}
 			$this->fields[ $field_id ] = $field_instance;
+
+			//check if we have any show rules
 
 			return $field_instance;
 		}
@@ -312,7 +396,7 @@ if ( ! class_exists( __NAMESPACE__ . '\Container' ) ) {
 			}
 
 			//process the fields based on the state and make any changes if needed
-			$this->process_state_before_render();
+			//$this->process_state_before_render();
 
 			$this->render_fields_before();
 
@@ -393,9 +477,22 @@ if ( ! class_exists( __NAMESPACE__ . '\Container' ) ) {
 				//set the tab_id to be the first child tab
 				$tab_content_id = $tab['tabs'][0]['id'];
 			}
-
+			$tab_classes = array( $class );
 			$tab_id = $this->get_unique_id( array( 'id' => $tab_content_id ) );
-			self::render_html_tag( 'li', array( 'id' => $tab_id . '-tab', 'class' => $class ), null, false );
+			if ( !$this->show_rule_is_visible( $tab_id, 'tabs' ) ) {
+				$tab_classes[] = 'foofields-hidden';
+			}
+			$tab_attributes = array(
+				'id' => $tab_id . '-tab',
+				'class' => implode(' ', $tab_classes )
+			);
+			$tab_data_attributes = isset( $tab['data'] ) ? $tab['data'] : array();
+
+			if ( count( $tab_data_attributes ) > 0 ) {
+				$tab_attributes = array_merge( $tab_attributes, $this->process_data_attributes( $tab_data_attributes ) );
+			}
+
+			self::render_html_tag( 'li', $tab_attributes, null, false );
 			self::render_html_tag( 'a', array( 'class' => $anchor_class, 'href' => '#' . $tab_id . '-content' ), null, false );
 			if ( isset( $tab['icon'] ) ) {
 				self::render_html_tag( 'span', array( 'class' => 'foofields-tab-icon dashicons ' . $tab['icon'] ) );
@@ -523,5 +620,39 @@ if ( ! class_exists( __NAMESPACE__ . '\Container' ) ) {
 			return $posted_data;
 		}
 
+		/**
+		 * Process any special data attributes
+		 * @param $key
+		 * @param $value
+		 *
+		 * @return array
+		 */
+		function process_data_attribute( $key, $value ) {
+			if ( 'show-when' === $key && is_array( $value ) ) {
+				$value['field'] = $this->get_unique_id( array( 'id' => $value['field'] ) ) . '-field';
+			}
+			return is_array( $value ) ? json_encode( $value ) : $value;
+		}
+
+		/***
+		 * Process all data attributes before they are rendered
+		 *
+		 * @param $data_attributes
+		 *
+		 * @return array
+		 */
+		function process_data_attributes( $data_attributes ) {
+			$result = array();
+			if ( is_array( $data_attributes ) && count( $data_attributes ) > 0 ) {
+				foreach ( $data_attributes as $key => $value ) {
+					$process_value = $this->process_data_attribute( $key, $value );
+					if ( strpos( $key, 'data-') !== 0 ) {
+						$key = 'data-' . $key;
+					}
+					$result[$key] = $process_value;
+				}
+			}
+			return $result;
+		}
 	}
 }

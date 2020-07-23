@@ -88,7 +88,7 @@ if ( ! class_exists( __NAMESPACE__ . '\Field' ) ) {
 			$this->id          = $field_config['id'];
 			$this->unique_id   = $container->get_unique_id( $field_config );
 			$this->name        = $container->get_field_name( $field_config );
-			$this->layout      = isset( $field_config['layout'] ) ? $field_config['layout'] : 'block';
+			$this->layout      = isset( $field_config['layout'] ) ? $field_config['layout'] : 'inline';
 			$this->label       = isset( $field_config['label'] ) ? $field_config['label'] : null;
 			$this->description = isset( $field_config['desc'] ) ? $field_config['desc'] : null;
 			$this->required    = isset( $field_config['required'] ) ? $field_config['required'] : false;
@@ -117,41 +117,6 @@ if ( ! class_exists( __NAMESPACE__ . '\Field' ) ) {
 		}
 
 		/**
-		 * Process any special data attributes
-		 * @param $key
-		 * @param $value
-		 *
-		 * @return array
-		 */
-		function process_data_attribute( $key, $value ) {
-			if ( 'show-when' === $key && is_array( $value ) ) {
-				$value['field'] = $this->container->get_unique_id( array( 'id' => $value['field'] ) ) . '-field';
-			}
-			return is_array( $value ) ? json_encode( $value ) : $value;
-		}
-
-		/***
-		 * Process all data attributes before they are rendered
-		 *
-		 * @param $data_attributes
-		 *
-		 * @return array
-		 */
-		function process_data_attributes( $data_attributes ) {
-			$result = array();
-			if ( is_array( $data_attributes ) && count( $data_attributes ) > 0 ) {
-				foreach ( $data_attributes as $key => $value ) {
-					$process_value = $this->process_data_attribute( $key, $value );
-					if ( strpos( $key, 'data-') !== 0 ) {
-						$key = 'data-' . $key;
-					}
-					$result[$key] = $process_value;
-				}
-			}
-			return $result;
-		}
-
-		/**
 		 * Makes any changes we need for a field before a field is rendered
 		 */
 		function pre_render() {
@@ -162,6 +127,10 @@ if ( ! class_exists( __NAMESPACE__ . '\Field' ) ) {
 
 			$this->classes[] = "foofields-type-{$this->type}";
 			$this->classes[] = "foofields-layout-{$this->layout}";
+
+			if ( !$this->visible() ) {
+				$this->classes[] = 'foofields-hidden';
+			}
 		}
 
 		/**
@@ -175,7 +144,7 @@ if ( ! class_exists( __NAMESPACE__ . '\Field' ) ) {
 			$data_attributes = $this->data_attributes();
 
 			if ( count( $data_attributes ) > 0 ) {
-				$field_attributes = array_merge( $field_attributes, $this->process_data_attributes( $data_attributes ) );
+				$field_attributes = array_merge( $field_attributes, $this->container->process_data_attributes( $data_attributes ) );
 			}
 
 			self::render_html_tag('div', $field_attributes, null, false );
@@ -502,6 +471,14 @@ if ( ! class_exists( __NAMESPACE__ . '\Field' ) ) {
 		 */
 		function field_action_name() {
 			return 'foofields_' . $this->unique_id . '-field';
+		}
+
+		/**
+		 *
+		 * @return bool
+		 */
+		function visible() {
+			return $this->container->show_rule_is_visible( $this->unique_id, 'fields' );
 		}
 	}
 }
