@@ -1,7 +1,8 @@
 // HTML Radios and Checkboxes
 // ------------------------------------
 .foofields-type-radiolist,
-.foofields-type-checkboxlist {
+.foofields-type-checkboxlist,
+.foofields-type-htmllist {
   .foofields-field-input {
 	display: flex;
 	flex-direction: row;
@@ -31,22 +32,20 @@
 .foofields-type-htmllist {
   .foofields-field-input {
 	label {
-	  display: inline-block;
-	  margin-right: 10px;
 	  border: solid 3px transparent;
 	  background: #aaa;
 	  border-radius: 3px;
-	  padding: 5px;
-	  line-height: 0;
-	  margin-bottom: 10px;
+	  > input {
+		display: none;
+	  }
 	}
 
-	input:checked + label {
+	.foofields-selected {
 	  border: solid 3px #444;
 	  background: #888;
 	}
 
-	label:hover {
+	.foofields-selected:hover {
 	  border: solid 3px #444;
 	}
   }
