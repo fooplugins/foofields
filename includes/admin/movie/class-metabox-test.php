@@ -16,131 +16,182 @@ if ( ! class_exists( 'FooPlugins\FooFields\Admin\Movie\MetaboxTest' ) ) {
 					'tabs' => array(
 						array(
 							'id'     => 'simplefields',
-							'label'  => __( 'Simple Fields', 'foofields' ),
+							'label'  => __( 'Simple', 'foofields' ),
 							'icon'   => 'dashicons-editor-kitchensink',
-							'fields' => array(
+							'tabs' => array(
 								array(
-									'id'       => 'simpleheading',
-									'label'    => __( 'Simple Fields', 'foofields' ),
-									'desc'     => __( 'This tab shows all the simple fields', 'foofields' ),
-									'type'     => 'heading',
-									'data'     => array(
-										'show-when' => array (
-											'field' => 'text',
-											'value' => '',
-											'operator' => '!=='
+									'id'     => 'headers_icons',
+									'label'  => __( 'Headers &amp; Icons', 'foofields' ),
+									'fields' => array(
+										array(
+											'id'       => 'simpleheading',
+											'label'    => __( 'Simple Fields', 'foofields' ),
+											'desc'     => __( 'This tab shows all the simple fields', 'foofields' ),
+											'type'     => 'heading',
+											'data'     => array(
+												'show-when' => array (
+													'field' => 'text',
+													'value' => '',
+													'operator' => '!=='
+												)
+											)
 										),
-										'another-option' => '1234',
-										'something' => 'abcd'
-									)
-									//data-show-when="{\"field\": \"text\", \"value\": \"\", \"operator\": \"!==\"}" data-another-option="1234" data-something="abcd"
-								),
-								array(
-									'id'       => 'help',
-									'text'     => __( 'This is a help field.', 'foofields' ),
-									'type'     => 'help',
-								),
-								array(
-									'id'       => 'error',
-									'text'     => __( 'This is an error field.', 'foofields' ),
-									'type'     => 'error',
-								),
-								array(
-									'id'       => 'icon',
-									'text'     => __( 'Icon field. Set the icon to the class name of the dashicon you want. Icon is set to "dashicons-wordpress" for this field.', 'foofields' ),
-									'icon'     => 'dashicons-wordpress',
-									'type'     => 'icon',
-								),
-								array(
-									'id'       => 'icon2',
-									'text'     => __( 'Icon is set to "dashicons-admin-site" for this field. Class set to "icon-green"', 'foofields' ),
-									'icon'     => 'dashicons-admin-site',
-									'class'    => 'icon-green',
-									'type'     => 'icon',
-								),
-								array(
-									'id'       => 'icon3',
-									'text'     => __( 'Icon is set to "dashicons-format-image" for this field. Class set to "icon-red"', 'foofields' ),
-									'icon'     => 'dashicons-format-image',
-									'class'    => 'icon-red',
-									'type'     => 'icon',
-								),
-								array(
-									'id'       => 'icon4',
-									'text'     => __( 'Icon is set to "dashicons-star-filled" for this field. Class set to "icon-yellow"', 'foofields' ),
-									'icon'     => 'dashicons-star-filled',
-									'class'    => 'icon-yellow',
-									'type'     => 'icon',
-								),
-								array(
-									'id'       => 'text',
-									'label'    => __( 'Block Field', 'foofields' ),
-									'desc'     => __( 'This field should have the label above the input', 'foofields' ),
-									'type'     => 'text',
-									'tooltip'  => array(
-										'text' => __('A tooltip to help the user'),
-										'length' => 'small',
-										'position' => 'top',
-										'icon' => 'dashicons-star-filled'
+										array(
+											'id'       => 'help',
+											'text'     => __( 'This is a help field.', 'foofields' ),
+											'type'     => 'help',
+										),
+										array(
+											'id'       => 'error',
+											'text'     => __( 'This is an error field.', 'foofields' ),
+											'type'     => 'error',
+										),
+										array(
+											'id'       => 'icon',
+											'text'     => __( 'Icon field. Set the icon to the class name of the dashicon you want. Icon is set to "dashicons-wordpress" for this field.', 'foofields' ),
+											'icon'     => 'dashicons-wordpress',
+											'type'     => 'icon',
+										),
+										array(
+											'id'       => 'icon2',
+											'text'     => __( 'Icon is set to "dashicons-admin-site" for this field. Class set to "icon-green"', 'foofields' ),
+											'icon'     => 'dashicons-admin-site',
+											'class'    => 'icon-green',
+											'type'     => 'icon',
+										),
+										array(
+											'id'       => 'icon3',
+											'text'     => __( 'Icon is set to "dashicons-format-image" for this field. Class set to "icon-red"', 'foofields' ),
+											'icon'     => 'dashicons-format-image',
+											'class'    => 'icon-red',
+											'type'     => 'icon',
+										),
+										array(
+											'id'       => 'icon4',
+											'text'     => __( 'Icon is set to "dashicons-star-filled" for this field. Class set to "icon-yellow"', 'foofields' ),
+											'icon'     => 'dashicons-star-filled',
+											'class'    => 'icon-yellow',
+											'type'     => 'icon',
+										),
 									)
 								),
 								array(
-									'id'       => 'text1',
-									'label'    => __( 'Inline Field', 'foofields' ),
-									'desc'     => __( 'This field should have the label next to the input', 'foofields' ),
-									'layout'   => 'inline',
-									'type'     => 'text',
-								),
-								array(
-									'id'       => 'text2',
-									'desc'     => __( 'This field will not have a label', 'foofields' ),
-									'type'     => 'text',
-								),
-								array(
-									'id'       => 'number',
-									'label'    => __( 'Number Field', 'foofields' ),
-									'desc'     => __( 'A test number field', 'foofields' ),
-									'type'     => 'number',
-								),
-								array(
-									'id'       => 'textarea',
-									'label'    => __( 'Textarea Field', 'foofields' ),
-									'desc'     => __( 'A test textarea field', 'foofields' ),
-									'type'     => 'textarea',
-								),
-								array(
-									'id'       => 'select',
-									'label'    => __( 'Select Field', 'foofields' ),
-									'desc'     => __( 'A test select field', 'foofields' ),
-									'type'     => 'select',
-									'choices' => array(
-										'option1' => __( 'Option 1', 'foofields' ),
-										'option2' => __( 'Option 2', 'foofields' ),
-										'option3' => __( 'Option 3', 'foofields' ),
-										'option4' => __( 'Option 4', 'foofields' ),
+									'id'     => 'inputs',
+									'label'  => __( 'Inputs', 'foofields' ),
+									'fields' => array(
+										array(
+											'id'       => 'text',
+											'label'    => __( 'Text Field', 'foofields' ),
+											'desc'     => __( 'This is a normal text input', 'foofields' ),
+											'type'     => 'text',
+											'tooltip'  => array(
+												'text' => __( 'A tooltip to help the user', 'foofields' ),
+												'length' => 'small',
+												'position' => 'top',
+												//'icon' => 'dashicons-star-filled'
+											)
+										),
+										array(
+											'id'       => 'number',
+											'label'    => __( 'Number Field', 'foofields' ),
+											'desc'     => __( 'A number field', 'foofields' ),
+											'type'     => 'number',
+										),
+										array(
+											'id'       => 'textarea',
+											'label'    => __( 'Textarea Field', 'foofields' ),
+											'desc'     => __( 'A textarea field', 'foofields' ),
+											'type'     => 'textarea',
+										),
+										array(
+											'id'       => 'select',
+											'label'    => __( 'Select Field', 'foofields' ),
+											'desc'     => __( 'A select field', 'foofields' ),
+											'type'     => 'select',
+											'choices' => array(
+												'option1' => __( 'Option 1', 'foofields' ),
+												'option2' => __( 'Option 2', 'foofields' ),
+												'option3' => __( 'Option 3', 'foofields' ),
+												'option4' => __( 'Option 4', 'foofields' ),
+											)
+										),
+										array(
+											'id'       => 'checkbox',
+											'label'    => __( 'Checkbox Field', 'foofields' ),
+											'desc'     => __( 'A checkbox field', 'foofields' ),
+											'layout'   => 'inline',
+											'type'     => 'checkbox',
+										),
+										array(
+											'id'       => 'color',
+											'label'    => __( 'Color Field', 'foofields' ),
+											'desc'     => __( 'A HTML5 color input field', 'foofields' ),
+											'type'     => 'color',
+										),
+										array(
+											'id'       => 'colorpicker',
+											'label'    => __( 'Colorpicker Field', 'foofields' ),
+											'desc'     => __( 'A colorpicker field using the colorpicker built into WP', 'foofields' ),
+											'type'     => 'colorpicker',
+										),
 									)
 								),
 								array(
-									'id'       => 'checkbox',
-									'label'    => __( 'Checkbox Field', 'foofields' ),
-									'layout'   => 'inline',
-									'type'     => 'checkbox',
-								),
-								array(
-									'id'       => 'color',
-									'label'    => __( 'Color Field', 'foofields' ),
-									'desc'     => __( 'A test HTML5 color input field', 'foofields' ),
-									'type'     => 'color',
-								),
-								array(
-									'id'       => 'colorpicker',
-									'label'    => __( 'Colorpicker Field', 'foofields' ),
-									'desc'     => __( 'A test colorpicker field using the colorpicker built into WP', 'foofields' ),
-									'type'     => 'colorpicker',
-								),
-							),
-							'data'   => array(
-								//tab data options
+									'id'    => 'lists',
+									'label'  => __( 'Lists', 'foofields' ),
+									'fields' => array(
+										array(
+											'id'       => 'radiolist',
+											'label'    => __( 'Radio List', 'foofields' ),
+											'desc'     => __( 'A Radio List field with a set of options, default layout is inline', 'foofields' ),
+											'type'     => 'radiolist',
+											'choices' => array(
+												'option1' => __( 'Option 1', 'foofields' ),
+												'option2' => __( 'Option 2', 'foofields' ),
+												'option3' => __( 'Option 3', 'foofields' ),
+												'option4' => __( 'Option 4', 'foofields' ),
+											)
+										),
+										array(
+											'id'       => 'checkboxlist',
+											'label'    => __( 'Checkbox List', 'foofields' ),
+											'desc'     => __( 'A Checkbox List field', 'foofields' ),
+											'type'     => 'checkboxlist',
+											'choices' => array(
+												'option1' => __( 'Option 1', 'foofields' ),
+												'option2' => __( 'Option 2', 'foofields' ),
+												'option3' => __( 'Option 3', 'foofields' ),
+												'option4' => __( 'Option 4', 'foofields' ),
+											)
+										),
+										array(
+											'id'       => 'radioliststacked',
+											'label'    => __( 'Radio List Stacked', 'foofields' ),
+											'desc'     => __( 'A Radio List field with "stacked" = true', 'foofields' ),
+											'stacked'  => true,
+											'type'     => 'radiolist',
+											'choices' => array(
+												'option1' => __( 'Option 1', 'foofields' ),
+												'option2' => __( 'Option 2', 'foofields' ),
+												'option3' => __( 'Option 3', 'foofields' ),
+												'option4' => __( 'Option 4', 'foofields' ),
+											)
+										),
+										array(
+											'id'       => 'checkboxliststacked',
+											'label'    => __( 'Checkbox List Stacked', 'foofields' ),
+											'desc'     => __( 'A Checkbox List field with "stacked" = true', 'foofields' ),
+											'stacked'  => true,
+											'type'     => 'checkboxlist',
+											'choices' => array(
+												'option1' => __( 'Option 1', 'foofields' ),
+												'option2' => __( 'Option 2', 'foofields' ),
+												'option3' => __( 'Option 3', 'foofields' ),
+												'option4' => __( 'Option 4', 'foofields' ),
+											)
+										),
+									)
+								)
 							)
 						),
 						array(
@@ -148,20 +199,6 @@ if ( ! class_exists( 'FooPlugins\FooFields\Admin\Movie\MetaboxTest' ) ) {
 							'label'  => __( 'List Fields', 'foofields' ),
 							'icon'   => 'dashicons-list-view',
 							'fields' => array(
-								array(
-									'id'       => 'radioinline',
-									'label'    => __( 'Radio Fields Inline', 'foofields' ),
-									'desc'     => __( 'Radio Fields Inline', 'foofields' ),
-									'layout'   => 'inline',
-									'stacked'  => false,
-									'type'     => 'radiolist',
-									'choices' => array(
-										'option1' => __( 'Option 1', 'foofields' ),
-										'option2' => __( 'Option 2', 'foofields' ),
-										'option3' => __( 'Option 3', 'foofields' ),
-										'option4' => __( 'Option 4', 'foofields' ),
-									)
-								),
 								array(
 									'id'       => 'radioinlinestacked',
 									'label'    => __( 'Radio Fields Inline Stacked', 'foofields' ),
@@ -176,19 +213,7 @@ if ( ! class_exists( 'FooPlugins\FooFields\Admin\Movie\MetaboxTest' ) ) {
 										'option4' => __( 'Option 4', 'foofields' ),
 									)
 								),
-								array(
-									'id'       => 'checkboxlistinline',
-									'label'    => __( 'Checkboxes Inline', 'foofields' ),
-									'desc'     => __( 'A test checkboxlist field', 'foofields' ),
-									'layout'   => 'inline',
-									'type'     => 'checkboxlist',
-									'choices' => array(
-										'option1' => __( 'Option 1', 'foofields' ),
-										'option2' => __( 'Option 2', 'foofields' ),
-										'option3' => __( 'Option 3', 'foofields' ),
-										'option4' => __( 'Option 4', 'foofields' ),
-									)
-								),
+
 								array(
 									'id'       => 'radiostacked',
 									'label'    => __( 'Radio Block Stacked', 'foofields' ),
@@ -259,6 +284,152 @@ if ( ! class_exists( 'FooPlugins\FooFields\Admin\Movie\MetaboxTest' ) ) {
 							)
 						),
 						array(
+							'id'     => 'layoutfields',
+							'label'  => __( 'Layout', 'foofields' ),
+							'icon'   => 'dashicons-editor-table',
+							'tabs' => array(
+								array(
+									'id'     => 'fieldlayout',
+									'label'  => __( 'Field Layout', 'foofields' ),
+									'fields' => array(
+										array(
+											'id'       => 'fieldlayoutheading',
+											'label'    => __( 'Field Layout', 'foofields' ),
+											'desc'     => __( 'This tab shows how fields can have different layouts, including not displaying a label at all', 'foofields' ),
+											'type'     => 'heading'
+										),
+										array(
+											'id'       => 'fieldlayouttext',
+											'label'    => __( 'Block Field', 'foofields' ),
+											'desc'     => __( 'This field should have the label above the input', 'foofields' ),
+											'type'     => 'text'
+										),
+										array(
+											'id'       => 'fieldlayoutinline',
+											'label'    => __( 'Inline Field', 'foofields' ),
+											'desc'     => __( 'This field should have the label next to the input. "layout" = "inline"', 'foofields' ),
+											'layout'   => 'inline',
+											'type'     => 'text',
+										),
+										array(
+											'id'       => 'fieldlayoutnolabel',
+											'desc'     => __( 'This field does not have a label', 'foofields' ),
+											'type'     => 'text',
+										),
+									)
+								),
+								array(
+									'id'     => 'columns',
+									'label'  => __( 'Columns', 'foofields' ),
+									'icon'   => 'dashicons-editor-table',
+									'class'  => 'foofields-cols-4',
+									'fields' => array(
+										array(
+											'id'       => 'colheading',
+											'label'     => __( 'Tab class set to "foofields-cols-4"', 'foofields' ),
+											'type'     => 'heading',
+											'class'    => 'foofields-full-width'
+										),
+										array(
+											'id'       => 'colhelp',
+											'text'     => __( 'This tab shows how fields can be arranged into columns. The tab can have a "class" or foofields-cols-2, foofields-cols-3 or foofields-cols-4. This particular tab has class of "foofields-cols-4". Fields then get assigned a class of "foofields-colspan-N" where N is the number of columns to span, eg. "foofields-colspan-2".', 'foofields' ),
+											'type'     => 'help',
+											'class'    => 'foofields-full-width'
+										),
+										array(
+											'id'       => 'colheading1',
+											'label'     => __( '1 Column', 'foofields' ),
+											'type'     => 'heading',
+											'class'    => 'foofields-full-width'
+										),
+										array(
+											'id'       => '12colcell1',
+											'label'    => __( 'Firstname', 'foofields' ),
+											'type'     => 'text',
+											'class'    => 'foofields-full-width',
+											'tooltip'  => __( 'This field has a class of "foofields-full-width"', 'foofields' ),
+										),
+										array(
+											'id'       => 'colheading2',
+											'label'     => __( '2 Columns', 'foofields' ),
+											'type'     => 'heading',
+											'class'    => 'foofields-full-width'
+										),
+										array(
+											'id'       => '2colcell1',
+											'label'    => __( 'Firstname', 'foofields' ),
+											'type'     => 'text',
+											'class'    => 'foofields-colspan-2',
+											'tooltip'  => __( 'This field has a class of "foofields-colspan-2"', 'foofields' ),
+										),
+										array(
+											'id'       => '2colcell2',
+											'label'    => __( 'Last Name', 'foofields' ),
+											'type'     => 'text',
+											'class'    => 'foofields-colspan-2',
+											'tooltip'  => __( 'This field has a class of "foofields-colspan-2"', 'foofields' ),
+										),
+										array(
+											'id'       => 'colheading3',
+											'label'     => __( '3 Columns', 'foofields' ),
+											'type'     => 'heading',
+											'class'    => 'foofields-full-width'
+										),
+										array(
+											'id'       => '3colcell1',
+											'label'    => __( 'Firstname', 'foofields' ),
+											'type'     => 'text',
+											'tooltip'  => __( 'This field has no class set', 'foofields' ),
+										),
+										array(
+											'id'       => '3colcell2',
+											'label'    => __( 'Middle', 'foofields' ),
+											'type'     => 'text',
+											'tooltip'  => __( 'This field has no class set', 'foofields' ),
+										),
+										array(
+											'id'       => '3colcell3',
+											'label'    => __( 'Last Name', 'foofields' ),
+											'type'     => 'text',
+											'class'    => 'foofields-colspan-2',
+											'tooltip'  => __( 'This field has a class of "foofields-colspan-2"', 'foofields' ),
+										),
+										array(
+											'id'       => 'colheading4',
+											'label'     => __( '4 Columns', 'foofields' ),
+											'type'     => 'heading',
+											'class'    => 'foofields-full-width'
+										),
+										array(
+											'id'       => '4colcell1',
+											'label'    => __( 'Line 1', 'foofields' ),
+											'type'     => 'text',
+											'tooltip'  => __( 'This field has no class set', 'foofields' ),
+										),
+										array(
+											'id'       => '4colcell2',
+											'label'    => __( 'Line 2', 'foofields' ),
+											'type'     => 'text',
+											'tooltip'  => __( 'This field has no class set', 'foofields' ),
+										),
+										array(
+											'id'       => '4colcell2',
+											'label'    => __( 'Line 3', 'foofields' ),
+											'type'     => 'text',
+											'tooltip'  => __( 'This field has no class set', 'foofields' ),
+										),
+										array(
+											'id'       => '4colcell3',
+											'label'    => __( 'Line 4', 'foofields' ),
+											'type'     => 'text',
+											'tooltip'  => __( 'This field has no class set', 'foofields' ),
+										),
+									)
+								)
+							)
+						),
+
+						array(
 							'id'     => 'advfields',
 							'label'  => __( 'Advanced Fields', 'foofields' ),
 							'icon'   => 'dashicons-list-view',
@@ -312,8 +483,8 @@ if ( ! class_exists( 'FooPlugins\FooFields\Admin\Movie\MetaboxTest' ) ) {
 									'type'     => 'selectize-multi',
 									'placeholder' => __( 'Choose from the actor taxonomy', 'foofields' ),
 									'create' => true,
-									//'close_after_select' => true,
-									//'max_items' => 2,
+//									'close_after_select' => false,
+//									'max_items' => 2,
 									'binding' => array(
 										'type' => 'taxonomy',
 										'taxonomy' => FOOFIELDS_CT_ACTOR,
@@ -333,114 +504,6 @@ if ( ! class_exists( 'FooPlugins\FooFields\Admin\Movie\MetaboxTest' ) ) {
 									'button'   => __( 'Run Something - Return Error', 'foofields' ),
 								)
 
-							)
-						),
-						array(
-							'id'     => 'columns',
-							'label'  => __( 'Columns', 'foofields' ),
-							'icon'   => 'dashicons-editor-table',
-							'class'  => 'foofields-cols-4',
-							'fields' => array(
-								array(
-									'id'       => 'colheading',
-									'label'     => __( 'Tab class set to "foofields-cols-4"', 'foofields' ),
-									'type'     => 'heading',
-									'class'    => 'foofields-full-width'
-								),
-								array(
-									'id'       => 'colhelp',
-									'text'     => __( 'This tab shows how fields can be arranged into columns. The tab can have a "class" or foofields-cols-2, foofields-cols-3 or foofields-cols-4. This particular tab has class of "foofields-cols-4". Fields then get assigned a class of "foofields-colspan-N" where N is the number of columns to span, eg. "foofields-colspan-2".', 'foofields' ),
-									'type'     => 'help',
-									'class'    => 'foofields-full-width'
-								),
-								array(
-									'id'       => 'colheading1',
-									'label'     => __( '1 Column', 'foofields' ),
-									'type'     => 'heading',
-									'class'    => 'foofields-full-width'
-								),
-								array(
-									'id'       => '12colcell1',
-									'label'    => __( 'Firstname', 'foofields' ),
-									'type'     => 'text',
-									'class'    => 'foofields-full-width',
-									'tooltip'  => __( 'This field has a class of "foofields-full-width"', 'foofields' ),
-								),
-								array(
-									'id'       => 'colheading2',
-									'label'     => __( '2 Columns', 'foofields' ),
-									'type'     => 'heading',
-									'class'    => 'foofields-full-width'
-								),
-								array(
-									'id'       => '2colcell1',
-									'label'    => __( 'Firstname', 'foofields' ),
-									'type'     => 'text',
-									'class'    => 'foofields-colspan-2',
-									'tooltip'  => __( 'This field has a class of "foofields-colspan-2"', 'foofields' ),
-								),
-								array(
-									'id'       => '2colcell2',
-									'label'    => __( 'Last Name', 'foofields' ),
-									'type'     => 'text',
-									'class'    => 'foofields-colspan-2',
-									'tooltip'  => __( 'This field has a class of "foofields-colspan-2"', 'foofields' ),
-								),
-								array(
-									'id'       => 'colheading3',
-									'label'     => __( '3 Columns', 'foofields' ),
-									'type'     => 'heading',
-									'class'    => 'foofields-full-width'
-								),
-								array(
-									'id'       => '3colcell1',
-									'label'    => __( 'Firstname', 'foofields' ),
-									'type'     => 'text',
-									'tooltip'  => __( 'This field has no class set', 'foofields' ),
-								),
-								array(
-									'id'       => '3colcell2',
-									'label'    => __( 'Middle', 'foofields' ),
-									'type'     => 'text',
-									'tooltip'  => __( 'This field has no class set', 'foofields' ),
-								),
-								array(
-									'id'       => '3colcell3',
-									'label'    => __( 'Last Name', 'foofields' ),
-									'type'     => 'text',
-									'class'    => 'foofields-colspan-2',
-									'tooltip'  => __( 'This field has a class of "foofields-colspan-2"', 'foofields' ),
-								),
-								array(
-									'id'       => 'colheading4',
-									'label'     => __( '4 Columns', 'foofields' ),
-									'type'     => 'heading',
-									'class'    => 'foofields-full-width'
-								),
-								array(
-									'id'       => '4colcell1',
-									'label'    => __( 'Line 1', 'foofields' ),
-									'type'     => 'text',
-									'tooltip'  => __( 'This field has no class set', 'foofields' ),
-								),
-								array(
-									'id'       => '4colcell2',
-									'label'    => __( 'Line 2', 'foofields' ),
-									'type'     => 'text',
-									'tooltip'  => __( 'This field has no class set', 'foofields' ),
-								),
-								array(
-									'id'       => '4colcell2',
-									'label'    => __( 'Line 3', 'foofields' ),
-									'type'     => 'text',
-									'tooltip'  => __( 'This field has no class set', 'foofields' ),
-								),
-								array(
-									'id'       => '4colcell3',
-									'label'    => __( 'Line 4', 'foofields' ),
-									'type'     => 'text',
-									'tooltip'  => __( 'This field has no class set', 'foofields' ),
-								),
 							)
 						),
 						array(
@@ -503,7 +566,7 @@ if ( ! class_exists( 'FooPlugins\FooFields\Admin\Movie\MetaboxTest' ) ) {
 												),
 												array(
 													'id'       => 'manage',
-													'type'     => 'manage',
+													'type'     => 'repeater-delete',
 												),
 											)
 										)
