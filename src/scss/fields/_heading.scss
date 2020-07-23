@@ -1,9 +1,11 @@
-.foofields-field.foofields-type-heading {
-  h3 {
-	margin: 0;
-  }
+.foofields-type-heading {
+  .foofields-field-input {
+	h3 {
+	  margin: 0;
+	}
 
-  p {
-	margin-bottom: 0;
+	p {
+	  margin-bottom: 0;
+	}
   }
 }

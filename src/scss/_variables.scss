@@ -36,6 +36,8 @@ $spacers: map-merge((
 
 $m-0  : map-get($spacers, 1);
 $m-xs  : map-get($spacers, 2);
-$m-sm :  map-get($spacers, 3);
+$m-sm :  map-get($spacers, 3); // 1em
 $m-md  : map-get($spacers, 4);
 $m-lg  : map-get($spacers, 5);
+
+$padded: $m-0 $m-xs;

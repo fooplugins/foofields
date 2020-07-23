@@ -10,10 +10,10 @@
 			var self = this;
 			self.$suggest = self.$input.children('input[type=text]').first();
 			self.$suggest.suggest(
-				window.ajaxurl + '?' + self.$suggest.data( 'suggest-query' ),
+				window.ajaxurl + '?' + self.opt.query,
 				{
-					multiple: $( this ).data( 'suggest-multiple' ),
-					multipleSep: $( this ).data( 'suggest-separator' )
+					multiple: self.opt.mulitple,
+					multipleSep: self.opt.separator
 				}
 			);
 		}

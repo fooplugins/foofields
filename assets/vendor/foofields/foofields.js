@@ -20,6 +20,7 @@
       first: "foofields-first",
       last: "foofields-last",
       hidden: "foofields-hidden",
+      selected: "foofields-selected",
       container: {
         el: "foofields-container",
         content: {
@@ -4774,7 +4775,7 @@ FooFields.utils, FooFields.utils.fn, FooFields.utils.str);
 })(FooFields.$, FooFields, FooFields.utils, FooFields.utils.is, FooFields.utils.obj);
 "use strict";
 
-(function ($, _, _utils, _is) {
+(function ($, _, _utils, _is, _obj) {
   _.Component = _utils.EventClass.extend({
     construct: function construct(instance, element, classes, selectors) {
       var self = this;
@@ -4833,9 +4834,80 @@ FooFields.utils, FooFields.utils.fn, FooFields.utils.str);
 
 
       self.ctnr = ctnr;
+      self.opt = _obj.extend({
+        showWhen: {
+          field: null,
+          value: null,
+          operator: null
+        }
+      }, self.$el.data());
+      self.visible = !self.$el.hasClass(self.instance.cls.hidden);
+      self._showWhenField = null;
+    },
+    init: function init() {
+      this.setupVisibilityRules();
+    },
+    destroy: function destroy() {
+      this.teardownVisibilityRules();
+
+      this._super();
+    },
+    toggle: function toggle(state) {
+      var self = this;
+      self.visible = _is.boolean(state) ? state : !self.visible;
+      self.$el.toggleClass(self.instance.cls.hidden, !self.visible);
+    },
+    setupVisibilityRules: function setupVisibilityRules() {
+      var self = this;
+      self.toggle(self.visible);
+
+      if (self.opt.showWhen.field !== null) {
+        var field = self.instance.field(self.opt.showWhen.field);
+
+        if (field instanceof _.Field) {
+          self._showWhenField = field;
+
+          self._showWhenField.on("change", self.onShowWhenFieldChanged, self);
+        }
+      }
+    },
+    teardownVisibilityRules: function teardownVisibilityRules() {
+      var self = this;
+
+      if (self._showWhenField instanceof _.Field) {
+        self._showWhenField.off("change", self.onShowWhenFieldChanged, self);
+      }
+    },
+    checkVisibilityRules: function checkVisibilityRules(value) {
+      var self = this,
+          testValue = self.opt.showWhen.value,
+          visible;
+
+      switch (self.opt.showWhen.operator) {
+        case "!==":
+          visible = value !== testValue;
+          break;
+
+        case "regex":
+          visible = new RegExp(testValue).test(value);
+          break;
+
+        case "indexOf":
+          visible = value.indexOf(testValue) !== -1;
+          break;
+
+        default:
+          visible = value === testValue;
+          break;
+      }
+
+      return visible;
+    },
+    onShowWhenFieldChanged: function onShowWhenFieldChanged(e, value) {
+      this.toggle(this.checkVisibilityRules(value));
     }
   });
-})(FooFields.$, FooFields, FooFields.utils, FooFields.utils.is);
+})(FooFields.$, FooFields, FooFields.utils, FooFields.utils.is, FooFields.utils.obj);
 "use strict";
 
 (function ($, _, _utils, _is, _obj) {
@@ -4923,6 +4995,19 @@ FooFields.utils, FooFields.utils.fn, FooFields.utils.str);
         content.activate(id);
       });
     },
+    toggle: function toggle(id, state) {
+      var self = this;
+
+      if (_is.string(id)) {
+        id = _utils.strip(id, "#");
+        self.tabs.forEach(function (tab) {
+          if (tab.target === id) tab.toggle(state);
+        });
+        self.contents.forEach(function (content) {
+          if (content.id === id) content.toggle(state);
+        });
+      }
+    },
     field: function field(id) {
       var self = this,
           field;
@@ -5000,6 +5085,13 @@ FooFields.utils, FooFields.utils.fn, FooFields.utils.str);
       self._super(ctnr.instance, ctnr, el, ctnr.cls.tabs.tab, ctnr.sel.tabs.tab);
 
       self.index = index;
+      self.opt = _obj.extend({
+        showWhen: {
+          field: null,
+          value: null,
+          operator: null
+        }
+      }, self.$el.data());
       self.$link = self.$el.children(self.sel.link).first();
       self.$icon = self.$link.children(self.sel.icon).first();
       self.$text = self.$link.children(self.sel.text).first();
@@ -5013,12 +5105,18 @@ FooFields.utils, FooFields.utils.fn, FooFields.utils.str);
       self.$link.on("click.foofields", {
         self: self
       }, self.onLinkClick);
+
+      self._super();
+
       self.menu.init();
     },
     destroy: function destroy() {
       var self = this;
       self.$el.removeClass(self.instance.cls.first).removeClass(self.instance.cls.last);
       self.$link.off(".foofields");
+
+      self._super();
+
       self.menu.destroy();
     },
     handles: function handles(id) {
@@ -5040,6 +5138,9 @@ FooFields.utils, FooFields.utils.fn, FooFields.utils.str);
       } else {
         self.ctnr.activate(self.target);
       }
+    },
+    onShowWhenFieldChanged: function onShowWhenFieldChanged(e, value) {
+      this.ctnr.toggle(this.target, this.checkVisibilityRules(value));
     }
   });
 })(FooFields.$, FooFields, FooFields.utils, FooFields.utils.is, FooFields.utils.obj);
@@ -5212,7 +5313,7 @@ FooFields.utils, FooFields.utils.fn, FooFields.utils.str);
 })(FooFields.$, FooFields, FooFields.utils, FooFields.utils.is);
 "use strict";
 
-(function ($, _, _utils, _is) {
+(function ($, _, _utils, _is, _obj) {
   _.TabMenuItem = _.CtnrComponent.extend({
     construct: function construct(menu, el, index) {
       var self = this;
@@ -5221,6 +5322,13 @@ FooFields.utils, FooFields.utils.fn, FooFields.utils.str);
 
       self.menu = menu;
       self.index = index;
+      self.opt = _obj.extend({
+        showWhen: {
+          field: null,
+          value: null,
+          operator: null
+        }
+      }, self.$el.data());
       self.active = self.$el.hasClass(self.instance.cls.active);
       self.$link = self.$el.children(self.sel.link).first();
       self.$text = self.$link.children(self.sel.text).first();
@@ -5232,11 +5340,15 @@ FooFields.utils, FooFields.utils.fn, FooFields.utils.str);
       self.$link.on("click.foofields", {
         self: self
       }, self.onLinkClick);
+
+      self._super();
     },
     destroy: function destroy() {
       var self = this;
       self.$el.removeClass(self.instance.cls.first).removeClass(self.instance.cls.last);
       self.$link.off(".foofields");
+
+      self._super();
     },
     activate: function activate(id) {
       var self = this;
@@ -5247,18 +5359,28 @@ FooFields.utils, FooFields.utils.fn, FooFields.utils.str);
       e.stopPropagation();
       var self = e.data.self;
       self.ctnr.activate(self.target);
+    },
+    onShowWhenFieldChanged: function onShowWhenFieldChanged(e, value) {
+      this.ctnr.toggle(this.target, this.checkVisibilityRules(value));
     }
   });
-})(FooFields.$, FooFields, FooFields.utils, FooFields.utils.is);
+})(FooFields.$, FooFields, FooFields.utils, FooFields.utils.is, FooFields.utils.obj);
 "use strict";
 
-(function ($, _, _utils, _is) {
+(function ($, _, _utils, _is, _obj) {
   _.Content = _.CtnrComponent.extend({
     construct: function construct(ctnr, el) {
       var self = this;
 
       self._super(ctnr.instance, ctnr, el, ctnr.cls.content, ctnr.sel.content);
 
+      self.opt = _obj.extend({
+        showWhen: {
+          field: null,
+          value: null,
+          operator: null
+        }
+      }, self.$el.data());
       self.id = self.$el.attr("id");
       self.active = self.$el.hasClass(self.instance.cls.active);
       self.fields = self.$el.children(self.sel.field).map(function (i, el) {
@@ -5268,6 +5390,9 @@ FooFields.utils, FooFields.utils.fn, FooFields.utils.str);
     init: function init() {
       var self = this;
       self.$el.toggleClass(self.instance.cls.active, self.active);
+
+      self._super();
+
       self.fields.forEach(function (field) {
         field.init();
       });
@@ -5277,6 +5402,8 @@ FooFields.utils, FooFields.utils.fn, FooFields.utils.str);
       self.fields.forEach(function (field) {
         field.destroy();
       });
+
+      self._super();
     },
     activate: function activate(id) {
       var self = this;
@@ -5286,9 +5413,12 @@ FooFields.utils, FooFields.utils.fn, FooFields.utils.str);
       return _utils.find(this.fields, function (field) {
         return field.id === id;
       });
+    },
+    onShowWhenFieldChanged: function onShowWhenFieldChanged(e, value) {
+      this.ctnr.toggle(this.id, this.checkVisibilityRules(value));
     }
   });
-})(FooFields.$, FooFields, FooFields.utils, FooFields.utils.is);
+})(FooFields.$, FooFields, FooFields.utils, FooFields.utils.is, FooFields.utils.obj);
 "use strict";
 
 (function ($, _, _utils, _is, _obj) {
@@ -5461,8 +5591,6 @@ FooFields.utils, FooFields.utils.fn, FooFields.utils.str);
       self.$input = self.$el.children(self.sel.input);
       self.$change = self.$el.find(self.opt.changeSelector);
       self.$value = self.$el.find(self.opt.valueSelector);
-      self.visible = !self.opt.hidden;
-      self._showWhenField = null;
     },
     init: function init() {
       var self = this;
@@ -5470,87 +5598,55 @@ FooFields.utils, FooFields.utils.fn, FooFields.utils.str);
       self.$change.on("change.foofields", {
         self: self
       }, self.onValueChanged);
-      self.setupVisibilityRules();
+
+      self._super();
+
       self.trigger("init", [self]);
     },
     setup: function setup() {},
-    setupVisibilityRules: function setupVisibilityRules() {
-      var self = this;
-      self.toggle(self.visible);
-
-      if (self.opt.showWhenField !== null) {
-        var field = self.instance.field(self.opt.showWhenField);
-
-        if (field instanceof _.Field) {
-          self._showWhenField = field;
-
-          self._showWhenField.on("change", self.onShowWhenFieldChanged, self);
-        }
-      }
-    },
     destroy: function destroy() {
       var self = this;
       self.trigger("destroy", [self]);
       self.$change.off("change.foofields", self.onValueChanged);
-      self.teardownVisibilityRules();
       self.teardown();
+
+      self._super();
     },
     teardown: function teardown() {},
-    teardownVisibilityRules: function teardownVisibilityRules() {
-      var self = this;
-
-      if (self._showWhenField instanceof _.Field) {
-        self._showWhenField.off("change", self.onShowWhenFieldChanged, self);
-      }
-    },
     toggle: function toggle(state) {
-      var self = this;
-      self.visible = _is.boolean(state) ? state : !self.visible;
-      self.$el.toggleClass(self.instance.cls.hidden, !self.visible).find(":input").attr("disabled", !self.visible);
+      this._super(state);
+
+      this.$el.find(":input").attr("disabled", !this.visible);
     },
     val: function val() {
-      var self = this;
-      return self.opt.valueAttribute !== null ? self.$value.attr(self.opt.valueAttribute) : self.$value.val();
+      var self = this,
+          $inputs = self.$value;
+
+      if (_is.string(self.opt.valueFilter)) {
+        $inputs = $inputs.filter(self.opt.valueFilter);
+      }
+
+      return $inputs.map(function () {
+        var $el = $(this);
+        return self.opt.valueAttribute !== null ? $el.attr(self.opt.valueAttribute) : $el.val();
+      }).get().join(',');
     },
     onValueChanged: function onValueChanged(e) {
       var self = e.data.self;
       self.trigger("change", [self.val(), self]);
-    },
-    onShowWhenFieldChanged: function onShowWhenFieldChanged(e, value) {
-      var self = this,
-          testValue = self.opt.showWhenValue,
-          visible;
-
-      switch (self.opt.showWhenOperator) {
-        case "!==":
-          visible = value !== testValue;
-          break;
-
-        case "regex":
-          visible = new RegExp(testValue).test(value);
-          break;
-
-        case "indexOf":
-          visible = value.indexOf(testValue) !== -1;
-          break;
-
-        default:
-          visible = value === testValue;
-          break;
-      }
-
-      self.toggle(visible);
     }
   });
 
   _.fields.register("field", _.Field, ".foofields-field", {
     // options
-    hidden: false,
-    showWhenField: null,
-    showWhenValue: null,
-    showWhenOperator: null,
+    showWhen: {
+      field: null,
+      value: null,
+      operator: null
+    },
     changeSelector: ":input",
     valueSelector: ":input",
+    valueFilter: null,
     valueAttribute: null
   }, {
     el: "foofields-field",
@@ -5576,8 +5672,8 @@ FooFields.utils, FooFields.utils.fn, FooFields.utils.str);
 
         self.$spinner.addClass('is-active');
         var postData = {
-          'action': 'foofields_ajaxbutton',
-          'nonce': $(this).data('nonce')
+          'action': 'foofields_' + self.id,
+          'nonce': self.opt.nonce
         };
 
         if ($('#post_ID').length) {
@@ -5651,6 +5747,33 @@ FooFields.utils, FooFields.utils.fn, FooFields.utils.str);
 "use strict";
 
 (function ($, _, _is, _obj) {
+  _.HtmlList = _.Field.extend({
+    updateSelected: function updateSelected() {
+      var self = this;
+      self.$change.each(function () {
+        var $el = $(this);
+        $el.parent('label').toggleClass(self.instance.cls.selected, $el.is(self.opt.valueFilter));
+      });
+    },
+    setup: function setup() {
+      this.updateSelected();
+    },
+    onValueChanged: function onValueChanged(e) {
+      var self = e.data.self;
+      self.updateSelected();
+      self.trigger("change", [self.val(), self]);
+    }
+  });
+
+  _.fields.register("htmllist", _.HtmlList, ".foofields-type-htmllist,.foofields-type-radiolist,.foofields-type-checkboxlist", {
+    changeSelector: "[type='checkbox'],[type='radio']",
+    valueSelector: "[type='checkbox'],[type='radio']",
+    valueFilter: ":checked"
+  }, {}, {});
+})(FooFields.$, FooFields, FooFields.utils.is, FooFields.utils.obj);
+"use strict";
+
+(function ($, _, _is, _obj) {
   _.Repeater = _.Field.extend({
     setup: function setup() {
       var self = this;
@@ -5707,10 +5830,6 @@ FooFields.utils, FooFields.utils.fn, FooFields.utils.str);
       if (self.$select.length) {
         self.$display = self.$input.children("input[type=hidden]").first();
 
-        _obj.extend(self.opt, self.$select.data());
-
-        self.endpoint = window.ajaxurl + '?' + self.opt.query;
-
         var options = _obj.extend({}, self.opt.selectize, {
           onChange: function onChange(value) {
             if (self.api instanceof window.Selectize) {
@@ -5719,7 +5838,7 @@ FooFields.utils, FooFields.utils.fn, FooFields.utils.str);
             }
           },
           load: function load(query, callback) {
-            $.get(self.endpoint, {
+            $.get(window.ajaxurl + '?' + self.opt.query, {
               q: query
             }).done(function (response) {
               callback(response.results);
@@ -5767,13 +5886,13 @@ FooFields.utils, FooFields.utils.fn, FooFields.utils.str);
       self.$select = self.$input.children("select").first();
       self.create = false;
 
-      if (self.$select.data('create')) {
+      if (self.opt.create) {
         self.create = function (input, callback) {
           this.close();
           self.$input.children(".selectize-control").addClass('loading');
           var data = {
-            action: self.$select.data('action'),
-            nonce: self.$select.data('nonce'),
+            action: self.opt.action,
+            nonce: self.opt.nonce,
             add: input
           };
           jQuery.ajax({
@@ -5848,9 +5967,9 @@ FooFields.utils, FooFields.utils.fn, FooFields.utils.str);
     setup: function setup() {
       var self = this;
       self.$suggest = self.$input.children('input[type=text]').first();
-      self.$suggest.suggest(window.ajaxurl + '?' + self.$suggest.data('suggest-query'), {
-        multiple: $(this).data('suggest-multiple'),
-        multipleSep: $(this).data('suggest-separator')
+      self.$suggest.suggest(window.ajaxurl + '?' + self.opt.query, {
+        multiple: self.opt.mulitple,
+        multipleSep: self.opt.separator
       });
     }
   });

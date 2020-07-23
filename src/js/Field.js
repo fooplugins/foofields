@@ -12,84 +12,53 @@
 			self.$input = self.$el.children(self.sel.input);
 			self.$change = self.$el.find(self.opt.changeSelector);
 			self.$value = self.$el.find(self.opt.valueSelector);
-			self.visible = !self.opt.hidden;
-			self._showWhenField = null;
 		},
 		init: function(){
 			var self = this;
 			self.setup();
 			self.$change.on("change.foofields", {self: self}, self.onValueChanged);
-			self.setupVisibilityRules();
+			self._super();
 			self.trigger("init", [self]);
 		},
 		setup: function(){},
-		setupVisibilityRules: function(){
-			var self = this;
-			self.toggle(self.visible);
-			if (self.opt.showWhenField !== null){
-				var field = self.instance.field(self.opt.showWhenField);
-				if (field instanceof _.Field){
-					self._showWhenField = field;
-					self._showWhenField.on("change", self.onShowWhenFieldChanged, self);
-				}
-			}
-		},
 		destroy: function(){
 			var self = this;
 			self.trigger("destroy", [self]);
 			self.$change.off("change.foofields", self.onValueChanged);
-			self.teardownVisibilityRules();
 			self.teardown();
+			self._super();
 		},
 		teardown: function(){},
-		teardownVisibilityRules: function(){
-			var self = this;
-			if (self._showWhenField instanceof _.Field){
-				self._showWhenField.off("change", self.onShowWhenFieldChanged, self);
-			}
-		},
 		toggle: function(state){
-			var self = this;
-			self.visible = _is.boolean(state) ? state : !self.visible;
-			self.$el.toggleClass(self.instance.cls.hidden, !self.visible)
-				.find(":input").attr("disabled", !self.visible);
+			this._super(state);
+			this.$el.find(":input").attr("disabled", !this.visible);
 		},
 		val: function(){
-			var self = this;
-			return self.opt.valueAttribute !== null ? self.$value.attr(self.opt.valueAttribute) : self.$value.val();
+			var self = this, $inputs = self.$value;
+			if (_is.string(self.opt.valueFilter)){
+				$inputs = $inputs.filter(self.opt.valueFilter);
+			}
+			return $inputs.map(function(){
+				var $el = $(this);
+				return self.opt.valueAttribute !== null ? $el.attr(self.opt.valueAttribute) : $el.val();
+			}).get().join(',');
 		},
 		onValueChanged: function(e){
 			var self = e.data.self;
 			self.trigger("change", [self.val(), self]);
-		},
-		onShowWhenFieldChanged: function(e, value){
-			var self = this, testValue = self.opt.showWhenValue, visible;
-			switch (self.opt.showWhenOperator) {
-				case "!==":
-					visible = value !== testValue;
-					break;
-				case "regex":
-					visible = new RegExp(testValue).test(value);
-					break;
-				case "indexOf":
-					visible = value.indexOf(testValue) !== -1;
-					break;
-				default:
-					visible = value === testValue;
-					break;
-			}
-			self.toggle(visible);
 		}
 	});
 
 	_.fields.register("field", _.Field, ".foofields-field", {
 		// options
-		hidden: false,
-		showWhenField: null,
-		showWhenValue: null,
-		showWhenOperator: null,
+		showWhen: {
+			field: null,
+			value: null,
+			operator: null
+		},
 		changeSelector: ":input",
 		valueSelector: ":input",
+		valueFilter: null,
 		valueAttribute: null
 	}, {
 		el: "foofields-field",

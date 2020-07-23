@@ -19,6 +19,7 @@
 			first: "foofields-first",
 			last: "foofields-last",
 			hidden: "foofields-hidden",
+			selected: "foofields-selected",
 			container: {
 				el: "foofields-container",
 				content: {
