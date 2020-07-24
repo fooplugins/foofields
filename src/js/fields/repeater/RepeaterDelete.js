@@ -26,7 +26,7 @@
 	});
 
 	_.fields.register("repeater-delete", _.RepeaterDelete, ".foofields-type-repeater-delete", {}, {
-		button: ".foofields-repeater-delete"
+		button: "foofields-repeater-delete"
 	}, {});
 
 })(
