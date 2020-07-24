@@ -21,6 +21,8 @@
 
 			self.id = self.$el.attr("id");
 
+			self.$state = self.$el.children('input[type="hidden"][name*="__state"]')
+
 			self.contents = self.$el.children(self.sel.content.el).map(function(i, el){
 				return new _.Content(self, el);
 			}).get();
@@ -51,7 +53,10 @@
 				tab.init();
 			});
 
-			if (active === null && self.contents.length > 0) active = self.contents[0];
+			var state = self.$state.val();
+			if ( !_is.empty(state) ) active = self.content(state);
+
+			if (!active && self.contents.length > 0) active = self.contents[0];
 			if (active instanceof _.Content) self.activate(active.id);
 
 			self.instance.on({
@@ -87,6 +92,9 @@
 			});
 			self.contents.forEach(function (content) {
 				content.activate(id);
+				if (content.id === id){
+					self.$state.val(id);
+				}
 			});
 		},
 		toggle: function(id, state){
