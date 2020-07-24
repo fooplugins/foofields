@@ -59,7 +59,7 @@
 			var self = this, reg = self.registered[name], i18n = {}, classes = {};
 			if (_is.hash(reg)){
 
-				var inst = content.ctnr.instance,
+				var inst = content.instance,
 					regBases = self.bases(name),
 					ext_options = [{}],
 					ext_classes = [{}],
