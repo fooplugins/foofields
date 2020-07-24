@@ -572,6 +572,19 @@ if ( ! class_exists( 'FooPlugins\FooFields\Admin\Movie\MetaboxTest' ) ) {
 										)
 									),
 									array(
+										'id'       => 'selectize-multi',
+										'label'    => __( 'Selectize Multi Select Field', 'foofields' ),
+										'type'     => 'selectize-multi',
+										'placeholder' => __( 'Choose from a pre-defined set of choices', 'foofields' ),
+										'choices' => array(
+											array( 'value' => 0, 'display' => __( 'option 1', 'foofields' ) ),
+											array( 'value' => 1, 'display' => __( 'option 2', 'foofields' ) ),
+											array( 'value' => 2, 'display' => __( 'option 3', 'foofields' ) ),
+											array( 'value' => 3, 'display' => __( 'option 4', 'foofields' ) ),
+											array( 'value' => 4, 'display' => __( 'option 5', 'foofields' ) ),
+										)
+									),
+									array(
 										'id'       => 'manage',
 										'type'     => 'repeater-delete',
 									),
