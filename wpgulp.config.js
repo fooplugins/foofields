@@ -53,7 +53,7 @@ module.exports = {
 			"./src/js/Content.js",
 			"./src/js/Fields.js",
 			"./src/js/Field.js",
-			"./src/js/fields/*.js",
+			"./src/js/fields/**/*.js",
 			"./src/js/__init.js"
 		]
 	},
