@@ -129,6 +129,7 @@ if ( ! class_exists( __NAMESPACE__ . '\Repeater' ) ) {
 				$field_object->override_value_function = array( $this, 'get_repeater_field_value' );
 			}
 			$field_object->name = $this->name . '[' . $field_id . '][]';
+			$field_object->pre_render();
 			$field_object->render( false, $in_footer ? array( 'disabled' => 'disabled' ) : false );
 		}
 
