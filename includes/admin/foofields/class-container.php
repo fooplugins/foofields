@@ -540,29 +540,28 @@ if ( ! class_exists( __NAMESPACE__ . '\Container' ) ) {
 		 * @param $content
 		 */
 		function render_content( $content ) {
-			$classes[] = 'foofields-content';
-			if ( isset( $content['class'] ) ) {
-				$classes[] = $content['class'];
-			}
-			$content_id = $this->get_unique_id( $content ) . '-content';
+			if ( isset( $content['fields'] ) ){
+				$classes[] = 'foofields-content';
+				if ( isset( $content['class'] ) ) {
+					$classes[] = $content['class'];
+				}
+				$content_id = $this->get_unique_id( $content ) . '-content';
 
-			$last_state = $this->container_last_state_value();
+				$last_state = $this->container_last_state_value();
 
-			if ( $last_state === $content_id ) {
-				$classes[] = 'foofields-active';
-			}
+				if ( $last_state === $content_id ) {
+					$classes[] = 'foofields-active';
+				}
 
-			self::render_html_tag( 'div', array(
-				'class' => implode( ' ', $classes ),
-				'id'    => $content_id
-			), null, false );
+				self::render_html_tag( 'div', array(
+					'class' => implode( ' ', $classes ),
+					'id'    => $content_id
+				), null, false );
 
-			if ( isset( $content['fields'] ) ) {
 				$this->render_fields( $content['fields'] );
+
+				echo '</div>';
 			}
-
-			echo '</div>';
-
 			if ( isset( $content['tabs'] ) ) {
 				foreach ( $content['tabs'] as $tab ) {
 					self::render_content( $tab );
