@@ -96,9 +96,8 @@ if ( ! class_exists( __NAMESPACE__ . '\Repeater' ) ) {
 				foreach( $value as $row ) {
 					echo '<tr>';
 					//output the hidden metadata cell for the row
-					$this->render_row_metadata_fields( $row, $row_index );
 					echo '<td>';
-
+					$this->render_row_metadata_fields( $row, $row_index );
 					echo '</td>';
 					foreach ( $this->fields as $child_field ) {
 						echo '<td>';
@@ -114,10 +113,10 @@ if ( ! class_exists( __NAMESPACE__ . '\Repeater' ) ) {
 			//render the repeater footer for adding
 			echo '<tfoot><tr>';
 
-			echo '<tr>';
 			//output the hidden metadata cell for the row
-			$this->render_row_metadata_fields();
 			echo '<td>';
+			$this->render_row_metadata_fields();
+			echo '</td>';
 
 			foreach ( $this->fields as $child_field ) {
 				echo '<td>';
@@ -174,11 +173,15 @@ if ( ! class_exists( __NAMESPACE__ . '\Repeater' ) ) {
 			}
 			$field_id = $field_config['id'];
 			$field_config['id'] = $this->unique_id . '_' . $field_config['id'];
-			if ( !$in_footer ) {
-				$field_config['id'] .= '_' . $row_index;
-				$field_config['row_index'] = $row_index;
-				$field_config['original_id'] = $field_id;
-			}
+
+			$field_config['id'] .= '_' . $row_index;
+			$field_config['row_index'] = $row_index;
+			$field_config['original_id'] = $field_id;
+//			if ( !$in_footer ) {
+//				$field_config['id'] .= '_' . $row_index;
+//				$field_config['row_index'] = $row_index;
+//				$field_config['original_id'] = $field_id;
+//			}
 
 			$field_object = $this->container->create_field_instance( $field_config['type'], $field_config );
 			if ( !$in_footer ) {
@@ -227,9 +230,11 @@ if ( ! class_exists( __NAMESPACE__ . '\Repeater' ) ) {
 			$repeater_data = parent::get_posted_value( $sanitized_data );
 
 			$results = array();
-			foreach ( array_keys( $repeater_data ) as $fieldKey ) {
-				foreach ( $repeater_data[$fieldKey] as $key => $value ) {
-					$results[$key][$fieldKey] = $value;
+			if ( is_array( $repeater_data ) ){
+				foreach ( array_keys( $repeater_data ) as $fieldKey ) {
+					foreach ( $repeater_data[$fieldKey] as $key => $value ) {
+						$results[$key][$fieldKey] = $value;
+					}
 				}
 			}
 
