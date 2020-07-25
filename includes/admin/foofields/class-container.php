@@ -68,6 +68,7 @@ if ( ! class_exists( __NAMESPACE__ . '\Container' ) ) {
 			'checkboxlist'    => __NAMESPACE__ . '\Fields\InputList',
 			'radiolist'       => __NAMESPACE__ . '\Fields\InputList',
 			'htmllist'        => __NAMESPACE__ . '\Fields\InputList',
+			'repeater-index'  => __NAMESPACE__ . '\Fields\RepeaterIndex',
 			'repeater-delete' => __NAMESPACE__ . '\Fields\RepeaterDelete'
 		);
 

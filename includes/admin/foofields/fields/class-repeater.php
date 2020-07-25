@@ -33,6 +33,28 @@ if ( ! class_exists( __NAMESPACE__ . '\Repeater' ) ) {
 		}
 
 		/**
+		 * Add classes to field div
+		 */
+		function pre_render() {
+			parent::pre_render();
+
+			//check if there were any rows
+			if ( !$this->has_rows() ) {
+				$this->classes[] = 'foofields-empty';
+			}
+		}
+
+		/**
+		 * Returns true if the repeater has data
+		 *
+		 * @return bool
+		 */
+		function has_rows() {
+			$value = $this->value();
+			return is_array( $value ) && count( $value ) > 0;
+		}
+
+		/**
 		 * Render the repeater field
 		 *
 		 * @return mixed|void
@@ -47,10 +69,6 @@ if ( ! class_exists( __NAMESPACE__ . '\Repeater' ) ) {
 
 			$has_rows = is_array( $value ) && count( $value ) > 0;
 
-			self::render_html_tag( 'div', array(
-				'class' => 'foofields-repeater' . ( $has_rows ? '' : ' foofields-repeater-empty' )
-			), null, false );
-
 			self::render_html_tag( 'p', array(
 				'class' => 'foofields-repeater-no-data-message'
 			), $this->no_data_message );
@@ -61,6 +79,7 @@ if ( ! class_exists( __NAMESPACE__ . '\Repeater' ) ) {
 
 			//render the table column headers
 			echo '<thead><tr>';
+			self::render_html_tag( 'th', array() );
 			foreach ( $this->fields as $child_field ) {
 				$column_attributes = array();
 				if ( isset( $child_field['width'] ) ) {
@@ -76,9 +95,14 @@ if ( ! class_exists( __NAMESPACE__ . '\Repeater' ) ) {
 				$row_index = 0;
 				foreach( $value as $row ) {
 					echo '<tr>';
+					//output the hidden metadata cell for the row
+					$this->render_row_metadata_fields( $row, $row_index );
+					echo '<td>';
+
+					echo '</td>';
 					foreach ( $this->fields as $child_field ) {
 						echo '<td>';
-						$this->render_repeater_child_field( $child_field, $row, $row_index );
+						$this->render_row_field( $child_field, $row, $row_index );
 						echo '</td>';
 					}
 					echo '</tr>';
@@ -90,9 +114,14 @@ if ( ! class_exists( __NAMESPACE__ . '\Repeater' ) ) {
 			//render the repeater footer for adding
 			echo '<tfoot><tr>';
 
+			echo '<tr>';
+			//output the hidden metadata cell for the row
+			$this->render_row_metadata_fields();
+			echo '<td>';
+
 			foreach ( $this->fields as $child_field ) {
 				echo '<td>';
-				$this->render_repeater_child_field( $child_field );
+				$this->render_row_field( $child_field );
 				echo '</td>';
 			}
 
@@ -102,19 +131,46 @@ if ( ! class_exists( __NAMESPACE__ . '\Repeater' ) ) {
 			self::render_html_tag( 'button', array(
 				'class' => 'button foofields-repeater-add'
 			), $this->add_button_text );
-
-			echo '</div>';
 		}
 
-		function render_repeater_child_field( $field_config, $row_state = array(), $row_index = -1) {
+		/**
+		 * Render all repeater row hidden metadata fields
+		 *
+		 * @param array $row_state
+		 * @param int $row_index
+		 */
+		function render_row_metadata_fields( $row_state = array(), $row_index =-1 ) {
+			$this->render_row_metadata_field( '__id', $row_state, $row_index );
+			$this->render_row_metadata_field( '__created', $row_state, $row_index );
+			$this->render_row_metadata_field( '__created_by', $row_state, $row_index );
+			$this->render_row_metadata_field( '__updated', $row_state, $row_index );
+			$this->render_row_metadata_field( '__updated_by', $row_state, $row_index );
+		}
+
+		/**
+		 * Render a repeater row hidden metadata field
+		 *
+		 * @param $metadata_id
+		 * @param array $row_state
+		 * @param int $row_index
+		 */
+		function render_row_metadata_field( $metadata_id, $row_state = array(), $row_index =-1 ) {
+			if ( isset( $row[$metadata_id] ) ) {
+				self::render_html_tag( 'input', array( 'type' => 'hidden', 'name' => $this->row_field_name( $metadata_id, $row_index ) ) );
+			}
+		}
+
+		/**
+		 * Render a repeater row field
+		 * @param $field_config
+		 * @param array $row_state
+		 * @param int $row_index
+		 */
+		function render_row_field( $field_config, $row_state = array(), $row_index = -1) {
 			$in_footer = $row_index === -1;
 
 			if ( array_key_exists( $field_config['id'], $row_state ) ) {
 				$field_config['value'] = $row_state[ $field_config['id'] ];
-			}
-			if ( 'index' === $field_config['type'] ) {
-				$field_config['type'] = 'html';
-				$field_config['html'] = $in_footer ? '' : ($row_index + 1);
 			}
 			$field_id = $field_config['id'];
 			$field_config['id'] = $this->unique_id . '_' . $field_config['id'];
@@ -128,12 +184,13 @@ if ( ! class_exists( __NAMESPACE__ . '\Repeater' ) ) {
 			if ( !$in_footer ) {
 				$field_object->override_value_function = array( $this, 'get_repeater_field_value' );
 			}
-			$field_object->name = $this->name . '[' . $field_id . '][]';
-//			if ( $field_object->type === 'selectize-multi' ) {
-//				$field_object->name = $field_object->name . '[]';
-//			}
+			$field_object->name = $this->row_field_name( $field_id, $row_index );
 			$field_object->pre_render();
 			$field_object->render( false, $in_footer ? array( 'disabled' => 'disabled' ) : false );
+		}
+
+		function row_field_name( $field_id, $row_index ) {
+			return $this->name .'[' . $row_index . '][' . $field_id . ']';
 		}
 
 		/**

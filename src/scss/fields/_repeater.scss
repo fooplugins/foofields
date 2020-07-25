@@ -1,0 +1,39 @@
+.foofields-type-repeater {
+  .foofields-field-input {
+	.foofields-repeater-no-data-message {
+	  display: none;
+	}
+
+	table {
+	  display: table;
+	  width: 100%;
+	  margin: 10px 0;
+
+
+
+	  td {
+		box-shadow: inset 0 -1px 0 rgba(0, 0, 0, 0.1);
+
+		&:nth-child(0) {
+		  display: none;
+		}
+	  }
+
+	  tfoot {
+		display: none;
+	  }
+	}
+  }
+
+  &.foofields-empty {
+	.foofields-field-input {
+	  .foofields-repeater-no-data-message {
+		display: block;
+	  }
+
+	  table {
+		display: none;
+	  }
+	}
+  }
+}
