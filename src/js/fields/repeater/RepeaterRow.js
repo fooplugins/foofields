@@ -33,6 +33,11 @@
 			return _utils.find(this.fields, function(field){
 				return field.id === id;
 			});
+		},
+		enable: function() {
+			this.fields.forEach(function(field){
+				field.enable();
+			});
 		}
 	});
 

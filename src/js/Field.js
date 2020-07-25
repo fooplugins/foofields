@@ -31,7 +31,17 @@
 		teardown: function(){},
 		toggle: function(state){
 			this._super(state);
-			this.$el.find(":input").attr("disabled", !this.visible);
+			if ( this.visible ) {
+				this.enable();
+			} else {
+				this.disable();
+			}
+		},
+		disable: function() {
+			this.$el.find(":input").attr("disabled", "disabled");
+		},
+		enable: function() {
+			this.$el.find(":input").removeAttr("disabled");
 		},
 		val: function(){
 			var self = this, $inputs = self.$value;

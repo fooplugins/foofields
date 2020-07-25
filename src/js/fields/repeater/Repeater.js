@@ -34,6 +34,7 @@
 			self.rows.push(row);
 			self.$tbody.append(row.$el);
 			row.init();
+			row.enable();
 			// always remove the empty class when adding a row, jquery internally checks if it exists
 			self.$table.removeClass(self.cls.empty);
 			return row;
@@ -60,6 +61,10 @@
 			e.preventDefault();
 			e.stopPropagation();
 			e.data.self.addNewRow();
+		},
+		toggle: function(state){
+			this._super(state);
+			this.$template.find(":input").attr("disabled", "disabled");
 		}
 	});
 

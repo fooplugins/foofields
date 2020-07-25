@@ -63,6 +63,18 @@
 			if (self.api instanceof Selectize){
 				self.api.destroy();
 			}
+		},
+		enable: function() {
+			var self = this;
+			if (self.api instanceof Selectize){
+				self.api.enable();
+			}
+		},
+		disable: function() {
+			var self = this;
+			if (self.api instanceof Selectize){
+				self.api.disable();
+			}
 		}
 	});
 
