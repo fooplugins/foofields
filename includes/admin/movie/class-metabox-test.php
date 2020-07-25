@@ -542,18 +542,6 @@ if ( ! class_exists( 'FooPlugins\FooFields\Admin\Movie\MetaboxTest' ) ) {
 										'type'     => 'text',
 									),
 									array(
-										'id'       => 'number',
-										'label'    => __( 'Number Field', 'foofields' ),
-										'desc'     => __( 'A test number field', 'foofields' ),
-										'type'     => 'number',
-									),
-									array(
-										'id'       => 'textarea',
-										'label'    => __( 'Textarea Field', 'foofields' ),
-										'desc'     => __( 'A test textarea field', 'foofields' ),
-										'type'     => 'textarea',
-									),
-									array(
 										'id'       => 'checkbox',
 										'label'    => __( 'Checkbox Field', 'foofields' ),
 										'desc'     => __( 'A test Checkbox field', 'foofields' ),
@@ -564,6 +552,18 @@ if ( ! class_exists( 'FooPlugins\FooFields\Admin\Movie\MetaboxTest' ) ) {
 										'label'    => __( 'Select Field', 'foofields' ),
 										'desc'     => __( 'A test select field', 'foofields' ),
 										'type'     => 'select',
+										'choices' => array(
+											'option1' => __( 'Option 1', 'foofields' ),
+											'option2' => __( 'Option 2', 'foofields' ),
+											'option3' => __( 'Option 3', 'foofields' ),
+											'option4' => __( 'Option 4', 'foofields' ),
+										)
+									),
+									array(
+										'id'       => 'checkboxlist',
+										'label'    => __( 'Checkbox List', 'foofields' ),
+										'desc'     => __( 'A Checkbox List field', 'foofields' ),
+										'type'     => 'checkboxlist',
 										'choices' => array(
 											'option1' => __( 'Option 1', 'foofields' ),
 											'option2' => __( 'Option 2', 'foofields' ),

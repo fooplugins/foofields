@@ -129,10 +129,20 @@ if ( ! class_exists( __NAMESPACE__ . '\Repeater' ) ) {
 				$field_object->override_value_function = array( $this, 'get_repeater_field_value' );
 			}
 			$field_object->name = $this->name . '[' . $field_id . '][]';
+//			if ( $field_object->type === 'selectize-multi' ) {
+//				$field_object->name = $field_object->name . '[]';
+//			}
 			$field_object->pre_render();
 			$field_object->render( false, $in_footer ? array( 'disabled' => 'disabled' ) : false );
 		}
 
+		/**
+		 * Override function for the fields within a repeater to ensure the correct value is fetched from the state
+		 *
+		 * @param $repeater_field_config
+		 *
+		 * @return mixed|string
+		 */
 		function get_repeater_field_value( $repeater_field_config ) {
 			$state = $this->value();
 
