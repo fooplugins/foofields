@@ -14,3 +14,12 @@
 	width: 100%;
   }
 }
+// Small Screen CSS
+// ----------------------------------------------------------------------------
+@media only screen and (max-width: $small-screen) {
+  .foofields-content.foofields-active.foofields-cols-2 {
+	>.foofields-field {
+	  width: 100%;
+	}
+  }
+}
