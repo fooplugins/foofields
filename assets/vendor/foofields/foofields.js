@@ -4933,6 +4933,7 @@ FooFields.utils, FooFields.utils.fn, FooFields.utils.str);
       self._super(instance, element, instance.cls.container, instance.sel.container);
 
       self.id = self.$el.attr("id");
+      self.$state = self.$el.children('input[type="hidden"][name*="__state"]');
       self.contents = self.$el.children(self.sel.content.el).map(function (i, el) {
         return new _.Content(self, el);
       }).get();
@@ -4959,7 +4960,9 @@ FooFields.utils, FooFields.utils.fn, FooFields.utils.str);
       self.tabs.forEach(function (tab) {
         tab.init();
       });
-      if (active === null && self.contents.length > 0) active = self.contents[0];
+      var state = self.$state.val();
+      if (!_is.empty(state)) active = self.content(state);
+      if (!active && self.contents.length > 0) active = self.contents[0];
       if (active instanceof _.Content) self.activate(active.id);
       self.instance.on({
         "small-changed": self.onSmallChanged,
@@ -4993,6 +4996,10 @@ FooFields.utils, FooFields.utils.fn, FooFields.utils.str);
       });
       self.contents.forEach(function (content) {
         content.activate(id);
+
+        if (content.id === id) {
+          self.$state.val(id);
+        }
       });
     },
     toggle: function toggle(id, state) {
@@ -5488,7 +5495,7 @@ FooFields.utils, FooFields.utils.fn, FooFields.utils.str);
           classes = {};
 
       if (_is.hash(reg)) {
-        var inst = content.ctnr.instance,
+        var inst = content.instance,
             regBases = self.bases(name),
             ext_options = [{}],
             ext_classes = [{}],
@@ -5616,7 +5623,17 @@ FooFields.utils, FooFields.utils.fn, FooFields.utils.str);
     toggle: function toggle(state) {
       this._super(state);
 
-      this.$el.find(":input").attr("disabled", !this.visible);
+      if (this.visible) {
+        this.enable();
+      } else {
+        this.disable();
+      }
+    },
+    disable: function disable() {
+      this.$el.find(":input").attr("disabled", "disabled");
+    },
+    enable: function enable() {
+      this.$el.find(":input").removeAttr("disabled");
     },
     val: function val() {
       var self = this,
@@ -5774,49 +5791,6 @@ FooFields.utils, FooFields.utils.fn, FooFields.utils.str);
 "use strict";
 
 (function ($, _, _is, _obj) {
-  _.Repeater = _.Field.extend({
-    setup: function setup() {
-      var self = this;
-      self.$addButton = self.$input.find('.foofields-repeater-add:first');
-      self.$container = self.$input.find('.foofields-repeater:first');
-      self.$table = self.$input.find('table:first');
-      self.$addButton.click(function (e) {
-        var $this = $(this),
-            $table = self.$table,
-            addRow = $table.find('tfoot tr').clone();
-        e.preventDefault();
-        e.stopPropagation(); //make sure the inputs are not disabled
-
-        addRow.find(':input').removeAttr('disabled'); //add the new row to the table
-
-        $table.find('tbody').append(addRow); //ensure the no-data message is hidden, and the table is shown
-
-        self.$container.removeClass('foofields-repeater-empty');
-      });
-      self.$input.on('click', '.foofields-repeater-delete', function (e) {
-        var $this = $(this),
-            confirmMessage = $this.data('confirm'),
-            $row = $this.parents('tr:first');
-        e.preventDefault();
-        e.stopPropagation();
-
-        if (confirmMessage && confirm(confirmMessage)) {
-          $row.remove();
-        } //check if no rows are left
-
-
-        if (self.$table.find('tbody tr').length === 0) {
-          self.$container.addClass('foofields-repeater-empty');
-        }
-      });
-    }
-  });
-
-  _.fields.register("repeater", _.Repeater, ".foofields-type-repeater", {}, {}, {});
-})(FooFields.$, FooFields, FooFields.utils.is, FooFields.utils.obj);
-"use strict";
-
-(function ($, _, _is, _obj) {
   if (!window.Selectize) {
     console.log("FooFields.Selectize dependency missing.");
     return;
@@ -5941,6 +5915,20 @@ FooFields.utils, FooFields.utils.fn, FooFields.utils.str);
       if (self.api instanceof Selectize) {
         self.api.destroy();
       }
+    },
+    enable: function enable() {
+      var self = this;
+
+      if (self.api instanceof Selectize) {
+        self.api.enable();
+      }
+    },
+    disable: function disable() {
+      var self = this;
+
+      if (self.api instanceof Selectize) {
+        self.api.disable();
+      }
     }
   });
 
@@ -5976,6 +5964,174 @@ FooFields.utils, FooFields.utils.fn, FooFields.utils.str);
 
   _.fields.register("suggest", _.Suggest, ".foofields-type-suggest", {}, {}, {});
 })(FooFields.$, FooFields, FooFields.utils.is, FooFields.utils.obj);
+"use strict";
+
+(function ($, _, _is, _obj) {
+  _.Repeater = _.Field.extend({
+    construct: function construct(content, element, options, classes, i18n) {
+      var self = this;
+
+      self._super(content, element, options, classes, i18n);
+
+      self.$container = self.$input.find(self.sel.container);
+      self.$addButton = self.$container.children(self.sel.add);
+      self.$table = self.$container.children('table').first();
+      self.$tbody = self.$table.children('tbody').first();
+      self.$template = self.$table.children('tfoot').first().children('tr').first();
+      self.rows = self.$tbody.children('tr').map(function (i, el) {
+        return new _.RepeaterRow(self, el);
+      }).get();
+    },
+    init: function init() {
+      var self = this;
+
+      self._super();
+
+      self.rows.forEach(function (row) {
+        row.init();
+      });
+    },
+    destroy: function destroy() {
+      var self = this;
+      self.rows.forEach(function (row) {
+        row.destroy();
+      });
+
+      self._super();
+    },
+    addNewRow: function addNewRow() {
+      var self = this,
+          row = new _.RepeaterRow(self, self.$template.clone()); // add the row to the collection for later use
+
+      self.rows.push(row);
+      self.$tbody.append(row.$el);
+      row.init();
+      row.enable(); // always remove the empty class when adding a row, jquery internally checks if it exists
+
+      self.$table.removeClass(self.cls.empty);
+      return row;
+    },
+    remove: function remove(row) {
+      var self = this;
+      row.$el.remove();
+      var i = self.rows.indexOf(row);
+
+      if (i !== -1) {
+        self.rows.splice(i, 1);
+      } //check if no rows are left
+
+
+      if (self.$tbody.children("tr").length === 0) {
+        self.$container.addClass(self.cls.empty);
+      }
+    },
+    setup: function setup() {
+      this.$addButton.on('click.foofields', {
+        self: this
+      }, this.onAddNewClick);
+    },
+    teardown: function teardown() {
+      this.$addButton.off('.foofields');
+    },
+    onAddNewClick: function onAddNewClick(e) {
+      e.preventDefault();
+      e.stopPropagation();
+      e.data.self.addNewRow();
+    },
+    toggle: function toggle(state) {
+      this._super(state);
+
+      this.$template.find(":input").attr("disabled", "disabled");
+    }
+  });
+
+  _.fields.register("repeater", _.Repeater, ".foofields-type-repeater", {}, {
+    add: "foofields-repeater-add",
+    container: "foofields-repeater",
+    empty: "foofields-repeater-empty"
+  }, {});
+})(FooFields.$, FooFields, FooFields.utils.is, FooFields.utils.obj);
+"use strict";
+
+(function ($, _, _is, _obj) {
+  _.RepeaterDelete = _.Field.extend({
+    setup: function setup() {
+      var self = this;
+      self.$button = self.$input.find(self.sel.button).on("click.foofields", {
+        self: self
+      }, self.onClick);
+    },
+    teardown: function teardown() {
+      this.$button.off(".foofields");
+    },
+    onClick: function onClick(e) {
+      e.preventDefault();
+      e.stopPropagation();
+      var $this = $(this),
+          confirmMessage = $this.data('confirm');
+
+      if (confirmMessage && confirm(confirmMessage)) {
+        // within the context of a repeater the fields content property
+        // holds a reference to its parent RepeaterRow so we can simply
+        // call the .remove() method.
+        e.data.self.content.remove();
+      }
+    }
+  });
+
+  _.fields.register("repeater-delete", _.RepeaterDelete, ".foofields-type-repeater-delete", {}, {
+    button: "foofields-repeater-delete"
+  }, {});
+})(FooFields.$, FooFields, FooFields.utils.is, FooFields.utils.obj);
+"use strict";
+
+(function ($, _, _utils, _is, _obj) {
+  _.RepeaterRow = _.Component.extend({
+    construct: function construct(repeater, el) {
+      var self = this;
+
+      self._super(repeater.instance, el, repeater.cls, repeater.sel);
+
+      self.repeater = repeater;
+      self.ctnr = repeater.ctnr;
+      self.$cells = self.$el.children('td,th');
+      self.fields = self.$cells.children(self.sel.el).map(function (i, el) {
+        return _.fields.create(self, el);
+      }).get();
+    },
+    init: function init() {
+      var self = this;
+
+      self._super();
+
+      self.fields.forEach(function (field) {
+        field.init();
+      });
+    },
+    destroy: function destroy() {
+      var self = this;
+      self.fields.forEach(function (field) {
+        field.destroy();
+      });
+
+      self._super();
+    },
+    remove: function remove() {
+      var self = this;
+      self.repeater.remove(self);
+    },
+    field: function field(id) {
+      return _utils.find(this.fields, function (field) {
+        return field.id === id;
+      });
+    },
+    enable: function enable() {
+      this.fields.forEach(function (field) {
+        field.enable();
+      });
+    }
+  });
+})(FooFields.$, FooFields, FooFields.utils, FooFields.utils.is, FooFields.utils.obj);
 "use strict";
 
 (function ($, _, _utils, _is, _obj) {

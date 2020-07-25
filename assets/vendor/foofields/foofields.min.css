@@ -163,6 +163,9 @@ button[data-balloon]{overflow:visible}
 .foofields-tabs-vertical .foofields-tab-link{text-align:center}
 .foofields-tabs-vertical .foofields-tab.foofields-show-menu .foofields-tab-menu{display:block;width:150px;position:absolute;top:0;right:0;-webkit-transform:translateX(100%);transform:translateX(100%);z-index:11}
 .foofields-tabs-vertical .foofields-tab-menu-header{display:block}
+.foofields-content.foofields-active.foofields-cols-2>.foofields-field{width:100%}
+.foofields-content.foofields-active.foofields-cols-3>.foofields-field,.foofields-content.foofields-active.foofields-cols-3>.foofields-field.foofields-colspan-2{width:100%}
+.foofields-content.foofields-active.foofields-cols-4>.foofields-field,.foofields-content.foofields-active.foofields-cols-4>.foofields-field.foofields-colspan-2,.foofields-content.foofields-active.foofields-cols-4>.foofields-field.foofields-colspan-3{width:100%}
 .foofields-tabs-vertical.foofields-style-metabox .foofields-tab.foofields-show-menu .foofields-tab-link:after{border-right-color:#ddd}
 .foofields-tabs-vertical.foofields-style-metabox .foofields-tab.foofields-show-menu:not(.foofields-active) .foofields-tab-link{color:#555;background-color:#ddd}
 .foofields-tabs-vertical.foofields-style-metabox .foofields-tab.foofields-active .foofields-tab-menu-header{color:#FFF;background-color:#0073aa}
