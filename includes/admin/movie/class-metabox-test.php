@@ -533,7 +533,7 @@ if ( ! class_exists( 'FooPlugins\FooFields\Admin\Movie\MetaboxTest' ) ) {
 								'fields'   => array(
 									array(
 										'id' => 'index',
-										'type' => 'index'
+										'type' => 'repeater-index'
 									),
 									array(
 										'id'       => 'text',
