@@ -11,7 +11,7 @@ if ( ! class_exists( __NAMESPACE__ . '\RepeaterIndex' ) ) {
 		function __construct( $container, $type, $field_config ) {
 			parent::__construct( $container, $type, $field_config );
 
-			$this->format = isset( $field_config['format'] ) ? $field_config['format'] : __( '%d', $container->text_domain );
+			$this->format = isset( $field_config['format'] ) ? $field_config['format'] : __( '{count}', $container->text_domain );
 			$this->row_index = intval( isset( $field_config['row_index'] ) ? $field_config['row_index'] : -1 );
 		}
 
@@ -25,7 +25,10 @@ if ( ! class_exists( __NAMESPACE__ . '\RepeaterIndex' ) ) {
 		 * Render the ajax button field
 		 */
 		function render_input( $override_attributes = false ) {
-			echo sprintf( $this->format, ($this->row_index + 1) );
+			$patterns = array('/{index}/','/{count}/');
+			$replacements = array($this->row_index, $this->row_index+1);
+			echo preg_replace($patterns, $replacements, $this->format);
+//			echo sprintf( $this->format, ($this->row_index + 1) );
 		}
 	}
 }
