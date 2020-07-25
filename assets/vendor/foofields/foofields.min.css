@@ -138,6 +138,13 @@ button[data-balloon]{overflow:visible}
 .foofields-content.foofields-active.foofields-cols-4>.foofields-field.foofields-colspan-2{width:50%}
 .foofields-content.foofields-active.foofields-cols-4>.foofields-field.foofields-colspan-3{width:75%}
 .foofields-content.foofields-active.foofields-cols-4>.foofields-field.foofields-colspan-4,.foofields-content.foofields-active.foofields-cols-4>.foofields-field.foofields-colspan-5,.foofields-content.foofields-active.foofields-cols-4>.foofields-field.foofields-full-width{width:100%}
+.foofields-type-repeater .foofields-field-input .foofields-repeater-no-data-message{display:none}
+.foofields-type-repeater .foofields-field-input table{display:table;width:100%;margin:10px 0}
+.foofields-type-repeater .foofields-field-input table td{-webkit-box-shadow:inset 0 -1px 0 rgba(0,0,0,0.1);box-shadow:inset 0 -1px 0 rgba(0,0,0,0.1)}
+.foofields-type-repeater .foofields-field-input table td:nth-child(0){display:none}
+.foofields-type-repeater .foofields-field-input table tfoot{display:none}
+.foofields-type-repeater.foofields-empty .foofields-field-input .foofields-repeater-no-data-message{display:block}
+.foofields-type-repeater.foofields-empty .foofields-field-input table{display:none}
 .foofields-style-metabox .foofields-content{background-color:#FFF}
 .foofields-style-metabox .foofields-tabs{background-color:#f5f5f5}
 .foofields-style-metabox .foofields-tab-link{color:#0073aa}
