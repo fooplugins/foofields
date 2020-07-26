@@ -10,8 +10,22 @@ if ( ! class_exists( __NAMESPACE__ . '\SettingsPage' ) ) {
 
 	abstract class SettingsPage extends Container {
 
+		protected $settings_id;
+		protected $page_title;
+		protected $menu_parent_slug;
+		protected $menu_title;
+		protected $capability;
+		protected $menu_position;
+
 		function __construct( $config ) {
 			parent::__construct( $config );
+
+			$this->settings_id = $this->config['settings_id'];
+			$this->page_title = isset( $this->config['page_title'] ) ? $this->config['page_title'] : __( 'Settings', $this->text_domain );
+			$this->menu_parent_slug = isset( $this->config['menu_parent_slug'] ) ? $this->config['menu_parent_slug'] : 'options-general.php';
+			$this->menu_title = isset( $this->config['menu_title'] ) ? $this->config['menu_title'] : __( 'Settings', $this->text_domain );
+			$this->capability = isset( $this->config['capability'] ) ? $this->config['capability'] : 'manage_options';
+			$this->menu_position = isset( $this->config['position'] ) ? $this->config['capability'] : null;
 
 			//add the menu for the settings page
 			add_action( 'admin_menu', array( $this, 'add_menu' ) );
@@ -78,13 +92,13 @@ if ( ! class_exists( __NAMESPACE__ . '\SettingsPage' ) ) {
 		 */
 		public function add_menu() {
 			add_submenu_page(
-				isset( $this->config['menu_parent_slug'] ) ? $this->config['menu_parent_slug'] : 'options-general.php',
-				isset( $this->config['page_title'] ) ? $this->config['page_title'] : __( 'Settings', $this->text_domain ),
-				isset( $this->config['menu_title'] ) ? $this->config['menu_title'] : __( 'Settings', $this->text_domain ),
-				isset( $this->config['capability'] ) ? $this->config['capability'] : 'manage_options',
+				$this->menu_parent_slug,
+				$this->page_title,
+				$this->menu_title,
+				$this->capability,
 				$this->container_id(),
 				array( $this, 'render_settings_page' ),
-				isset( $this->config['position'] ) ? $this->config['capability'] : null
+				$this->menu_position
 			);
 		}
 
@@ -93,20 +107,26 @@ if ( ! class_exists( __NAMESPACE__ . '\SettingsPage' ) ) {
 		 */
 		public function render_settings_page() {
 			?>
-			<form action="options.php" method="post">
-			<?php settings_fields( $this->container_id() ); ?>
+			<div class="wrap">
+				<h2><?php echo esc_html( $this->page_title ); ?></h2>
+				<?php if ( function_exists( 'settings_errors' ) ) {
+					settings_errors();
+				} ?>
+				<form action="options.php" method="post">
+				<?php settings_fields( $this->container_id() ); ?>
 
-				<?php $this->render_container(); ?>
+					<?php $this->render_container(); ?>
 
-				<p class="submit">
-					<input name="submit" class="button-primary" type="submit"
-					       value="<?php _e( 'Save Changes', $this->text_domain ); ?>"/>
-					<input name="<?php echo $this->container_id(); ?>[reset-defaults]"
-					       onclick="return confirm('<?php _e( 'Are you sure you want to restore all settings back to their default values?', $this->text_domain ); ?>');"
-					       class="button-secondary" type="submit"
-					       value="<?php _e( 'Restore Defaults', $this->text_domain ); ?>"/>
-				</p>
-			</form>
+					<p class="submit">
+						<input name="submit" class="button-primary" type="submit"
+						       value="<?php _e( 'Save Changes', $this->text_domain ); ?>"/>
+						<input name="<?php echo $this->container_id(); ?>[reset-defaults]"
+						       onclick="return confirm('<?php _e( 'Are you sure you want to restore all settings back to their default values?', $this->text_domain ); ?>');"
+						       class="button-secondary" type="submit"
+						       value="<?php _e( 'Restore Defaults', $this->text_domain ); ?>"/>
+					</p>
+				</form>
+			</div>
 <?php
 		}
 
@@ -133,6 +153,9 @@ if ( ! class_exists( __NAMESPACE__ . '\SettingsPage' ) ) {
 		 */
 		function get_container_classes() {
 			$classes = parent::get_container_classes();
+
+			$classes[] = 'foofields-style-settings';
+
 			return $classes;
 		}
 
@@ -140,7 +163,26 @@ if ( ! class_exists( __NAMESPACE__ . '\SettingsPage' ) ) {
 		 * Register settings
 		 */
 		function init_settings() {
-			register_setting( $this->container_id(), $this->container_id() );
+			register_setting( $this->container_id(), $this->container_id(), array( 'sanitize_callback' => array($this, 'sanitize_callback') ) );
+		}
+
+		// validate our settings
+		function sanitize_callback($input) {
+
+			//check to see if the options were reset
+			if ( isset ($input['reset-defaults']) ) {
+				delete_option( $this->container_id() );
+				add_settings_error(
+					'reset',
+					'reset_error',
+					__( 'Settings restored to default values', $this->text_domain ),
+					'updated'
+				);
+
+				return false;
+			}
+
+			return $input;
 		}
 	}
 }
