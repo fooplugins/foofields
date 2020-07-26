@@ -154,8 +154,12 @@ if ( ! class_exists( __NAMESPACE__ . '\Repeater' ) ) {
 		 * @param int $row_index
 		 */
 		function render_row_metadata_field( $metadata_id, $row_state = array(), $row_index =-1 ) {
-			if ( isset( $row[$metadata_id] ) ) {
-				self::render_html_tag( 'input', array( 'type' => 'hidden', 'name' => $this->row_field_name( $metadata_id, $row_index ) ) );
+			if ( isset( $row_state[$metadata_id] ) ) {
+				self::render_html_tag( 'input', array(
+					'type' => 'hidden',
+					'name' => $this->row_field_name( $metadata_id, $row_index ),
+					'value' => $row_state[$metadata_id]
+				) );
 			}
 		}
 
@@ -177,11 +181,6 @@ if ( ! class_exists( __NAMESPACE__ . '\Repeater' ) ) {
 			$field_config['id'] .= '_' . $row_index;
 			$field_config['row_index'] = $row_index;
 			$field_config['original_id'] = $field_id;
-//			if ( !$in_footer ) {
-//				$field_config['id'] .= '_' . $row_index;
-//				$field_config['row_index'] = $row_index;
-//				$field_config['original_id'] = $field_id;
-//			}
 
 			$field_object = $this->container->create_field_instance( $field_config['type'], $field_config );
 			if ( !$in_footer ) {
@@ -227,16 +226,7 @@ if ( ! class_exists( __NAMESPACE__ . '\Repeater' ) ) {
 		 * @return array
 		 */
 		function get_posted_value( $sanitized_data ) {
-			$repeater_data = parent::get_posted_value( $sanitized_data );
-
-			$results = array();
-			if ( is_array( $repeater_data ) ){
-				foreach ( array_keys( $repeater_data ) as $fieldKey ) {
-					foreach ( $repeater_data[$fieldKey] as $key => $value ) {
-						$results[$key][$fieldKey] = $value;
-					}
-				}
-			}
+			$results = parent::get_posted_value( $sanitized_data );
 
 			$current_username = 'unknown';
 			$current_user = wp_get_current_user();
