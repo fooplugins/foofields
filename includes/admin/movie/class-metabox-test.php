@@ -230,38 +230,11 @@ if ( ! class_exists( 'FooPlugins\FooFields\Admin\Movie\MetaboxTest' ) ) {
 								'type'     => 'text',
 							),
 							array(
-								'id'       => 'radioinlinestacked',
-								'label'    => __( 'Radio Fields Inline Stacked', 'foofields' ),
-								'desc'     => __( 'Radio Fields Inline', 'foofields' ),
-								'layout'   => 'inline',
+								'id'       => 'radioblockstacked',
+								'label'    => __( 'Radio Fields Block Stacked', 'foofields' ),
+								'layout'   => 'block',
 								'stacked'  => true,
 								'type'     => 'radiolist',
-								'choices' => array(
-									'option1' => __( 'Option 1', 'foofields' ),
-									'option2' => __( 'Option 2', 'foofields' ),
-									'option3' => __( 'Option 3', 'foofields' ),
-									'option4' => __( 'Option 4', 'foofields' ),
-								)
-							),
-							array(
-								'id'       => 'radiostacked',
-								'label'    => __( 'Radio Block Stacked', 'foofields' ),
-								'desc'     => __( 'Radio Block Stacked', 'foofields' ),
-								'type'     => 'radiolist',
-								'stacked'  => true,
-								'choices' => array(
-									'option1' => __( 'Option 1', 'foofields' ),
-									'option2' => __( 'Option 2', 'foofields' ),
-									'option3' => __( 'Option 3', 'foofields' ),
-									'option4' => __( 'Option 4', 'foofields' ),
-								)
-							),
-							array(
-								'id'       => 'checkboxlist',
-								'label'    => __( 'Checkboxlist stacked', 'foofields' ),
-								'desc'     => __( 'A test checkboxlist field', 'foofields' ),
-								'type'     => 'checkboxlist',
-								'stacked'  => false,
 								'choices' => array(
 									'option1' => __( 'Option 1', 'foofields' ),
 									'option2' => __( 'Option 2', 'foofields' ),
@@ -366,13 +339,13 @@ if ( ! class_exists( 'FooPlugins\FooFields\Admin\Movie\MetaboxTest' ) ) {
 								'tooltip'  => __( 'This field has no class set', 'foofields' ),
 							),
 							array(
-								'id'       => '4colcell2',
+								'id'       => '4colcell3',
 								'label'    => __( 'Line 3', 'foofields' ),
 								'type'     => 'text',
 								'tooltip'  => __( 'This field has no class set', 'foofields' ),
 							),
 							array(
-								'id'       => '4colcell3',
+								'id'       => '4colcell4',
 								'label'    => __( 'Line 4', 'foofields' ),
 								'type'     => 'text',
 								'tooltip'  => __( 'This field has no class set', 'foofields' ),
