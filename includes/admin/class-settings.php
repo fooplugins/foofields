@@ -616,5 +616,28 @@ if ( !class_exists( 'FooPlugins\FooFields\Admin\Settings' ) ) {
 				)
 			);
 		}
+
+
+		/**
+		 * Runs a successful thing on the server
+		 *
+		 * @param $field
+		 */
+		function return_success( $field ) {
+			wp_send_json_success( array(
+				'message' => __( 'A successful thing was run on the server', 'foofields' )
+			) );
+		}
+
+		/**
+		 * Runs a error thing on the server
+		 *
+		 * @param $field
+		 */
+		function return_error( $field ) {
+			wp_send_json_error( array(
+				'message' => __( 'An error occurred on the server.', 'foofields' )
+			) );
+		}
 	}
 }
