@@ -140,8 +140,10 @@ button[data-balloon]{overflow:visible}
 .foofields-content.foofields-active.foofields-cols-4>.foofields-field.foofields-colspan-4,.foofields-content.foofields-active.foofields-cols-4>.foofields-field.foofields-colspan-5,.foofields-content.foofields-active.foofields-cols-4>.foofields-field.foofields-full-width{width:100%}
 .foofields-type-repeater .foofields-field-input .foofields-repeater-no-data-message{display:none}
 .foofields-type-repeater .foofields-field-input table{display:table;width:100%;margin:10px 0}
+.foofields-type-repeater .foofields-field-input table tr.ui-sortable-helper{border:solid 1px rgba(0,0,0,0.1);border-bottom:0;background-color:#fff}
+.foofields-type-repeater .foofields-field-input table tr.foofields-repeater-placeholder{outline:1px dashed #0073aa;outline-offset:-10px}
 .foofields-type-repeater .foofields-field-input table td{-webkit-box-shadow:inset 0 -1px 0 rgba(0,0,0,0.1);box-shadow:inset 0 -1px 0 rgba(0,0,0,0.1)}
-.foofields-type-repeater .foofields-field-input table td:nth-child(0){display:none}
+.foofields-type-repeater .foofields-field-input table td:nth-of-type(1),.foofields-type-repeater .foofields-field-input table th:nth-of-type(1){display:none}
 .foofields-type-repeater .foofields-field-input table tfoot{display:none}
 .foofields-type-repeater.foofields-empty .foofields-field-input .foofields-repeater-no-data-message{display:block}
 .foofields-type-repeater.foofields-empty .foofields-field-input table{display:none}

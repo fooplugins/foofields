@@ -5987,9 +5987,8 @@ FooFields.utils, FooFields.utils.fn, FooFields.utils.str);
 
       self._super(content, element, options, classes, i18n);
 
-      self.$container = self.$input.find(self.sel.container);
-      self.$addButton = self.$container.children(self.sel.add);
-      self.$table = self.$container.children('table').first();
+      self.$addButton = self.$input.children(self.sel.add);
+      self.$table = self.$input.children('table').first();
       self.$tbody = self.$table.children('tbody').first();
       self.$template = self.$table.children('tfoot').first().children('tr').first();
       self.rows = self.$tbody.children('tr').map(function (i, el) {
@@ -6001,15 +6000,38 @@ FooFields.utils, FooFields.utils.fn, FooFields.utils.str);
 
       self._super();
 
+      self.$addButton.on('click.foofields', {
+        self: self
+      }, self.onAddNewClick);
       self.rows.forEach(function (row) {
         row.init();
+      });
+      var original;
+      self.$tbody.sortable({
+        cancel: ':input',
+        forcePlaceholderSize: true,
+        placeholder: 'foofields-repeater-placeholder',
+        items: '> tr',
+        distance: 5,
+        start: function start(e, ui) {
+          original = ui.item.index();
+          ui.placeholder.height(ui.item.height());
+        },
+        update: function update(e, ui) {
+          var current = ui.item.index(),
+              from = original < current ? original : current;
+          console.log('update:', current);
+          self.$tbody.children('tr').eq(from).nextAll('tr').andSelf().trigger('index-change');
+        }
       });
     },
     destroy: function destroy() {
       var self = this;
+      self.$tbody.sortable("destroy");
       self.rows.forEach(function (row) {
         row.destroy();
       });
+      self.$addButton.off('.foofields');
 
       self._super();
     },
@@ -6018,16 +6040,18 @@ FooFields.utils, FooFields.utils.fn, FooFields.utils.str);
           row = new _.RepeaterRow(self, self.$template.clone()); // add the row to the collection for later use
 
       self.rows.push(row);
-      self.$tbody.append(row.$el);
-      row.init();
-      row.enable(); // always remove the empty class when adding a row, jquery internally checks if it exists
+      self.$tbody.append(row.$el).sortable("refresh");
+      row.init(true); // row.enable();
+      // always remove the empty class when adding a row, jquery internally checks if it exists
 
-      self.$table.removeClass(self.cls.empty);
+      self.$el.removeClass(self.cls.empty);
       return row;
     },
     remove: function remove(row) {
-      var self = this;
+      var self = this,
+          $after = row.$el.nextAll('tr');
       row.$el.remove();
+      self.$tbody.sortable("refresh");
       var i = self.rows.indexOf(row);
 
       if (i !== -1) {
@@ -6036,16 +6060,10 @@ FooFields.utils, FooFields.utils.fn, FooFields.utils.str);
 
 
       if (self.$tbody.children("tr").length === 0) {
-        self.$container.addClass(self.cls.empty);
+        self.$el.addClass(self.cls.empty);
       }
-    },
-    setup: function setup() {
-      this.$addButton.on('click.foofields', {
-        self: this
-      }, this.onAddNewClick);
-    },
-    teardown: function teardown() {
-      this.$addButton.off('.foofields');
+
+      $after.trigger('index-change');
     },
     onAddNewClick: function onAddNewClick(e) {
       e.preventDefault();
@@ -6061,8 +6079,7 @@ FooFields.utils, FooFields.utils.fn, FooFields.utils.str);
 
   _.fields.register("repeater", _.Repeater, ".foofields-type-repeater", {}, {
     add: "foofields-repeater-add",
-    container: "foofields-repeater",
-    empty: "foofields-repeater-empty"
+    empty: "foofields-empty"
   }, {});
 })(FooFields.$, FooFields, FooFields.utils.is, FooFields.utils.obj);
 "use strict";
@@ -6112,15 +6129,23 @@ FooFields.utils, FooFields.utils.fn, FooFields.utils.str);
       self.fields = self.$cells.children(self.sel.el).map(function (i, el) {
         return _.fields.create(self, el);
       }).get();
+      self.regex = {
+        id: /(_)-?\d+(-.*?)?$/i,
+        name: /(\[.*?]\[)-?\d+(]\[.*?])$/i
+      };
     },
-    init: function init() {
+    init: function init(reindex) {
       var self = this;
 
       self._super();
 
+      self.$el.on('index-change.foofields', {
+        self: self
+      }, self.onIndexChange);
       self.fields.forEach(function (field) {
         field.init();
       });
+      if (reindex) self.reindex();
     },
     destroy: function destroy() {
       var self = this;
@@ -6134,10 +6159,49 @@ FooFields.utils, FooFields.utils.fn, FooFields.utils.str);
       var self = this;
       self.repeater.remove(self);
     },
+    reindex: function reindex() {
+      var self = this,
+          index = self.$el.index();
+      self.fields.forEach(function (field) {
+        field.id = self.update(field.$el, index);
+        field.$el.find("[id],[name]").each(function (i, el) {
+          self.update(el, index);
+        });
+      });
+      self.trigger('index-change', [index]);
+    },
+    update: function update(el, index) {
+      el = _is.jq(el) ? el : $(el);
+      var id = el.prop('id');
+
+      if (_is.string(id)) {
+        var newId = id.replace(this.regex.id, '$1' + index + '$2');
+
+        if (newId !== id) {
+          el.prop('id', newId);
+          id = newId;
+        }
+      }
+
+      var name = el.prop('name');
+
+      if (_is.string(name)) {
+        var newName = name.replace(this.regex.name, '$1' + index + '$2');
+
+        if (newName !== name) {
+          el.prop('name', newName);
+        }
+      }
+
+      return id;
+    },
     field: function field(id) {
       return _utils.find(this.fields, function (field) {
         return field.id === id;
       });
+    },
+    onIndexChange: function onIndexChange(e) {
+      e.data.self.reindex();
     },
     enable: function enable() {
       this.fields.forEach(function (field) {
@@ -6157,3 +6221,25 @@ FooFields.utils, FooFields.utils.fn, FooFields.utils.str);
     _.__instance__.init(window.FOOFIELDS);
   });
 })(FooFields.$, FooFields, FooFields.utils, FooFields.utils.is, FooFields.utils.obj);
+"use strict";
+
+(function ($, _, _is, _str) {
+  _.RepeaterIndex = _.Field.extend({
+    setup: function setup() {
+      this.content.on("index-change", this.onIndexChange, this);
+    },
+    teardown: function teardown() {
+      this.content.off("index-change");
+    },
+    onIndexChange: function onIndexChange(e, index) {
+      this.$input.text(_str.format(this.opt.format, {
+        index: index,
+        count: index + 1
+      }));
+    }
+  });
+
+  _.fields.register("repeater-index", _.RepeaterIndex, ".foofields-type-repeater-index", {
+    format: "{count}"
+  }, {}, {});
+})(FooFields.$, FooFields, FooFields.utils.is, FooFields.utils.str);
