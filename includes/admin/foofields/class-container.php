@@ -343,6 +343,7 @@ if ( ! class_exists( __NAMESPACE__ . '\Container' ) ) {
 				wp_enqueue_script( 'selectize', $this->config['plugin_url'] . 'assets/vendor/selectize/selectize.min.js', array( 'jquery' ), $this->config['plugin_version'] );
 				wp_enqueue_script( 'foofields', $this->config['plugin_url'] . 'assets/vendor/foofields/foofields.js', array(
 					'jquery',
+					'jquery-ui-sortable',
 					'suggest',
 					'wp-color-picker',
 					'selectize'
