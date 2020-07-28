@@ -21,17 +21,17 @@
 
 			self.id = self.$el.attr("id");
 
-			self.$state = self.$el.children('input[type="hidden"][name*="__state"]')
+			self.$state = self.$el.children('input[type="hidden"][name*="__state"]');
+			self.$tabContainer = self.$el.children(self.sel.tabs.el);
+			self.$tabs = self.$tabContainer.children(self.sel.tabs.tab.el)
 
 			self.contents = self.$el.children(self.sel.content.el).map(function(i, el){
 				return new _.Content(self, el);
 			}).get();
 
-			self.tabs = self.$el.children(self.sel.tabs.el)
-				.children(self.sel.tabs.tab.el)
-				.map(function(i, el){
-					return new _.Tab(self, el, i);
-				}).get();
+			self.tabs = self.$tabs.map(function(i, el){
+				return new _.Tab(self, el, i);
+			}).get();
 		},
 		/**
 		 * @summary Init the container raising events.

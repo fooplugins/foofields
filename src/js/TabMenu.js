@@ -61,7 +61,7 @@
 			if (!self.exists) return;
 			self.visible = !_is.undef(visible) ? !!visible : !self.visible;
 			self.tab.$el.toggleClass(self.cls.visible, self.visible);
-			self.ctnr.$el.children(self.ctnr.cls.tabs.el).toggleClass(self.cls.visible, self.visible);
+			self.ctnr.$tabContainer.toggleClass(self.cls.showing, self.ctnr.$tabs.filter(self.sel.visible).length > 0);
 			if (self.visible){
 				self.instance.$doc.on("click.foofields", self.onDocumentClick);
 			} else {
