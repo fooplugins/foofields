@@ -44,7 +44,14 @@ if ( ! class_exists( __NAMESPACE__ . '\Container' ) ) {
 		 */
 		public $plugin_version;
 
-		protected $validation_errors = array();
+		/**
+		 * Config validation errors
+		 *
+		 * @var array
+		 */
+		protected $config_validation_errors = array();
+
+		protected $state_field_errors = array();
 
 		const STATE_KEY = '__state';
 
@@ -96,13 +103,13 @@ if ( ! class_exists( __NAMESPACE__ . '\Container' ) ) {
 		 */
 		function validate_config() {
 			if ( ! isset( $this->text_domain ) ) {
-				$this->add_validation_error( __( 'ERROR : There is no "text_domain" value set! Translations will not work!' ) );
+				$this->add_config_validation_error( __( 'ERROR : There is no "text_domain" value set! Translations will not work!' ) );
 			}
 			if ( ! isset( $this->plugin_url ) ) {
-				$this->add_validation_error( __( 'ERROR : There is no "plugin_url" value set! Things will not work!' ) );
+				$this->add_config_validation_error( __( 'ERROR : There is no "plugin_url" value set! Things will not work!' ) );
 			}
 			if ( ! isset( $this->plugin_version ) ) {
-				$this->add_validation_error( __( 'ERROR : There is no "plugin_version" value set! Things will not work!' ) );
+				$this->add_config_validation_error( __( 'ERROR : There is no "plugin_version" value set! Things will not work!' ) );
 			}
 		}
 
@@ -111,11 +118,11 @@ if ( ! class_exists( __NAMESPACE__ . '\Container' ) ) {
 		 *
 		 * @param $error_message
 		 */
-		function add_validation_error( $error_message ) {
-			$this->validation_errors[] = $error_message;
+		function add_config_validation_error( $error_message ) {
+			$this->config_validation_errors[] = $error_message;
 
 			$error_field = array(
-				'id'   => 'validation_error_' . count( $this->validation_errors ),
+				'id'   => 'validation_error_' . count( $this->config_validation_errors ),
 				'type' => 'error',
 				'desc' => $error_message
 			);
@@ -132,11 +139,12 @@ if ( ! class_exists( __NAMESPACE__ . '\Container' ) ) {
 		 * Finds all fields within the config
 		 *
 		 * @param $config
+		 * @param string $parent_id
 		 */
-		function parse_config( &$config ) {
+		function parse_config( &$config, $parent_id = null ) {
 			if ( isset( $config['tabs'] ) ) {
 				foreach ( $config['tabs'] as &$tab ) {
-					$this->parse_config( $tab );
+					$this->parse_config( $tab, $tab['id'] );
 
 					//check if the tab has any data show rules
 					$this->show_rule_add( $tab, 'tabs' );
@@ -146,7 +154,7 @@ if ( ! class_exists( __NAMESPACE__ . '\Container' ) ) {
 			if ( isset( $config['fields'] ) ) {
 				foreach ( $config['fields'] as &$field ) {
 					$field_type = isset( $field['type'] ) ? $field['type'] : 'unknown';
-					$this->create_field_instance( $field_type,$field );
+					$this->create_field_instance( $field_type,$field, $parent_id );
 
 					//check if the field has any data show rules
 					$this->show_rule_add( $field, 'fields' );
@@ -215,10 +223,11 @@ if ( ! class_exists( __NAMESPACE__ . '\Container' ) ) {
 		 *
 		 * @param $field_type
 		 * @param $field_config
+		 * @param string $parent_id
 		 *
 		 * @return Field|mixed
 		 */
-		function create_field_instance( $field_type, &$field_config ) {
+		function create_field_instance( $field_type, &$field_config, $parent_id = null ) {
 			$field_id = $this->get_unique_id( $field_config );
 
 			//check if we have a duplicate field id
@@ -235,9 +244,8 @@ if ( ! class_exists( __NAMESPACE__ . '\Container' ) ) {
 			} else {
 				$field_instance = new Field( $this, $field_type, $field_config );
 			}
+			$field_instance->parent_id = $parent_id;
 			$this->fields[ $field_id ] = $field_instance;
-
-			//check if we have any show rules
 
 			return $field_instance;
 		}
@@ -399,9 +407,6 @@ if ( ! class_exists( __NAMESPACE__ . '\Container' ) ) {
 				return; //do nothing!
 			}
 
-			//process the fields based on the state and make any changes if needed
-			//$this->process_state_before_render();
-
 			$this->render_fields_before();
 
 			self::render_html_tag( 'div', array( 'class' => implode( ' ', $this->get_container_classes() ) ), null, false );
@@ -431,12 +436,13 @@ if ( ! class_exists( __NAMESPACE__ . '\Container' ) ) {
 		}
 
 		/**
-		 * Do any processing before the fields are rendered
+		 * Do any processing of errors before the fields are rendered
 		 */
-		function process_state_before_render() {
+		function process_state_errors( $config = null) {
 			$state = $this->get_state();
 
 			//get errors
+
 		}
 
 		/**
@@ -471,7 +477,7 @@ if ( ! class_exists( __NAMESPACE__ . '\Container' ) ) {
 			}
 
 			foreach ( $fields['tabs'] as $tab ) {
-				$this->render_content( $tab );
+				$this->render_content( $tab, $tab['id'] );
 			}
 		}
 
@@ -518,11 +524,13 @@ if ( ! class_exists( __NAMESPACE__ . '\Container' ) ) {
 			}
 			self::render_html_tag( 'span', array( 'class' => 'foofields-tab-text' ), $tab['label'] );
 
-			if ( isset( $tab['errors'] ) ) {
+			//check if there are any errors stored in the state
+			$errors = $this->get_field_errors( $tab_content_id );
+			if ( $errors !== false && is_array( $errors ) && count( $errors ) > 0 ) {
 				self::render_html_tag( 'span', array(
 					'class' => 'foofields-tab-error',
-					'title' => sprintf( _n( 'There is an error. Click to see more info.', 'There are %s errors. Click to see more info.', $tab['errors'] ), $tab['errors'] )
-				), $tab['errors'] );
+					'title' => sprintf( _n( 'There is an error. Click to see more info.', 'There are %s errors. Click to see more info.', count( $errors ) ), count( $errors ) )
+				), count( $errors ) );
 			}
 
 			echo '</a>';
@@ -537,11 +545,37 @@ if ( ! class_exists( __NAMESPACE__ . '\Container' ) ) {
 		}
 
 		/**
+		 * Get fields errors for a particular parent (usually a tab)
+		 * @param $parent_id
+		 *
+		 * @return mixed
+		 */
+		function get_field_errors( $parent_id ) {
+			if ( !array_key_exists( $parent_id, $this->state_field_errors ) ) {
+				$errors = array();
+
+				$state = $this->get_state();
+
+				if ( isset( $state['__errors'] ) ) {
+					foreach ( $this->fields as $field ) {
+						if ( $field->parent_id === $parent_id && array_key_exists( $field->field_data_key(), $state['__errors'] ) ) {
+							$errors[] = $state['__errors'][$field->field_data_key()]['message'];
+						}
+					}
+				}
+
+				$this->state_field_errors[$parent_id] = $errors;
+			}
+
+			return $this->state_field_errors[$parent_id];
+		}
+
+		/**
 		 * Renders the tab content
 		 *
 		 * @param $content
 		 */
-		function render_content( $content ) {
+		function render_content( $content, $parent_id = null ) {
 			if ( isset( $content['fields'] ) ){
 				$classes[] = 'foofields-content';
 				if ( isset( $content['class'] ) ) {
@@ -560,13 +594,30 @@ if ( ! class_exists( __NAMESPACE__ . '\Container' ) ) {
 					'id'    => $content_id
 				), null, false );
 
+				//check if there are any errors stored in the state
+				$errors = $this->get_field_errors( $parent_id );
+				if ( $errors !== false && is_array( $errors ) && count( $errors ) > 0 ) {
+					$error_message = '<strong>' . esc_html( __( 'The following errors were found:', $this->text_domain ) ) . '</strong><br />';
+					$error_message .= implode( '<br />', $errors );
+
+					$error_field_config = array(
+						'id' => 'errors_' . $parent_id,
+						'type' => 'error',
+						'text' => $error_message
+					);
+
+					$error_field_object = $this->create_field_instance( 'error', $error_field_config, $parent_id );
+					$error_field_object->pre_render();
+					$error_field_object->render( false );
+				}
+
 				$this->render_fields( $content['fields'] );
 
 				echo '</div>';
 			}
 			if ( isset( $content['tabs'] ) ) {
 				foreach ( $content['tabs'] as $tab ) {
-					self::render_content( $tab );
+					self::render_content( $tab, $tab['id'] );
 				}
 			}
 		}

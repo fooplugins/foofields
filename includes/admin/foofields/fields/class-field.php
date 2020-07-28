@@ -63,7 +63,7 @@ if ( ! class_exists( __NAMESPACE__ . '\Field' ) ) {
 
 		protected $description;
 
-		protected $required = false;
+		protected $required;
 
 		protected $tooltip;
 
@@ -74,6 +74,13 @@ if ( ! class_exists( __NAMESPACE__ . '\Field' ) ) {
 		protected $placeholder;
 
 		public $override_value_function;
+
+		/**
+		 * The parent_id for the current field, usually the id of the tab
+		 *
+		 * @var null
+		 */
+		public $parent_id = null;
 
 		/**
 		 * Field constructor.
@@ -93,7 +100,7 @@ if ( ! class_exists( __NAMESPACE__ . '\Field' ) ) {
 			$this->layout      = isset( $field_config['layout'] ) ? $field_config['layout'] : 'inline';
 			$this->label       = isset( $field_config['label'] ) ? $field_config['label'] : null;
 			$this->description = isset( $field_config['desc'] ) ? $field_config['desc'] : null;
-			$this->required    = isset( $field_config['required'] ) ? $field_config['required'] : false;
+			$this->required    = isset( $field_config['required'] ) ? $field_config['required'] : null;
 			$this->tooltip     = isset( $field_config['tooltip'] ) ? $field_config['tooltip'] : null;
 			$this->choices     = isset( $field_config['choices'] ) ? $field_config['choices'] : array();
 			$this->default     = isset( $field_config['default'] ) ? $field_config['default'] : null;
@@ -123,7 +130,9 @@ if ( ! class_exists( __NAMESPACE__ . '\Field' ) ) {
 		 */
 		function pre_render() {
 			//check if there were any processing errors
-			if ( $this->error ) {
+			$this->get_error_from_state();
+
+			if ( $this->error !== false ) {
 				$this->classes[] = 'foofields-error';
 			}
 
@@ -169,7 +178,7 @@ if ( ! class_exists( __NAMESPACE__ . '\Field' ) ) {
 			if ( isset( $this->label ) ) {
 				echo '<div class="foofields-label">';
 				$label = $this->label;
-				if ( $this->required ) {
+				if ( isset( $this->required ) && $this->required === true ) {
 					$label .= ' *';
 				}
 				self::render_html_tag( 'label', array( 'for' => $this->unique_id ), $label );
@@ -461,11 +470,42 @@ if ( ! class_exists( __NAMESPACE__ . '\Field' ) ) {
 		public function validate( $posted_value ) {
 
 			//check for required fields
-			if ( empty( $posted_value) && $this->required ) {
-				$this->error = sprintf( __( '%s is required!', $this->container->config[''] ), $this->label );
+			if ( isset( $this->required ) ) {
+				if ( true === $this->required && empty( $posted_value) ) {
+					$this->error = sprintf( __( '%s is required!', $this->container->text_domain ), $this->label );
+				} else if ( is_array( $this->required ) ) {
+					//check for more advanced required rules
+					if ( isset( $this->required['minimum'] ) && intval( $this->required['minimum'] ) > 0 ) {
+						$message = isset( $this->required['message'] ) ? $this->required['message'] : __( 'Please select a minimum of %d item(s) for %s!', $this->container->text_domain );
+						if ( !isset( $posted_value ) || ( is_array( $posted_value ) && count( $posted_value ) < intval( $this->required['minimum'] ) ) ) {
+							$this->error = sprintf( $message, intval( $this->required['minimum'] ), $this->label );
+						}
+					} else if ( isset( $this->required['maximum'] ) && intval( $this->required['maximum'] ) > 0 ) {
+						$message = isset( $this->required['message'] ) ? $this->required['message'] : __( 'Please select a maximum of %d item(s) for %s!', $this->container->text_domain );
+						if ( is_array( $posted_value ) && count( $posted_value ) > intval( $this->required['maximum'] ) ) {
+							$this->error = sprintf( $message, intval( $this->required['maximum'] ), $this->label );
+						}
+					} else if ( isset( $this->required['exact'] ) && intval( $this->required['exact'] ) > 0 ) {
+						$message = isset( $this->required['message'] ) ? $this->required['message'] : __( 'Please select exactly %d item(s) for %s!', $this->container->text_domain );
+						if ( !isset( $posted_value ) || ( is_array( $posted_value ) && count( $posted_value ) !== intval( $this->required['exact'] ) ) ) {
+							$this->error = sprintf( $message, intval( $this->required['exact'] ), $this->label );
+						}
+					}
+				}
 			}
 
-			return $this->error !== false;
+			return $this->error === false;
+		}
+
+		/**
+		 * Get the error message from the state if it exists
+		 */
+		function get_error_from_state() {
+			$state = $this->container->get_state();
+
+			if ( isset( $state['__errors'] ) && array_key_exists( $this->field_data_key(), $state['__errors'] ) ) {
+				$this->error = $state['__errors'][$this->field_data_key()]['message'];
+			}
 		}
 
 		/**

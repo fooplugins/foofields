@@ -192,6 +192,64 @@ if ( ! class_exists( 'FooPlugins\FooFields\Admin\Movie\MetaboxTest' ) ) {
 								)
 							),
 						)
+					),
+					array(
+						'id'     => 'validation',
+						'label'  => __( 'Validation', 'foofields' ),
+						'fields' => array(
+							array(
+								'id'       => 'required',
+								'label'    => __( 'Required Field', 'foofields' ),
+								'desc'     => __( 'This field is required. To test how the validation works, save the post without entering anything.', 'foofields' ),
+								'type'     => 'text',
+								'required' => true
+							),
+							array(
+								'id'       => 'checkboxlistvalidation',
+								'label'    => __( 'Checkbox List Min Validation', 'foofields' ),
+								'desc'     => __( 'You need to select at least 2 options', 'foofields' ),
+								'required' => array(
+									'minimum' => 2,
+								),
+								'type'     => 'checkboxlist',
+								'choices' => array(
+									'option1' => __( 'Option 1', 'foofields' ),
+									'option2' => __( 'Option 2', 'foofields' ),
+									'option3' => __( 'Option 3', 'foofields' ),
+									'option4' => __( 'Option 4', 'foofields' ),
+								)
+							),
+							array(
+								'id'       => 'checkboxlistvalidation2',
+								'label'    => __( 'Checkbox List Max Validation', 'foofields' ),
+								'desc'     => __( 'You need to select at most 3 options', 'foofields' ),
+								'required' => array(
+									'maximum' => 3,
+								),
+								'type'     => 'checkboxlist',
+								'choices' => array(
+									'option1' => __( 'Option 1', 'foofields' ),
+									'option2' => __( 'Option 2', 'foofields' ),
+									'option3' => __( 'Option 3', 'foofields' ),
+									'option4' => __( 'Option 4', 'foofields' ),
+								)
+							),
+							array(
+								'id'       => 'checkboxlistvalidation3',
+								'label'    => __( 'Checkbox List Exact Validation', 'foofields' ),
+								'desc'     => __( 'You need to select exactly 1 option', 'foofields' ),
+								'required' => array(
+									'exact' => 1,
+								),
+								'type'     => 'checkboxlist',
+								'choices' => array(
+									'option1' => __( 'Option 1', 'foofields' ),
+									'option2' => __( 'Option 2', 'foofields' ),
+									'option3' => __( 'Option 3', 'foofields' ),
+									'option4' => __( 'Option 4', 'foofields' ),
+								)
+							),
+						)
 					)
 				)
 			);

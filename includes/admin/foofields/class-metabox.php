@@ -31,7 +31,7 @@ if ( ! class_exists( __NAMESPACE__ . '\Metabox' ) ) {
 				if ( isset( $this->config['surpress_metakey_error'] ) && $this->config['surpress_metakey_error'] ) {
 					//Do nothing. Suppress the error message for the missing meta_key
 				} else {
-					$this->add_validation_error( __( 'WARNING : There is no "meta_key" value set for the metabox, which means nothing will be saved! If this is intentional, then set "surpress_metakey_error" to true.' ) );
+					$this->add_config_validation_error( __( 'WARNING : There is no "meta_key" value set for the metabox, which means nothing will be saved! If this is intentional, then set "surpress_metakey_error" to true.' ) );
 				}
 			}
 		}

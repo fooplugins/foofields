@@ -44,7 +44,7 @@ if ( ! class_exists( __NAMESPACE__ . '\SettingsPage' ) ) {
 			parent::validate_config();
 
 			if ( !isset( $this->config['settings_id'] ) ) {
-				$this->add_validation_error( __( 'ERROR : There is no "settings_id" value set for the settings page, which means nothing will be saved!' ) );
+				$this->add_config_validation_error( __( 'ERROR : There is no "settings_id" value set for the settings page, which means nothing will be saved!' ) );
 			}
 		}
 
