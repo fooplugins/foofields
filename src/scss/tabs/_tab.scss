@@ -64,7 +64,7 @@
 .foofields-tab-text {
   display: inline-block;
   vertical-align: middle;
-  padding: 0 7px 0 3px;
+  padding: 0 3px;
 }
 .foofields-tab-error {
   display: inline-block;
@@ -104,9 +104,7 @@
   .foofields-tab {
 	display: inline-block;
   }
-  .foofields-tab.foofields-has-menu.foofields-active {
-	margin-bottom: $tab-h-menu-height;
-  }
+  .foofields-tab.foofields-has-menu.foofields-active,
   .foofields-tab.foofields-has-menu.foofields-show-menu {
 	margin-bottom: $tab-h-menu-height;
   }
@@ -116,6 +114,12 @@
 	  transform: translateX(-50%);
 	  left: 50%;
 	  border-width: 4px;
+	}
+	.foofields-tab-icon {
+	  margin: 0 4px;
+	}
+	.foofields-tab-icon+.foofields-tab-text {
+	  margin-left: -2px;
 	}
   }
   .foofields-showing-menu {
