@@ -39,6 +39,7 @@
               el: "foofields-tab-menu",
               exists: "foofields-has-menu",
               visible: "foofields-show-menu",
+              showing: "foofields-menu-showing",
               header: "foofields-tab-menu-header",
               item: {
                 el: "foofields-tab-menu-item",
@@ -4934,10 +4935,12 @@ FooFields.utils, FooFields.utils.fn, FooFields.utils.str);
 
       self.id = self.$el.attr("id");
       self.$state = self.$el.children('input[type="hidden"][name*="__state"]');
+      self.$tabContainer = self.$el.children(self.sel.tabs.el);
+      self.$tabs = self.$tabContainer.children(self.sel.tabs.tab.el);
       self.contents = self.$el.children(self.sel.content.el).map(function (i, el) {
         return new _.Content(self, el);
       }).get();
-      self.tabs = self.$el.children(self.sel.tabs.el).children(self.sel.tabs.tab.el).map(function (i, el) {
+      self.tabs = self.$tabs.map(function (i, el) {
         return new _.Tab(self, el, i);
       }).get();
     },
@@ -5209,7 +5212,7 @@ FooFields.utils, FooFields.utils.fn, FooFields.utils.str);
       if (!self.exists) return;
       self.visible = !_is.undef(visible) ? !!visible : !self.visible;
       self.tab.$el.toggleClass(self.cls.visible, self.visible);
-      self.ctnr.$el.children(self.ctnr.cls.tabs.el).toggleClass(self.cls.visible, self.visible);
+      self.ctnr.$tabContainer.toggleClass(self.cls.showing, self.ctnr.$tabs.filter(self.sel.visible).length > 0);
 
       if (self.visible) {
         self.instance.$doc.on("click.foofields", self.onDocumentClick);
