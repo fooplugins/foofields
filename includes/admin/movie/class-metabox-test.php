@@ -249,6 +249,16 @@ if ( ! class_exists( 'FooPlugins\FooFields\Admin\Movie\MetaboxTest' ) ) {
 									'option4' => __( 'Option 4', 'foofields' ),
 								)
 							),
+							array(
+								'id'       => 'customvalidation',
+								'label'    => __( 'Custom Validation', 'foofields' ),
+								'desc'     => __( 'This field has custom validation. You have to enter exactly "bob"', 'foofields' ),
+								'type'     => 'text',
+								'required' => array(
+									'validation_function' => array( $this, 'validate_custom' ),
+									'message' => __( 'Custom field validation failed for %s! You have to enter exactly "bob"', 'foofields' )
+								)
+							),
 						)
 					)
 				)
@@ -697,6 +707,10 @@ if ( ! class_exists( 'FooPlugins\FooFields\Admin\Movie\MetaboxTest' ) ) {
 			wp_send_json_error( array(
 				'message' => sprintf( __( 'An error occurred on the server. Post ID: %s', 'foofields' ), $post_id )
 			) );
+		}
+
+		function validate_custom( $value, $field ) {
+			return $value === 'bob';
 		}
 	}
 }

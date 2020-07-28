@@ -490,6 +490,12 @@ if ( ! class_exists( __NAMESPACE__ . '\Field' ) ) {
 						if ( !isset( $posted_value ) || ( is_array( $posted_value ) && count( $posted_value ) !== intval( $this->required['exact'] ) ) ) {
 							$this->error = sprintf( $message, intval( $this->required['exact'] ), $this->label );
 						}
+					} else if ( isset( $this->required['validation_function'] ) ) {
+						$validation_result = call_user_func( $this->required['validation_function'], $posted_value, $this );
+						if ( $validation_result === false ) {
+							$message = isset( $this->required['message'] ) ? $this->required['message'] : __( 'Custom validation failed for %s!', $this->container->text_domain );
+							$this->error = sprintf( $message, $this->label );
+						}
 					}
 				}
 			}
