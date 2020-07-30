@@ -315,7 +315,6 @@ if ( ! class_exists( 'FooPlugins\FooFields\Admin\Movie\MetaboxTest' ) ) {
 					array(
 						'id'     => 'columns',
 						'label'  => __( 'Columns', 'foofields' ),
-						'icon'   => 'dashicons-editor-table',
 						'class'  => 'foofields-cols-4',
 						'fields' => array(
 							array(
