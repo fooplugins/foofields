@@ -206,7 +206,7 @@ if ( ! class_exists( __NAMESPACE__ . '\Container' ) ) {
 						return true;
 					}
 				} else if ( 'regex' === $show_rule_operator ) {
-					if ( preg_match( $show_rule_value, $show_rule_field_value ) === 1 ) {
+					if ( preg_match( '/' . $show_rule_value . '/', $show_rule_field_value ) === 1 ) {
 						return true;
 					}
 				}

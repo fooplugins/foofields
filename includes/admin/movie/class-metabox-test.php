@@ -419,6 +419,86 @@ if ( ! class_exists( 'FooPlugins\FooFields\Admin\Movie\MetaboxTest' ) ) {
 								'tooltip'  => __( 'This field has no class set', 'foofields' ),
 							),
 						)
+					),
+					array(
+						'id'     => 'showrules',
+						'label'  => __( 'Show Rules', 'foofields' ),
+						'fields' => array(
+							array(
+								'id'       => 'showrulesheading',
+								'label'     => __( 'This tab shows how the field show rules work', 'foofields' ),
+								'type'     => 'heading',
+							),
+							array(
+								'id'       => 'showrulelist',
+								'label'    => __( 'Show Rules List', 'foofields' ),
+								'desc'     => __( 'Choose different options to see show the show rules will apply', 'foofields' ),
+								'type'     => 'radiolist',
+								'default'  => 'default',
+								'choices' => array(
+									'default' => __( 'Default', 'foofields' ),
+									'option1' => __( 'Option 1', 'foofields' ),
+									'option2' => __( 'Option 2', 'foofields' ),
+									'option3' => __( 'Option 3', 'foofields' ),
+									'option4' => __( 'Option 4', 'foofields' ),
+								)
+							),
+							array(
+								'id'       => 'showrulestext',
+								'label'    => __( 'Text Field', 'foofields' ),
+								'desc'     => __( 'This is shown when the "Option 1" is selected', 'foofields' ),
+								'type'     => 'text',
+								'data'     => array(
+									'show-when' => array(
+										'field' => 'showrulelist',
+										'value' => 'option1',
+									)
+								)
+							),
+							array(
+								'id'       => 'showrulestext2',
+								'label'    => __( 'Text Field 2', 'foofields' ),
+								'desc'     => __( 'This is shown when the "Default" option is NOT selected', 'foofields' ),
+								'type'     => 'text',
+								'data'     => array(
+									'show-when' => array(
+										'field' => 'showrulelist',
+										'operator' => '!==',
+										'value' => 'default',
+									)
+								)
+							),
+							array(
+								'id'       => 'showrulestext3',
+								'label'    => __( 'Text Field 3', 'foofields' ),
+								'desc'     => __( 'This is shown when "Option 2" OR "Option 3" is selected', 'foofields' ),
+								'type'     => 'text',
+								'data'     => array(
+									'show-when' => array(
+										'field' => 'showrulelist',
+										'operator' => 'regex',
+										'value' => 'option2|option3',
+									)
+								)
+							),
+						)
+					),
+					array(
+						'id'     => 'showrules2',
+						'label'  => __( 'Hidden', 'foofields' ),
+						'fields' => array(
+							array(
+								'id'       => 'showrules2heading',
+								'label'     => __( 'This tab is only shown if "Option 4" is selected under the first Show Rules tab', 'foofields' ),
+								'type'     => 'heading',
+							)
+						),
+						'data'     => array(
+							'show-when' => array(
+								'field' => 'showrulelist',
+								'value' => 'option4',
+							)
+						)
 					)
 				)
 			);
