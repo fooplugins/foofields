@@ -6119,6 +6119,28 @@ FooFields.utils, FooFields.utils.fn, FooFields.utils.str);
 })(FooFields.$, FooFields, FooFields.utils.is, FooFields.utils.obj);
 "use strict";
 
+(function ($, _, _is, _str) {
+  _.RepeaterIndex = _.Field.extend({
+    setup: function setup() {
+      this.content.on("index-change", this.onIndexChange, this);
+    },
+    teardown: function teardown() {
+      this.content.off("index-change");
+    },
+    onIndexChange: function onIndexChange(e, index) {
+      this.$input.text(_str.format(this.opt.format, {
+        index: index,
+        count: index + 1
+      }));
+    }
+  });
+
+  _.fields.register("repeater-index", _.RepeaterIndex, ".foofields-type-repeater-index", {
+    format: "{count}"
+  }, {}, {});
+})(FooFields.$, FooFields, FooFields.utils.is, FooFields.utils.str);
+"use strict";
+
 (function ($, _, _utils, _is, _obj) {
   _.RepeaterRow = _.Component.extend({
     construct: function construct(repeater, el) {
@@ -6224,25 +6246,3 @@ FooFields.utils, FooFields.utils.fn, FooFields.utils.str);
     _.__instance__.init(window.FOOFIELDS);
   });
 })(FooFields.$, FooFields, FooFields.utils, FooFields.utils.is, FooFields.utils.obj);
-"use strict";
-
-(function ($, _, _is, _str) {
-  _.RepeaterIndex = _.Field.extend({
-    setup: function setup() {
-      this.content.on("index-change", this.onIndexChange, this);
-    },
-    teardown: function teardown() {
-      this.content.off("index-change");
-    },
-    onIndexChange: function onIndexChange(e, index) {
-      this.$input.text(_str.format(this.opt.format, {
-        index: index,
-        count: index + 1
-      }));
-    }
-  });
-
-  _.fields.register("repeater-index", _.RepeaterIndex, ".foofields-type-repeater-index", {
-    format: "{count}"
-  }, {}, {});
-})(FooFields.$, FooFields, FooFields.utils.is, FooFields.utils.str);
