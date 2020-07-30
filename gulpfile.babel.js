@@ -416,3 +416,23 @@ gulp.task("copy", function (done) {
 gulp.task("default", gulp.series( "copy", gulp.parallel( "scss", "js", "img", "watch" )));
 
 gulp.task("start", gulp.parallel( "default", "browser" ));
+
+gulp.task("generator", function (done) {
+	return filesTask("generator", {
+		allowEmpty: true,
+		match: null,
+		replacement: null,
+		logging: false,
+		process: (src, file, opt) => {
+			if (opt.match !== null && opt.replacement !== null){
+				return src.pipe( replace(opt.match, opt.replacement, { logs: { enabled: opt.logging } }) )
+					.pipe( rename(file.name) )
+					.pipe( gulp.dest(file.dir) )
+					.pipe( notify({ message: '\n\n✅  ===> Generator Deployment — completed!\n', onLast: true }) );
+			}
+			return src.pipe( rename(file.name) )
+				.pipe( gulp.dest(file.dir) )
+				.pipe( notify({ message: '\n\n✅  ===> Generator Deployment — completed!\n', onLast: true }) );
+		}
+	}, done);
+});

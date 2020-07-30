@@ -35,6 +35,82 @@ module.exports = {
 		"./assets/vendor/selectize/selectize.css": "./node_modules/selectize/dist/css/selectize.css"
 	},
 
+	generator: {
+		"./dist/generator/assets/vendor/foofields/foofields.min.css": "./assets/vendor/foofields/foofields.min.css",
+		"./dist/generator/assets/vendor/foofields/maps/foofields.css.map": "./assets/vendor/foofields/maps/foofields.css.map",
+		"./dist/generator/assets/vendor/foofields/foofields.min.js": "./assets/vendor/foofields/foofields.min.js",
+		"./dist/generator/assets/vendor/selectize/selectize.min.js": "./assets/vendor/selectize/selectize.min.js",
+		"./dist/generator/assets/vendor/selectize/selectize.css": "./assets/vendor/selectize/selectize.css",
+		"./dist/generator/includes/admin/foofields/class-base.php.txt": {
+			options: { match: /FooPlugins\\FooFields/g, replacement: "{namespace}" },
+			files: ["./includes/admin/foofields/class-base.php"]
+		},
+		"./dist/generator/includes/admin/foofields/class-container.php.txt": {
+			options: { match: /FooPlugins\\FooFields/g, replacement: "{namespace}" },
+			files: ["./includes/admin/foofields/class-container.php"]
+		},
+		"./dist/generator/includes/admin/foofields/class-metabox.php.txt": {
+			options: { match: /FooPlugins\\FooFields/g, replacement: "{namespace}" },
+			files: ["./includes/admin/foofields/class-metabox.php"]
+		},
+		"./dist/generator/includes/admin/foofields/class-settings-page.php.txt": {
+			options: { match: /FooPlugins\\FooFields/g, replacement: "{namespace}" },
+			files: ["./includes/admin/foofields/class-settings-page.php"]
+		},
+		"./dist/generator/includes/admin/foofields/fields/class-ajax-button.php.txt": {
+			options: { match: /FooPlugins\\FooFields/g, replacement: "{namespace}" },
+			files: ["./includes/admin/foofields/fields/class-ajax-button.php"]
+		},
+		"./dist/generator/includes/admin/foofields/fields/class-embed-metabox.php.txt": {
+			options: { match: /FooPlugins\\FooFields/g, replacement: "{namespace}" },
+			files: ["./includes/admin/foofields/fields/class-embed-metabox.php"]
+		},
+		"./dist/generator/includes/admin/foofields/fields/class-field.php.txt": {
+			options: { match: /FooPlugins\\FooFields/g, replacement: "{namespace}" },
+			files: ["./includes/admin/foofields/fields/class-field.php"]
+		},
+		"./dist/generator/includes/admin/foofields/fields/class-header.php.txt": {
+			options: { match: /FooPlugins\\FooFields/g, replacement: "{namespace}" },
+			files: ["./includes/admin/foofields/fields/class-header.php"]
+		},
+		"./dist/generator/includes/admin/foofields/fields/class-icon.php.txt": {
+			options: { match: /FooPlugins\\FooFields/g, replacement: "{namespace}" },
+			files: ["./includes/admin/foofields/fields/class-icon.php"]
+		},
+		"./dist/generator/includes/admin/foofields/fields/class-input-list.php.txt": {
+			options: { match: /FooPlugins\\FooFields/g, replacement: "{namespace}" },
+			files: ["./includes/admin/foofields/fields/class-input-list.php"]
+		},
+		"./dist/generator/includes/admin/foofields/fields/class-repeater.php.txt": {
+			options: { match: /FooPlugins\\FooFields/g, replacement: "{namespace}" },
+			files: ["./includes/admin/foofields/fields/class-repeater.php"]
+		},
+		"./dist/generator/includes/admin/foofields/fields/class-repeater-delete.php.txt": {
+			options: { match: /FooPlugins\\FooFields/g, replacement: "{namespace}" },
+			files: ["./includes/admin/foofields/fields/class-repeater-delete.php"]
+		},
+		"./dist/generator/includes/admin/foofields/fields/class-repeater-index.php.txt": {
+			options: { match: /FooPlugins\\FooFields/g, replacement: "{namespace}" },
+			files: ["./includes/admin/foofields/fields/class-repeater-index.php"]
+		},
+		"./dist/generator/includes/admin/foofields/fields/class-selectize.php.txt": {
+			options: { match: /FooPlugins\\FooFields/g, replacement: "{namespace}" },
+			files: ["./includes/admin/foofields/fields/class-selectize.php"]
+		},
+		"./dist/generator/includes/admin/foofields/fields/class-selectize-multi.php.txt": {
+			options: { match: /FooPlugins\\FooFields/g, replacement: "{namespace}" },
+			files: ["./includes/admin/foofields/fields/class-selectize-multi.php"]
+		},
+		"./dist/generator/includes/admin/foofields/fields/class-suggest.php.txt": {
+			options: { match: /FooPlugins\\FooFields/g, replacement: "{namespace}" },
+			files: ["./includes/admin/foofields/fields/class-suggest.php"]
+		},
+		"./dist/generator/includes/admin/foofields/fields/class-textarea.php.txt": {
+			options: { match: /FooPlugins\\FooFields/g, replacement: "{namespace}" },
+			files: ["./includes/admin/foofields/fields/class-textarea.php"]
+		}
+	},
+
 	scss: {
 		"./assets/vendor/foofields/foofields.css": "./src/scss/foofields.scss"
 	},

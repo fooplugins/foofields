@@ -80,3 +80,4 @@ assets/img/.DS_Store
 # Freemius #
 /fs-config.json
 
+dist/
