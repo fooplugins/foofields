@@ -433,7 +433,8 @@ if ( ! class_exists( 'FooPlugins\FooFields\Admin\Movie\MetaboxTest' ) ) {
 						'fields' => array(
 							array(
 								'id'       => 'suggest',
-								'label'    => __( 'Suggest Field (autocomplete using movies)', 'foofields' ),
+								'label'    => __( 'Suggest (Post)', 'foofields' ),
+								'desc'     => __( 'Autosuggest field using the movie custom post type as the data source', 'foofields' ),
 								'type'     => 'suggest',
 								'placeholder' => __( 'Start typing to search for movies', 'foofields' ),
 								'query' => array(
@@ -443,7 +444,8 @@ if ( ! class_exists( 'FooPlugins\FooFields\Admin\Movie\MetaboxTest' ) ) {
 							),
 							array(
 								'id'       => 'suggest2',
-								'label'    => __( 'Suggest Field (autocomplete using taxonomy actor)', 'foofields' ),
+								'label'    => __( 'Suggest (Taxonomy)', 'foofields' ),
+								'desc'     => __( 'Autosuggest field using the actor taxonomy as the data source', 'foofields' ),
 								'type'     => 'suggest',
 								'placeholder' => __( 'Start typing to search for actors', 'foofields' ),
 								'query' => array(
@@ -453,7 +455,8 @@ if ( ! class_exists( 'FooPlugins\FooFields\Admin\Movie\MetaboxTest' ) ) {
 							),
 							array(
 								'id'       => 'selectize',
-								'label'    => __( 'Selectize Field (autocomplete with a key)', 'foofields' ),
+								'label'    => __( 'Selectize Field', 'foofields' ),
+								'desc'     => __( 'Selectize field using the actor taxonomy as the data source. This fields stores both the id and value of the chosen item', 'foofields' ),
 								'type'     => 'selectize',
 								'placeholder' => __( 'Start typing to search for actors', 'foofields' ),
 								'query' => array(
@@ -463,7 +466,7 @@ if ( ! class_exists( 'FooPlugins\FooFields\Admin\Movie\MetaboxTest' ) ) {
 							),
 							array(
 								'id'       => 'selectize-multi',
-								'label'    => __( 'Selectize Multi Select Field', 'foofields' ),
+								'label'    => __( 'Multi Select Field', 'foofields' ),
 								'type'     => 'selectize-multi',
 								'placeholder' => __( 'Choose from a pre-defined set of choices', 'foofields' ),
 								'choices' => array(
@@ -476,8 +479,9 @@ if ( ! class_exists( 'FooPlugins\FooFields\Admin\Movie\MetaboxTest' ) ) {
 							),
 							array(
 								'id'       => 'selectize-multi-taxonomy',
-								'label'    => __( 'Selectize Multi Select Field (Taxonomy)', 'foofields' ),
+								'label'    => __( 'Multi Select Field (Taxonomy)', 'foofields' ),
 								'type'     => 'selectize-multi',
+								'desc'     => __( 'Seletize mult-select field using the actor taxonomy as the data source', 'foofields' ),
 								'placeholder' => __( 'Choose from the actor taxonomy', 'foofields' ),
 								'create' => true,
 //									'close_after_select' => false,
@@ -485,6 +489,21 @@ if ( ! class_exists( 'FooPlugins\FooFields\Admin\Movie\MetaboxTest' ) ) {
 								'binding' => array(
 									'type' => 'taxonomy',
 									'taxonomy' => FOOFIELDS_CT_ACTOR,
+									'sync_with_post' => true
+								)
+							),
+							array(
+								'id'       => 'selectize-multi-taxonomy2',
+								'label'    => __( 'Multi Select Field (Taxonomy 2)', 'foofields' ),
+								'type'     => 'selectize-multi',
+								'desc'     => __( 'Seletize mult-select field using the genre taxonomy as the data source', 'foofields' ),
+								'placeholder' => __( 'Choose from the genre taxonomy', 'foofields' ),
+								'create' => true,
+//									'close_after_select' => false,
+//									'max_items' => 2,
+								'binding' => array(
+									'type' => 'taxonomy',
+									'taxonomy' => FOOFIELDS_CT_GENRE,
 									'sync_with_post' => true
 								)
 							),

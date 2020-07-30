@@ -25,6 +25,7 @@ if( ! class_exists( 'FooPlugins\FooFields\Taxonomies\Actor' ) ) {
 						'add_new_item'      => __( 'Add New Actor', 'foofields' ),
 						'new_item_name'     => __( 'New Actor Name', 'foofields' ),
 						'menu_name'         => __( 'Actors', 'foofields' ),
+						'default_term'      => array( 'name' => 'Brad Pitt', 'slug' => 'brad-pitt' )
 					),
 					'hierarchical' 		=> false,
 					'show_ui'           => true,

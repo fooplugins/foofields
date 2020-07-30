@@ -35,17 +35,23 @@ if ( ! class_exists( __NAMESPACE__ . '\SelectizeMulti' ) ) {
 			} else if ( $this->is_bound_to_taxonomy() ) {
 				$taxonomy = $this->config['binding']['taxonomy'];
 
+				//get all the terms
 				$terms = get_terms( array(
 					'taxonomy' => $taxonomy,
 					'hide_empty' => false,
 				) );
 
+				$hierarchical = is_taxonomy_hierarchical( $taxonomy );
 				$choices = array();
 
 				foreach ( $terms as $term ) {
+					$name = $term->name;
+					if ( $hierarchical ) {
+						$name = $this->calculate_term_hierarchy_name( $term->term_id, $terms );
+					}
 					$choices[] = array(
 						'value' => $term->term_id,
-						'display' => $term->name
+						'display' => $name
 					);
 				}
 			}
@@ -60,6 +66,36 @@ if ( ! class_exists( __NAMESPACE__ . '\SelectizeMulti' ) ) {
 				'id'          => $this->unique_id,
 				'name'        => $this->name . '[]'
 			), $inner, true, false );
+		}
+
+		/**
+		 * Calculates the term name for a hierarchical taxonomy
+		 *
+		 * @param $term_id
+		 * @param $terms
+		 *
+		 * @return string
+		 */
+		function calculate_term_hierarchy_name( $term_id, $terms ) {
+			$the_term = null;
+			foreach ($terms as $term) {
+				if ( $term->term_id === $term_id ) {
+					$the_term = $term;
+					break;
+				}
+			}
+
+			if ( isset( $the_term ) ) {
+				$parent_id = intval( $term->parent );
+
+				if ( $parent_id > 0 ) {
+					return $this->calculate_term_hierarchy_name( $parent_id, $terms ) . ' / ' . $the_term->name;
+				} else {
+					return $the_term->name;
+				}
+			}
+
+			return '';
 		}
 
 		function get_selected_values() {

@@ -25,6 +25,7 @@ if( ! class_exists( 'FooPlugins\FooFields\Taxonomies\Genre' ) ) {
 						'add_new_item'      => __( 'Add New Genre', 'foofields' ),
 						'new_item_name'     => __( 'New Genre Name', 'foofields' ),
 						'menu_name'         => __( 'Genres', 'foofields' ),
+						'default_term'      => array( 'name' => 'Sci-Fi', 'slug' => 'schi-fi' )
 					),
 					'hierarchical' 		=> true,
 					'show_ui'           => true,
