@@ -6,13 +6,6 @@
 			self._super(menu.instance, menu.ctnr, el, menu.cls.item, menu.sel.item);
 			self.menu = menu;
 			self.index = index;
-			self.opt = _obj.extend({
-				showWhen: {
-					field: null,
-					value: null,
-					operator: null
-				}
-			}, self.$el.data());
 			self.active = self.$el.hasClass(self.instance.cls.active);
 			self.$link = self.$el.children(self.sel.link).first();
 			self.$text = self.$link.children(self.sel.text).first();

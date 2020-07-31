@@ -5,14 +5,6 @@
 			var self = this;
 			self._super(ctnr.instance, ctnr, el, ctnr.cls.tabs.tab, ctnr.sel.tabs.tab);
 			self.index = index;
-			self.opt = _obj.extend({
-				showWhen: {
-					field: null,
-					value: null,
-					operator: null
-				}
-			}, self.$el.data());
-
 			self.$link = self.$el.children(self.sel.link).first();
 			self.$icon = self.$link.children(self.sel.icon).first();
 			self.$text = self.$link.children(self.sel.text).first();

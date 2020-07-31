@@ -103,6 +103,11 @@
 				id = _utils.strip(id, "#");
 				self.tabs.forEach(function(tab){
 					if (tab.target === id) tab.toggle(state);
+					else if (tab.menu.exists){
+						tab.menu.items.forEach(function(item){
+							if (item.target === id) item.toggle(state);
+						});
+					}
 				});
 				self.contents.forEach(function (content) {
 					if (content.id === id) content.toggle(state);

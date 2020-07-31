@@ -4,13 +4,6 @@
 		construct: function(ctnr, el){
 			var self = this;
 			self._super(ctnr.instance, ctnr, el, ctnr.cls.content, ctnr.sel.content);
-			self.opt = _obj.extend({
-				showWhen: {
-					field: null,
-					value: null,
-					operator: null
-				}
-			}, self.$el.data());
 			self.id = self.$el.attr("id");
 			self.active = self.$el.hasClass(self.instance.cls.active);
 			self.fields = self.$el.children(self.sel.field).map(function(i, el){
