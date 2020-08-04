@@ -5011,7 +5011,11 @@ FooFields.utils, FooFields.utils.fn, FooFields.utils.str);
       if (_is.string(id)) {
         id = _utils.strip(id, "#");
         self.tabs.forEach(function (tab) {
-          if (tab.target === id) tab.toggle(state);
+          if (tab.target === id) tab.toggle(state);else if (tab.menu.exists) {
+            tab.menu.items.forEach(function (item) {
+              if (item.target === id) item.toggle(state);
+            });
+          }
         });
         self.contents.forEach(function (content) {
           if (content.id === id) content.toggle(state);
@@ -5095,13 +5099,6 @@ FooFields.utils, FooFields.utils.fn, FooFields.utils.str);
       self._super(ctnr.instance, ctnr, el, ctnr.cls.tabs.tab, ctnr.sel.tabs.tab);
 
       self.index = index;
-      self.opt = _obj.extend({
-        showWhen: {
-          field: null,
-          value: null,
-          operator: null
-        }
-      }, self.$el.data());
       self.$link = self.$el.children(self.sel.link).first();
       self.$icon = self.$link.children(self.sel.icon).first();
       self.$text = self.$link.children(self.sel.text).first();
@@ -5332,13 +5329,6 @@ FooFields.utils, FooFields.utils.fn, FooFields.utils.str);
 
       self.menu = menu;
       self.index = index;
-      self.opt = _obj.extend({
-        showWhen: {
-          field: null,
-          value: null,
-          operator: null
-        }
-      }, self.$el.data());
       self.active = self.$el.hasClass(self.instance.cls.active);
       self.$link = self.$el.children(self.sel.link).first();
       self.$text = self.$link.children(self.sel.text).first();
@@ -5384,13 +5374,6 @@ FooFields.utils, FooFields.utils.fn, FooFields.utils.str);
 
       self._super(ctnr.instance, ctnr, el, ctnr.cls.content, ctnr.sel.content);
 
-      self.opt = _obj.extend({
-        showWhen: {
-          field: null,
-          value: null,
-          operator: null
-        }
-      }, self.$el.data());
       self.id = self.$el.attr("id");
       self.active = self.$el.hasClass(self.instance.cls.active);
       self.fields = self.$el.children(self.sel.field).map(function (i, el) {

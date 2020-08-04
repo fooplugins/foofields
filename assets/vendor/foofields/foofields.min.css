@@ -102,6 +102,7 @@ button[data-balloon]{overflow:visible}
 .foofields-type-icon.icon-yellow .foofields-field-input .dashicons{color:#fa0}
 .foofields-type-icon.icon-red .foofields-field-input{background-color:#fde6e6;border-color:#bb2f2f}
 .foofields-type-icon.icon-red .foofields-field-input .dashicons{color:#bb2f2f}
+.foofields-type-checkbox.foofields-layout-inline .foofields-field-description{display:inline}
 .foofields-type-radiolist .foofields-field-input,.foofields-type-checkboxlist .foofields-field-input,.foofields-type-htmllist .foofields-field-input{display:-webkit-box;display:-ms-flexbox;display:flex;-webkit-box-orient:horizontal;-webkit-box-direction:normal;-ms-flex-direction:row;flex-direction:row;-webkit-box-align:center;-ms-flex-align:center;align-items:center;-ms-flex-wrap:wrap;flex-wrap:wrap}
 .foofields-type-radiolist .foofields-field-input label,.foofields-type-checkboxlist .foofields-field-input label,.foofields-type-htmllist .foofields-field-input label{display:inline-block;margin-right:1em;padding:5px;line-height:1}
 .foofields-type-radiolist.foofields-stacked .foofields-field-input,.foofields-type-checkboxlist.foofields-stacked .foofields-field-input,.foofields-type-htmllist.foofields-stacked .foofields-field-input{-webkit-box-orient:vertical;-webkit-box-direction:normal;-ms-flex-direction:column;flex-direction:column;-webkit-box-align:start;-ms-flex-align:start;align-items:flex-start}
@@ -160,6 +161,7 @@ button[data-balloon]{overflow:visible}
 .foofields-tabs-horizontal.foofields-style-metabox .foofields-tab-link:after{border-bottom-color:#fff}
 .foofields-tabs-horizontal.foofields-style-metabox .foofields-tab.foofields-has-menu .foofields-tab-link:after{border-bottom-color:#ccd0d4}
 .foofields-tabs-horizontal.foofields-style-metabox .foofields-tab-menu{border-top-color:#ccd0d4}
+.foofields-style-settings .foofields-content{padding:1em 0}
 .foofields-style-settings .foofields-tab-link{color:#555;background-color:#e5e5e5;border:solid 1px #ccc;font-weight:600}
 .foofields-style-settings .foofields-tab{border-color:#ccc}
 .foofields-style-settings .foofields-tab.foofields-active .foofields-tab-link{color:#000;background-color:#f1f1f1}
