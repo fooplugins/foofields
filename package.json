@@ -5,7 +5,7 @@
   "author": "Brad Vincent",
   "repository": {
     "type": "git",
-    "url": "https://github.com/path-to-your-repo"
+    "url": "https://github.com/fooplugins/foofields"
   },
   "license": "GPLv2",
   "devDependencies": {
