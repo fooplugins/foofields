@@ -1,9 +1,6 @@
 // Settings Style CSS
 // ----------------------------------------------------------------------------
 .foofields-style-settings {
-  .foofields-content {
-	padding: $m-sm 0;
-  }
   .foofields-tabs {
 	//background-color: #f5f5f5;
   }
@@ -108,6 +105,9 @@
 // Horizontal CSS
 // ----------------------------------------------------------------------------
 .foofields-tabs-horizontal.foofields-style-settings {
+  .foofields-content {
+	padding: $m-sm 0;
+  }
   .foofields-tab {
 	.foofields-tab-link {
 	  margin: 0 $m-0;
@@ -144,7 +144,9 @@
 	}
   }
   .foofields-tabs {
-
+	&:after {
+	  background-color: #ccc;
+	}
 	&.foofields-menu-showing {
 	  .foofields-tab {
 		&.foofields-active:not(.foofields-show-menu) {
