@@ -15,6 +15,7 @@
 .foofields-tabs-horizontal {
   .foofields-tab-menu {
 	border-top: solid 1px transparent;
+	z-index: 9;
   }
   .foofields-tab.foofields-active {
 	.foofields-tab-menu {
