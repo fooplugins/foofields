@@ -1,6 +1,6 @@
 .foofields-type-selectize-multi {
   .foofields-field-input {
-	.selectize-control.multi {
+	.selectize-control {
 
 	  &.loading {
 		.selectize-input:after {
@@ -41,6 +41,48 @@
 		line-height: 100%;
 		font-weight: 400;
 		font-size: 17px;
+	  }
+
+	  &.single.plugin-remove_button {
+		.selectize-input > span {
+
+		  cursor: pointer;
+		  margin: 0 3px 3px 0;
+		  padding: 2px 6px;
+		  background: #f2f2f2;
+		  color: #303030;
+		  border: 1px solid #d0d0d0;
+		  border-radius: 3px;
+
+		  & > div {
+			line-height: 1.5;
+		  }
+
+		  .remove-single {
+			z-index: 1;
+			position: absolute;
+			top: 0;
+			right: 0;
+			bottom: 0;
+			width: 17px;
+			text-align: center;
+			font-weight: 400;
+			font-size: 17px;
+			color: #999;
+			text-decoration: none;
+			vertical-align: middle;
+			display: inline-block;
+			padding: 2px 0 0 0;
+			border-left: 1px solid #d0d0d0;
+			border-radius: 0 2px 2px 0;
+			box-sizing: border-box;
+			line-height: 1;
+
+			&:hover{
+			  background: rgba(0, 0, 0, 0.05);
+			}
+		  }
+		}
 	  }
 	}
   }

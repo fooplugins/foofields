@@ -97,6 +97,10 @@ if ( ! class_exists( 'FooPlugins\FooFields\Admin\Movie\MetaboxTest' ) ) {
 								'label'    => __( 'Number Field', 'foofields' ),
 								'desc'     => __( 'A number field', 'foofields' ),
 								'type'     => 'number',
+								'class'    => 'foofields-field-short',
+								'before_input_render' => function( $field ) {
+									echo '$ ';
+								}
 							),
 							array(
 								'id'       => 'textarea',
@@ -135,6 +139,26 @@ if ( ! class_exists( 'FooPlugins\FooFields\Admin\Movie\MetaboxTest' ) ) {
 								'desc'     => __( 'A colorpicker field using the colorpicker built into WP', 'foofields' ),
 								'type'     => 'colorpicker',
 							),
+							array(
+								'id'       => 'datejoined',
+								'label'    => __( 'Joined Date', 'foofields' ),
+								'desc'     => __( 'This date feild has a custom after_input_function function to show lenght of service basd on the date selected.', 'foopeople' ),
+								'type'     => 'date',
+								'min'     => '1970-01-01',
+								'max'     => date("Y-m-d"),
+								'default'  => '',
+								'after_input_render' => function( $field ) {
+									$datejoined = $field->value();
+
+									if ( $datejoined !== '' ) {
+										$diff = abs(time() - strtotime( $datejoined ) );
+										$years = floor($diff / (365*60*60*24));
+										$months = floor(($diff - $years * 365*60*60*24) / (30*60*60*24));
+
+										echo sprintf( '%d years, %d months', $years, $months );
+									}
+								}
+							), //datejoined
 						)
 					),
 					array(
@@ -560,11 +584,11 @@ if ( ! class_exists( 'FooPlugins\FooFields\Admin\Movie\MetaboxTest' ) ) {
 								'id'       => 'selectize-multi-taxonomy',
 								'label'    => __( 'Multi Select Field (Taxonomy)', 'foofields' ),
 								'type'     => 'selectize-multi',
-								'desc'     => __( 'Seletize mult-select field using the actor taxonomy as the data source', 'foofields' ),
-								'placeholder' => __( 'Choose from the actor taxonomy', 'foofields' ),
+								'desc'     => __( 'Seletize mult-select field using the actor taxonomy as the data source. Only 1 item can be selected.', 'foofields' ),
+								'placeholder' => __( 'Choose an actor', 'foofields' ),
 								'create' => true,
-//									'close_after_select' => false,
-//									'max_items' => 2,
+								'close_after_select' => false,
+								'max_items' => 1,
 								'binding' => array(
 									'type' => 'taxonomy',
 									'taxonomy' => FOOFIELDS_CT_ACTOR,

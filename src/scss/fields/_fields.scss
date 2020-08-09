@@ -61,6 +61,19 @@
 	min-height: 100px;
   }
 
+  &.foofields-field-short {
+	input[type="text"],
+	input[type="password"],
+	input[type="number"],
+	input[type="search"],
+	input[type="email"],
+	input[type="url"],
+	select,
+	textarea {
+	  width: 50%;
+	}
+  }
+
   .foofields-field-description {
 	font-style: italic;
 	padding: $padded;

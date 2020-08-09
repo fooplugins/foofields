@@ -246,7 +246,15 @@ if ( ! class_exists( __NAMESPACE__ . '\Field' ) ) {
 		function render_input_container( $override_attributes = false ) {
 			self::render_html_tag( 'div', array( 'class' => 'foofields-field-input' ), null, false );
 
+			if ( isset( $this->config['before_input_render'] ) && is_callable( $this->config['before_input_render'] ) ) {
+				call_user_func( $this->config['before_input_render'], $this );
+			}
+
 			$this->render_input( $override_attributes );
+
+			if ( isset( $this->config['after_input_render'] ) && is_callable( $this->config['after_input_render'] ) ) {
+				call_user_func( $this->config['after_input_render'], $this );
+			}
 
 			$this->render_description();
 
@@ -369,17 +377,19 @@ if ( ! class_exists( __NAMESPACE__ . '\Field' ) ) {
 					self::render_html_tag( 'input', $attributes );
 
 					$inner = $field_value;
-					if ( isset( $this->config['display_function'] ) ) {
-						$inner = call_user_func( $this->config['display_function'], $inner );
+
+					if ( isset( $this->config['render'] ) && is_callable( $this->config['render'] ) ) {
+						call_user_func( $this->config['render'], $this );
+					} else {
+						self::render_html_tag( 'span', array(), $inner );
 					}
 
-					self::render_html_tag( 'span', array(), $inner );
 					break;
 
 				default:
 					//the field type is not natively supported
-					if ( isset( $this->config['function'] ) ) {
-						call_user_func( $this->config['function'], $this );
+					if ( isset( $this->config['render'] ) && is_callable( $this->config['render'] ) ) {
+						call_user_func( $this->config['render'], $this );
 					}
 					break;
 			}

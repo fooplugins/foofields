@@ -54,6 +54,21 @@ if ( ! class_exists( __NAMESPACE__ . '\SelectizeMulti' ) ) {
 						'display' => $name
 					);
 				}
+			} else if ( $this->is_bound_to_post() ) {
+				$post_type = $this->config['binding']['post_type'];
+
+				$posts = get_posts( array(
+						'numberposts' => 100,
+						'post_status' => 'any',
+						'post_type'   => $post_type
+				) );
+
+				foreach ( $posts as $post ) {
+					$choices[] = array(
+						'value' => $post->ID,
+						'display' => $post->post_title
+					);
+				}
 			}
 
 			//build up options
@@ -198,6 +213,13 @@ if ( ! class_exists( __NAMESPACE__ . '\SelectizeMulti' ) ) {
 			       $this->config['binding']['sync_with_post'];
 		}
 
+		function is_bound_to_post() {
+			return isset( $this->config['binding'] ) &&
+			       isset( $this->config['binding']['type'] ) &&
+			       $this->config['binding']['type'] === 'post' &&
+			       isset( $this->config['binding']['post_type'] );
+		}
+
 		/**
 		 * Ajax handler for Selectize Multi fields add
 		 */
@@ -225,6 +247,26 @@ if ( ! class_exists( __NAMESPACE__ . '\SelectizeMulti' ) ) {
 							wp_send_json( array(
 								'new' => array(
 									'value'   => $new_term['term_id'],
+									'display' => $thing_to_add
+								)
+							) );
+						}
+					} else if ( $this->is_bound_to_post() ) {
+						$post_type = $this->config['binding']['post_type'];
+
+						$post = array(
+							'post_title'    => $thing_to_add,
+							'post_status'   => 'draft',
+							'post_type'   => $post_type
+						);
+
+						$post_id = wp_insert_post( $post );
+
+						if ( ! is_wp_error( $post_id ) ) {
+
+							wp_send_json( array(
+								'new' => array(
+									'value'   => $post_id,
 									'display' => $thing_to_add
 								)
 							) );

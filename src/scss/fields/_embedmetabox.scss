@@ -12,6 +12,10 @@
 	  background: transparent;
 	}
 
+	.postbox-header {
+	  display: none !important;
+	}
+
 	// Reset featured thumbnail styling
 	#set-post-thumbnail {
 	  .attachment-post-thumbnail {
