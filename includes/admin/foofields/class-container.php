@@ -257,6 +257,10 @@ if ( ! class_exists( __NAMESPACE__ . '\Container' ) ) {
 		 * @return string
 		 */
 		function get_unique_id( $config ) {
+			if ( !isset( $config['id'] ) ) {
+				$config['id'] = 'unknown';
+			}
+
 			return $this->container_id() . '_' . $config['id'];
 		}
 
@@ -349,7 +353,7 @@ if ( ! class_exists( __NAMESPACE__ . '\Container' ) ) {
 			//enqueue assets if there are any fields
 			if ( $this->has_fields() ) {
 				wp_enqueue_script( 'selectize', $this->config['plugin_url'] . 'assets/vendor/selectize/selectize.min.js', array( 'jquery' ), $this->config['plugin_version'] );
-				wp_enqueue_script( 'foofields', $this->config['plugin_url'] . 'assets/vendor/foofields/foofields.js', array(
+				wp_enqueue_script( 'foofields', $this->config['plugin_url'] . 'assets/vendor/foofields/foofields.min.js', array(
 					'jquery',
 					'jquery-ui-sortable',
 					'suggest',
@@ -603,7 +607,8 @@ if ( ! class_exists( __NAMESPACE__ . '\Container' ) ) {
 					$error_field_config = array(
 						'id' => 'errors_' . $parent_id,
 						'type' => 'error',
-						'text' => $error_message
+						'text' => $error_message,
+						'class' => 'foofields-colspan-4'
 					);
 
 					$error_field_object = $this->create_field_instance( 'error', $error_field_config, $parent_id );
@@ -713,7 +718,7 @@ if ( ! class_exists( __NAMESPACE__ . '\Container' ) ) {
 				$posted_data[self::STATE_KEY] = $sanitized_data[self::STATE_KEY];
 			}
 
-			return $posted_data;
+			return $this->apply_filters( 'GetPostedData', $posted_data );
 		}
 
 		/**

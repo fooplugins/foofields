@@ -8,6 +8,8 @@ if ( ! class_exists( __NAMESPACE__ . '\Metabox' ) ) {
 
 		protected $post;
 
+		protected $post_id;
+
 		function __construct( $config ) {
 			parent::__construct( $config );
 
@@ -49,7 +51,7 @@ if ( ! class_exists( __NAMESPACE__ . '\Metabox' ) ) {
 		 * @return string
 		 */
 		public function container_hook_prefix() {
-			return __NAMESPACE__ . '\\' . $this->config['post_type'] . '\\' . $this->config['metabox_id'] . '\\';
+			return get_class($this) . '\\';
 		}
 
 		/**
@@ -134,6 +136,8 @@ if ( ! class_exists( __NAMESPACE__ . '\Metabox' ) ) {
 				return $post_id;
 			}
 
+			$this->post_id = $post_id;
+
 			$full_id = $this->container_id();
 
 			// verify nonce
@@ -166,6 +170,21 @@ if ( ! class_exists( __NAMESPACE__ . '\Metabox' ) ) {
 				// re-hook this function
 				add_action( 'save_post', array( $this, 'save_post' ) );
 			}
+		}
+
+		/**
+		 * Returns the post ID
+		 * @return int
+		 */
+		function get_post_id() {
+			if ( isset( $this->post_id ) ) {
+				return $this->post_id;
+			}
+			if ( isset( $this->post ) ) {
+				return $this->post->ID;
+			}
+
+			return 0;
 		}
 
 		/***
