@@ -599,6 +599,18 @@ if ( !class_exists( 'FooPlugins\FooFields\Admin\Settings' ) ) {
 					$simple_tab,
 					$layout_tab,
 					$advanced_tab,
+					array(
+						'id' => 'empty',
+						'label'  => __( 'Empty', 'foofields' ),
+						'icon'   => 'dashicons-sos',
+						'fields' => array(
+							array(
+								'id'       => 'no-children',
+								'text'     => __( 'This tab exists just to test a tab with no child tabs.', 'foofields' ),
+								'type'     => 'help',
+							)
+						)
+					)
 				)
 			);
 
