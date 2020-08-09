@@ -11,20 +11,35 @@
 		  filter: alpha(opacity=70);
 		  width: 20px;
 		  height: 20px;
-		  top: 30%;
+		  margin-top: -10px;
 		  border: none;
-		  right: 5px;
+		  right: 3px;
 		}
 	  }
 
 	  .selectize-input {
-		box-shadow: 0 0 0 transparent;
+		box-shadow: none;
 		border-radius: 4px;
 		border: 1px solid #7e8993;
 		background-color: #fff;
 		color: #32373c;
 		line-height: 2;
-		padding: 5px 10px;
+		padding: 2px 27px 2px 8px;
+		min-height: 30px;
+
+		&.focus {
+		  border-color: #007cba;
+		  box-shadow: 0 0 0 1px #007cba;
+		  outline: 2px solid transparent;
+		}
+		&:after {
+		  right: 8px;
+		}
+
+		> input {
+		  font-size: 14px;
+		  vertical-align: initial;
+		}
 	  }
 	}
   }
