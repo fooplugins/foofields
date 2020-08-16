@@ -296,12 +296,6 @@ if ( ! class_exists( __NAMESPACE__ . '\Container' ) ) {
 		abstract function container_id();
 
 		/**
-		 * The action and filter hook prefix
-		 * @return string
-		 */
-		abstract function container_hook_prefix();
-
-		/**
 		 * Cater for both doing a do_action and call the function if it was passed in
 		 *
 		 * @param $tag
@@ -317,7 +311,7 @@ if ( ! class_exists( __NAMESPACE__ . '\Container' ) ) {
 			}
 
 			call_user_func_array( 'do_action', array_merge(
-				array( $this->container_hook_prefix() . $tag ),
+				array( $this->build_hook_tag( $tag ) ),
 				array_slice( $args, 1 )
 			) );
 		}
@@ -341,9 +335,23 @@ if ( ! class_exists( __NAMESPACE__ . '\Container' ) ) {
 			}
 
 			return call_user_func_array( 'apply_filters', array_merge(
-					array( $this->container_hook_prefix() . $tag ),
+					array( $this->build_hook_tag( $tag ) ),
 					array_slice( $args, 1 ) )
 			);
+		}
+
+		/**
+		 * Builds a hook tag from the class namespace plus the tag passed in
+		 *
+		 * @param $tag
+		 *
+		 * @return string
+		 */
+		public function build_hook_tag( $tag ) {
+			$full_tag = get_class($this) . '\\' . $tag;       //build up the full tag from the class namespace + tag
+			$parts = explode( '\\', $full_tag );      //break it into the different parts
+			array_shift( $parts );            //remove the first part from the start
+			return strtolower( implode( '_', $parts ) );//bring the lowercase parts back together separated by "_"
 		}
 
 		/**
@@ -368,7 +376,7 @@ if ( ! class_exists( __NAMESPACE__ . '\Container' ) ) {
 				), $this->config['plugin_version'] );
 			}
 
-			$this->do_action( 'EnqueueAssets\\' . $this->container_id() );
+			$this->do_action( 'enqueueassets' );
 
 			//enqueue any scripts provided from config
 			if ( isset( $this->config['scripts'] ) ) {
@@ -718,7 +726,7 @@ if ( ! class_exists( __NAMESPACE__ . '\Container' ) ) {
 				$posted_data[self::STATE_KEY] = $sanitized_data[self::STATE_KEY];
 			}
 
-			return $this->apply_filters( 'GetPostedData', $posted_data );
+			return $this->apply_filters( 'GetPostedData', $posted_data, $this );
 		}
 
 		/**

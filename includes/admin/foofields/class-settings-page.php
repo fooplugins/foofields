@@ -76,15 +76,7 @@ if ( ! class_exists( __NAMESPACE__ . '\SettingsPage' ) ) {
 		 * @return mixed|string
 		 */
 		function container_id() {
-			return $this->config['settings_id'] . '_settings';
-		}
-
-		/**
-		 * The action and filter hook prefix
-		 * @return string
-		 */
-		public function container_hook_prefix() {
-			return __NAMESPACE__ . '\Settings\\' . $this->config['settings_id'] . '\\';
+			return $this->config['settings_id'] . '-settings';
 		}
 
 		/**

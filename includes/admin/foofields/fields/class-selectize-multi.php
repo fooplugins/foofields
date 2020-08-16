@@ -11,10 +11,10 @@ if ( ! class_exists( __NAMESPACE__ . '\SelectizeMulti' ) ) {
 		function __construct( $container, $type, $field_config ) {
 			parent::__construct( $container, $type, $field_config );
 
-			$hook = $this->container->container_hook_prefix();
+			$hook = $this->container->build_hook_tag( 'aftersavepostmeta' );
 
 			//save taxonomy mappings for selectize-multi fields
-			add_action( $hook . 'AfterSavePostMeta', array( $this, 'save_taxonomy_mapping' ), 10, 2 );
+			add_action( $hook, array( $this, 'save_taxonomy_mapping' ), 10, 2 );
 
 			//handle ajax selectize multiple add
 			add_action( $this->field_ajax_action_name(), array( $this, 'ajax_handle_selectize_multi_add' ) );

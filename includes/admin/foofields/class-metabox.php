@@ -47,14 +47,6 @@ if ( ! class_exists( __NAMESPACE__ . '\Metabox' ) ) {
 		}
 
 		/**
-		 * The action and filter hook prefix
-		 * @return string
-		 */
-		public function container_hook_prefix() {
-			return get_class($this) . '\\';
-		}
-
-		/**
 		 * Add metaboxe to the CPT
 		 *
 		 * @param $post
@@ -90,7 +82,7 @@ if ( ! class_exists( __NAMESPACE__ . '\Metabox' ) ) {
 			         value="<?php echo wp_create_nonce( $full_id ); ?>"/><?php
 
 			//allow custom metabox rendering
-			$this->do_action( 'Render\\' . $full_id, $post );
+			$this->do_action( 'render', $post );
 
 			//render any fields
 			$this->render_container();
@@ -150,7 +142,7 @@ if ( ! class_exists( __NAMESPACE__ . '\Metabox' ) ) {
 				remove_action( 'save_post', array( $this, 'save_post' ) );
 
 				//fire an action
-				$this->do_action( 'Save', $post_id );
+				$this->do_action( 'save', $post_id );
 
 				//if we have fields, then we can save that data
 				if ( $this->has_fields() ) {
@@ -158,13 +150,13 @@ if ( ! class_exists( __NAMESPACE__ . '\Metabox' ) ) {
 					//get the current state of the posted form
 					$state = $this->get_posted_data();
 
-					$this->do_action( 'BeforeSavePostMeta', $post_id, $state );
+					$this->do_action( 'beforesavepostmeta', $post_id, $state );
 
 					if ( isset( $this->config['meta_key'] ) ) {
 						update_post_meta( $post_id, $this->config['meta_key'], $state );
 					}
 
-					$this->do_action( 'AfterSavePostMeta', $post_id, $state );
+					$this->do_action( 'aftersavepostmeta', $post_id, $state );
 				}
 
 				// re-hook this function

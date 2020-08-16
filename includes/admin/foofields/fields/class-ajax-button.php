@@ -52,7 +52,7 @@ if ( ! class_exists( __NAMESPACE__ . '\AjaxButton' ) ) {
 		 */
 		function ajax_handle_ajaxbutton() {
 			if ( $this->verify_nonce() ) {
-				$this->container->do_action( 'AjaxButton\\' . $this->unique_id, $this );
+				$this->container->do_action( 'ajaxbutton_' . $this->unique_id, $this );
 
 				if ( isset( $this->config['callback'] ) ) {
 					if ( is_callable( $this->config['callback'] ) ) {

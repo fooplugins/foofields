@@ -78,7 +78,7 @@ if ( ! class_exists( __NAMESPACE__ . '\Selectize' ) ) {
 				if ( !empty( $s ) ) {
 					$results = array();
 
-					$this->container->do_action( 'Suggest\\' . $this->unique_id, $s, $this );
+					$this->container->do_action( 'selectize_' . $this->unique_id, $s, $this );
 
 					if ( is_array( $this->query ) ) {
 						$query_type = $this->query['type'];

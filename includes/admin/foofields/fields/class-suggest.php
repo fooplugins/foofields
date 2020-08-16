@@ -70,7 +70,7 @@ if ( ! class_exists( __NAMESPACE__ . '\Suggest' ) ) {
 				$s = trim( $s );
 
 				if ( !empty( $s ) ) {
-					$this->container->do_action( 'Suggest\\' . $this->unique_id, $s, $this );
+					$this->container->do_action( 'suggest_' . $this->unique_id, $s, $this );
 
 					if ( is_array( $this->query ) ) {
 						$query_type = $this->query['type'];
