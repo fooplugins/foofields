@@ -4732,6 +4732,12 @@ FooFields.utils, FooFields.utils.fn, FooFields.utils.str);
         });
       }
     },
+    val: function val() {
+      return this.containers.reduce(function (result, container) {
+        result[container.id] = container.val();
+        return result;
+      }, {});
+    },
 
     /**
      * @summary Listens for the small screen MediaQueryList changed event.
@@ -4857,6 +4863,8 @@ FooFields.utils, FooFields.utils.fn, FooFields.utils.str);
       var self = this;
       self.visible = _is.boolean(state) ? state : !self.visible;
       self.$el.toggleClass(self.instance.cls.hidden, !self.visible);
+      self.trigger("toggle", [self.visible, self]);
+      self.instance.trigger("toggle", [self, self.visible]);
     },
     setupVisibilityRules: function setupVisibilityRules() {
       var self = this;
@@ -4868,7 +4876,10 @@ FooFields.utils, FooFields.utils.fn, FooFields.utils.str);
         if (field instanceof _.Field) {
           self._showWhenField = field;
 
-          self._showWhenField.on("change", self.onShowWhenFieldChanged, self);
+          self._showWhenField.on({
+            "change": self.onShowWhenFieldChanged,
+            "toggle": self.onShowWhenFieldToggled
+          }, self);
         }
       }
     },
@@ -4876,7 +4887,10 @@ FooFields.utils, FooFields.utils.fn, FooFields.utils.str);
       var self = this;
 
       if (self._showWhenField instanceof _.Field) {
-        self._showWhenField.off("change", self.onShowWhenFieldChanged, self);
+        self._showWhenField.off({
+          "change": self.onShowWhenFieldChanged,
+          "toggle": self.onShowWhenFieldToggled
+        }, self);
       }
     },
     checkVisibilityRules: function checkVisibilityRules(value) {
@@ -4906,6 +4920,13 @@ FooFields.utils, FooFields.utils.fn, FooFields.utils.str);
     },
     onShowWhenFieldChanged: function onShowWhenFieldChanged(e, value) {
       this.toggle(this.checkVisibilityRules(value));
+    },
+    onShowWhenFieldToggled: function onShowWhenFieldToggled(e, visible, field) {
+      if (visible) {
+        this.toggle(this.checkVisibilityRules(field.val()));
+      } else {
+        this.toggle(false);
+      }
     }
   });
 })(FooFields.$, FooFields, FooFields.utils, FooFields.utils.is, FooFields.utils.obj);
@@ -5040,6 +5061,12 @@ FooFields.utils, FooFields.utils.fn, FooFields.utils.str);
           return content.id === id;
         });
       }
+    },
+    val: function val() {
+      return this.contents.reduce(function (result, content) {
+        result[content.id] = content.val();
+        return result;
+      }, {});
     },
 
     /**
@@ -5409,6 +5436,12 @@ FooFields.utils, FooFields.utils.fn, FooFields.utils.str);
     },
     onShowWhenFieldChanged: function onShowWhenFieldChanged(e, value) {
       this.ctnr.toggle(this.id, this.checkVisibilityRules(value));
+    },
+    val: function val() {
+      return this.fields.reduce(function (result, field) {
+        result[field.id] = field.val();
+        return result;
+      }, {});
     }
   });
 })(FooFields.$, FooFields, FooFields.utils, FooFields.utils.is, FooFields.utils.obj);
@@ -5588,7 +5621,7 @@ FooFields.utils, FooFields.utils.fn, FooFields.utils.str);
     init: function init() {
       var self = this;
       self.setup();
-      self.$change.on("change.foofields", {
+      self.$change.on("change", {
         self: self
       }, self.onValueChanged);
 
@@ -5600,7 +5633,7 @@ FooFields.utils, FooFields.utils.fn, FooFields.utils.str);
     destroy: function destroy() {
       var self = this;
       self.trigger("destroy", [self]);
-      self.$change.off("change.foofields", self.onValueChanged);
+      self.$change.off("change", self.onValueChanged);
       self.teardown();
 
       self._super();
@@ -5623,20 +5656,27 @@ FooFields.utils, FooFields.utils.fn, FooFields.utils.str);
     },
     val: function val() {
       var self = this,
-          $inputs = self.$value;
+          $inputs = self.$value,
+          single = $inputs.is(":radio") || $inputs.length === 1;
 
       if (_is.string(self.opt.valueFilter)) {
         $inputs = $inputs.filter(self.opt.valueFilter);
       }
 
-      return $inputs.map(function () {
+      var result = $inputs.map(function () {
         var $el = $(this);
-        return self.opt.valueAttribute !== null ? $el.attr(self.opt.valueAttribute) : $el.val();
-      }).get().join(',');
+        return self.opt.valueAttribute !== null ? $el.attr(self.opt.valueAttribute) : $el.is(":checkbox") && single ? $el.is(":checked") : $el.val();
+      }).get();
+      return single && result.length > 0 ? result.length === 0 ? null : result[0] : result;
+    },
+    doValueChanged: function doValueChanged() {
+      var self = this,
+          value = self.val();
+      self.trigger("change", [value, self]);
+      self.instance.trigger("change", [self, value]);
     },
     onValueChanged: function onValueChanged(e) {
-      var self = e.data.self;
-      self.trigger("change", [self.val(), self]);
+      e.data.self.doValueChanged();
     }
   });
 
@@ -5717,7 +5757,7 @@ FooFields.utils, FooFields.utils.fn, FooFields.utils.str);
 })(FooFields.$, FooFields, FooFields.utils.is, FooFields.utils.obj);
 "use strict";
 
-(function ($, _, _is, _obj) {
+(function ($, _, _is, _fn, _obj) {
   if (!$.fn.wpColorPicker) {
     console.log("FooFields.ColorPicker dependency missing.");
     return;
@@ -5726,12 +5766,27 @@ FooFields.utils, FooFields.utils.fn, FooFields.utils.str);
   _.ColorPicker = _.Field.extend({
     setup: function setup() {
       var self = this;
-      self.$input.children('input[type=text]').wpColorPicker();
+      self.debouncedId = null;
+      self.$input.children('input[type=text]').wpColorPicker({
+        change: self.onColorPickerChange.bind(self),
+        clear: self.onColorPickerClear.bind(self)
+      });
+    },
+    onColorPickerClear: function onColorPickerClear() {
+      this.doValueChanged();
+    },
+    onColorPickerChange: function onColorPickerChange(e, ui) {
+      var self = this;
+      if (self.debouncedId !== null) clearTimeout(self.debouncedId);
+      self.debouncedId = setTimeout(function () {
+        self.debouncedId = null;
+        self.doValueChanged();
+      }, 100);
     }
   });
 
   _.fields.register("colorpicker", _.ColorPicker, ".foofields-type-colorpicker", {}, {}, {});
-})(FooFields.$, FooFields, FooFields.utils.is, FooFields.utils.obj);
+})(FooFields.$, FooFields, FooFields.utils.is, FooFields.utils.fn, FooFields.utils.obj);
 "use strict";
 
 (function ($, _, _is, _obj) {
@@ -5761,10 +5816,11 @@ FooFields.utils, FooFields.utils.fn, FooFields.utils.str);
     setup: function setup() {
       this.updateSelected();
     },
-    onValueChanged: function onValueChanged(e) {
-      var self = e.data.self;
+    doValueChanged: function doValueChanged() {
+      var self = this;
       self.updateSelected();
-      self.trigger("change", [self.val(), self]);
+
+      self._super();
     }
   });
 
@@ -5929,6 +5985,9 @@ FooFields.utils, FooFields.utils.fn, FooFields.utils.str);
       if (self.api instanceof Selectize) {
         self.api.disable();
       }
+    },
+    val: function val() {
+      return this.$select.val();
     }
   });
 
@@ -6006,7 +6065,6 @@ FooFields.utils, FooFields.utils.fn, FooFields.utils.str);
         update: function update(e, ui) {
           var current = ui.item.index(),
               from = original < current ? original : current;
-          console.log('update:', current);
           self.$tbody.children('tr').eq(from).nextAll('tr').andSelf().trigger('index-change');
         }
       });
@@ -6031,6 +6089,7 @@ FooFields.utils, FooFields.utils.fn, FooFields.utils.str);
       // always remove the empty class when adding a row, jquery internally checks if it exists
 
       self.$el.removeClass(self.cls.empty);
+      self.doValueChanged();
       return row;
     },
     remove: function remove(row) {
@@ -6050,6 +6109,7 @@ FooFields.utils, FooFields.utils.fn, FooFields.utils.str);
       }
 
       $after.trigger('index-change');
+      self.doValueChanged();
     },
     onAddNewClick: function onAddNewClick(e) {
       e.preventDefault();
@@ -6060,6 +6120,12 @@ FooFields.utils, FooFields.utils.fn, FooFields.utils.str);
       this._super(state);
 
       this.$template.find(":input").attr("disabled", "disabled");
+    },
+    val: function val() {
+      var self = this;
+      return self.rows.map(function (row) {
+        return row.val();
+      });
     }
   });
 
@@ -6151,6 +6217,7 @@ FooFields.utils, FooFields.utils.fn, FooFields.utils.str);
         self: self
       }, self.onIndexChange);
       self.fields.forEach(function (field) {
+        field.on("change", self.onFieldChange, self);
         field.init();
       });
       if (reindex) self.reindex();
@@ -6158,6 +6225,7 @@ FooFields.utils, FooFields.utils.fn, FooFields.utils.str);
     destroy: function destroy() {
       var self = this;
       self.fields.forEach(function (field) {
+        field.off("change", self.onFieldChange, self);
         field.destroy();
       });
 
@@ -6211,10 +6279,22 @@ FooFields.utils, FooFields.utils.fn, FooFields.utils.str);
     onIndexChange: function onIndexChange(e) {
       e.data.self.reindex();
     },
+    onFieldChange: function onFieldChange() {
+      this.repeater.doValueChanged();
+    },
     enable: function enable() {
       this.fields.forEach(function (field) {
         field.enable();
       });
+    },
+    val: function val() {
+      var self = this,
+          result = [];
+      self.fields.forEach(function (field) {
+        if (field instanceof _.RepeaterIndex || field instanceof _.RepeaterDelete) return;
+        result.push(field.val());
+      });
+      return result;
     }
   });
 })(FooFields.$, FooFields, FooFields.utils, FooFields.utils.is, FooFields.utils.obj);
@@ -6223,9 +6303,10 @@ FooFields.utils, FooFields.utils.fn, FooFields.utils.str);
 (function ($, _, _utils, _is, _obj) {
   _.__instance__ = new _.Instance();
 
-  _utils.expose(_.__instance__, _, ["on", "off", "trigger", "init", "destroy", "field"]);
+  _utils.expose(_.__instance__, _, ["on", "off", "trigger", "init", "destroy", "field", "content", "container", "val"]);
 
   _utils.ready(function () {
     _.__instance__.init(window.FOOFIELDS);
   });
 })(FooFields.$, FooFields, FooFields.utils, FooFields.utils.is, FooFields.utils.obj);
+"use strict";

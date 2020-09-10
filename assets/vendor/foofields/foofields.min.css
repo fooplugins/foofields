@@ -77,6 +77,8 @@ button[data-balloon]{overflow:visible}
 .foofields-field{display:-webkit-box;display:-ms-flexbox;display:flex;padding:0;margin-bottom:1.5em}
 .foofields-field:last-child{margin-bottom:0}
 .foofields-field .foofields-label{-webkit-box-flex:1;-ms-flex:1;flex:1;font-weight:600;padding:.25em .5em}
+.foofields-field .foofields-label label{display:-webkit-inline-box;display:-ms-inline-flexbox;display:inline-flex;-webkit-box-align:center;-ms-flex-align:center;align-items:center;min-height:30px}
+.foofields-field .foofields-label [data-balloon]{display:inline-block}
 .foofields-field .foofields-field-input{-webkit-box-flex:1;-ms-flex:1;flex:1;padding:.25em .5em}
 .foofields-field .foofields-field-input label{vertical-align:text-bottom}
 .foofields-field.foofields-layout-block{-webkit-box-orient:vertical;-webkit-box-direction:normal;-ms-flex-direction:column;flex-direction:column}
@@ -104,11 +106,16 @@ button[data-balloon]{overflow:visible}
 .foofields-type-icon.icon-yellow .foofields-field-input .dashicons{color:#fa0}
 .foofields-type-icon.icon-red .foofields-field-input{background-color:#fde6e6;border-color:#bb2f2f}
 .foofields-type-icon.icon-red .foofields-field-input .dashicons{color:#bb2f2f}
+.foofields-type-color .foofields-field-input input[type=color]{min-height:30px}
+.foofields-type-checkbox .foofields-field-input{display:-webkit-inline-box;display:-ms-inline-flexbox;display:inline-flex;-webkit-box-align:center;-ms-flex-align:center;align-items:center;min-height:30px}
+.foofields-type-checkbox .foofields-field-input input[type=checkbox],.foofields-type-checkbox .foofields-field-input input[type=radio]{margin:0}
 .foofields-type-checkbox.foofields-layout-inline .foofields-field-description{display:inline}
 .foofields-type-radiolist .foofields-field-input,.foofields-type-checkboxlist .foofields-field-input,.foofields-type-htmllist .foofields-field-input{display:-webkit-box;display:-ms-flexbox;display:flex;-webkit-box-orient:horizontal;-webkit-box-direction:normal;-ms-flex-direction:row;flex-direction:row;-webkit-box-align:center;-ms-flex-align:center;align-items:center;-ms-flex-wrap:wrap;flex-wrap:wrap}
-.foofields-type-radiolist .foofields-field-input label,.foofields-type-checkboxlist .foofields-field-input label,.foofields-type-htmllist .foofields-field-input label{display:inline-block;margin-right:1em;padding:5px;line-height:1}
+.foofields-type-radiolist .foofields-field-input label,.foofields-type-checkboxlist .foofields-field-input label,.foofields-type-htmllist .foofields-field-input label{display:-webkit-inline-box;display:-ms-inline-flexbox;display:inline-flex;margin-right:1em;padding:5px;line-height:1;min-height:30px;-webkit-box-align:center;-ms-flex-align:center;align-items:center}
+.foofields-type-radiolist .foofields-field-input label input[type=checkbox],.foofields-type-radiolist .foofields-field-input label input[type=radio],.foofields-type-checkboxlist .foofields-field-input label input[type=checkbox],.foofields-type-checkboxlist .foofields-field-input label input[type=radio],.foofields-type-htmllist .foofields-field-input label input[type=checkbox],.foofields-type-htmllist .foofields-field-input label input[type=radio]{margin:0 .25em}
+.foofields-type-radiolist .foofields-field-input label input[type=checkbox],.foofields-type-checkboxlist .foofields-field-input label input[type=checkbox],.foofields-type-htmllist .foofields-field-input label input[type=checkbox]{margin-top:1px}
 .foofields-type-radiolist.foofields-stacked .foofields-field-input,.foofields-type-checkboxlist.foofields-stacked .foofields-field-input,.foofields-type-htmllist.foofields-stacked .foofields-field-input{-webkit-box-orient:vertical;-webkit-box-direction:normal;-ms-flex-direction:column;flex-direction:column;-webkit-box-align:start;-ms-flex-align:start;align-items:flex-start}
-.foofields-type-radiolist.foofields-stacked .foofields-field-input label,.foofields-type-checkboxlist.foofields-stacked .foofields-field-input label,.foofields-type-htmllist.foofields-stacked .foofields-field-input label{display:block;margin-right:0}
+.foofields-type-radiolist.foofields-stacked .foofields-field-input label,.foofields-type-checkboxlist.foofields-stacked .foofields-field-input label,.foofields-type-htmllist.foofields-stacked .foofields-field-input label{display:-webkit-box;display:-ms-flexbox;display:flex;margin-right:0}
 .foofields-type-htmllist .foofields-field-input label{border:solid 3px transparent;background:#aaa;border-radius:3px}
 .foofields-type-htmllist .foofields-field-input label>input{display:none}
 .foofields-type-htmllist .foofields-field-input .foofields-selected{border:solid 3px #444;background:#888}
