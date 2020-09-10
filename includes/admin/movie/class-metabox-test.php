@@ -504,6 +504,35 @@ if ( ! class_exists( 'FooPlugins\FooFields\Admin\Movie\MetaboxTest' ) ) {
 									)
 								)
 							),
+							array(
+								'id'       => 'showrulelist2',
+								'label'    => __( 'Some More Options', 'foofields' ),
+								'desc'     => __( 'This will test nested show rules.', 'foofields' ),
+								'type'     => 'radiolist',
+								'default'  => 'none',
+								'choices' => array(
+									'none' => __( 'Show no new fields', 'foofields' ),
+									'show' => __( 'Show another field', 'foofields' ),
+								),
+								'data'     => array(
+									'show-when' => array(
+										'field' => 'showrulelist',
+										'value' => 'option3',
+									)
+								)
+							),
+							array(
+								'id'       => 'showrulestext4',
+								'label'    => __( 'Text Field 4', 'foofields' ),
+								'desc'     => __( 'This is shown when "Option 3" AND "Show another field" is selected', 'foofields' ),
+								'type'     => 'text',
+								'data'     => array(
+									'show-when' => array(
+										'field' => 'showrulelist2',
+										'value' => 'show',
+									)
+								)
+							),
 						)
 					),
 					array(
