@@ -130,6 +130,12 @@
 				});
 			}
 		},
+		val: function(){
+			return this.contents.reduce(function(result, content){
+				result[content.id] = content.val();
+				return result;
+			}, {});
+		},
 		/**
 		 * @summary Sets the small screen state for this container.
 		 * @memberof FooFields.Container#

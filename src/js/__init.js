@@ -2,7 +2,7 @@
 
 	_.__instance__ = new _.Instance();
 
-	_utils.expose(_.__instance__, _, ["on","off","trigger","init","destroy","field"]);
+	_utils.expose(_.__instance__, _, ["on","off","trigger","init","destroy","field","content","container","val"]);
 
 	_utils.ready(function(){
 		_.__instance__.init(window.FOOFIELDS);

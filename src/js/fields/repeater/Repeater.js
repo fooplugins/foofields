@@ -33,7 +33,6 @@
 				update: function(e, ui){
 					var current = ui.item.index(),
 						from = original < current ? original : current;
-					console.log('update:', current);
 					self.$tbody.children('tr').eq(from).nextAll('tr').andSelf().trigger('index-change');
 				}
 			});
@@ -57,6 +56,7 @@
 			// row.enable();
 			// always remove the empty class when adding a row, jquery internally checks if it exists
 			self.$el.removeClass(self.cls.empty);
+			self.doValueChanged();
 			return row;
 		},
 		remove: function(row){
@@ -72,6 +72,7 @@
 				self.$el.addClass(self.cls.empty);
 			}
 			$after.trigger('index-change');
+			self.doValueChanged();
 		},
 		onAddNewClick: function(e){
 			e.preventDefault();
@@ -81,6 +82,12 @@
 		toggle: function(state){
 			this._super(state);
 			this.$template.find(":input").attr("disabled", "disabled");
+		},
+		val: function(){
+			const self = this;
+			return self.rows.map(function(row){
+				return row.val();
+			});
 		}
 	});
 

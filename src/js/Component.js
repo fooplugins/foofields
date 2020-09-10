@@ -74,6 +74,8 @@
 			var self = this;
 			self.visible = _is.boolean(state) ? state : !self.visible;
 			self.$el.toggleClass(self.instance.cls.hidden, !self.visible);
+			self.trigger("toggle", [self.visible, self]);
+			self.instance.trigger("toggle", [self, self.visible]);
 		},
 		setupVisibilityRules: function(){
 			var self = this;
@@ -82,14 +84,20 @@
 				var field = self.instance.field(self.opt.showWhen.field);
 				if (field instanceof _.Field){
 					self._showWhenField = field;
-					self._showWhenField.on("change", self.onShowWhenFieldChanged, self);
+					self._showWhenField.on({
+						"change": self.onShowWhenFieldChanged,
+						"toggle": self.onShowWhenFieldToggled
+					}, self);
 				}
 			}
 		},
 		teardownVisibilityRules: function(){
 			var self = this;
 			if (self._showWhenField instanceof _.Field){
-				self._showWhenField.off("change", self.onShowWhenFieldChanged, self);
+				self._showWhenField.off({
+					"change": self.onShowWhenFieldChanged,
+					"toggle": self.onShowWhenFieldToggled
+				}, self);
 			}
 		},
 		checkVisibilityRules: function(value){
@@ -112,6 +120,13 @@
 		},
 		onShowWhenFieldChanged: function(e, value){
 			this.toggle(this.checkVisibilityRules(value));
+		},
+		onShowWhenFieldToggled: function(e, visible, field){
+			if (visible){
+				this.toggle(this.checkVisibilityRules(field.val()));
+			} else {
+				this.toggle(false);
+			}
 		}
 	});
 

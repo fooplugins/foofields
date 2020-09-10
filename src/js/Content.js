@@ -36,6 +36,12 @@
 		},
 		onShowWhenFieldChanged: function(e, value){
 			this.ctnr.toggle(this.id, this.checkVisibilityRules(value));
+		},
+		val: function(){
+			return this.fields.reduce(function(result, field){
+				result[field.id] = field.val();
+				return result;
+			}, {});
 		}
 	});
 

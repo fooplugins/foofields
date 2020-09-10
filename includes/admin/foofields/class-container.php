@@ -483,7 +483,10 @@ if ( ! class_exists( __NAMESPACE__ . '\Container' ) ) {
 
 			$this->render_fields_before();
 
-			self::render_html_tag( 'div', array( 'class' => implode( ' ', $this->get_container_classes() ) ), null, false );
+			self::render_html_tag( 'div', array(
+				'id' => $this->container_id(),
+				'class' => implode( ' ', $this->get_container_classes() )
+			), null, false );
 
 			//render the state input
 			self::render_html_tag( 'input', array(

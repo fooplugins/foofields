@@ -20,6 +20,7 @@
 			self._super();
 			self.$el.on('index-change.foofields', {self: self}, self.onIndexChange);
 			self.fields.forEach(function(field){
+				field.on("change", self.onFieldChange, self);
 				field.init();
 			});
 			if (reindex) self.reindex();
@@ -27,6 +28,7 @@
 		destroy: function(){
 			var self = this;
 			self.fields.forEach(function(field){
+				field.off("change", self.onFieldChange, self);
 				field.destroy();
 			});
 			self._super();
@@ -72,10 +74,21 @@
 		onIndexChange: function(e){
 			e.data.self.reindex();
 		},
+		onFieldChange: function(){
+			this.repeater.doValueChanged();
+		},
 		enable: function() {
 			this.fields.forEach(function(field){
 				field.enable();
 			});
+		},
+		val: function(){
+			const self = this, result = [];
+			self.fields.forEach(function(field){
+				if (field instanceof _.RepeaterIndex || field instanceof _.RepeaterDelete) return;
+				result.push(field.val());
+			});
+			return result;
 		}
 	});
 

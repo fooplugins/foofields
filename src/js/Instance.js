@@ -177,6 +177,12 @@
 				});
 			}
 		},
+		val: function(){
+			return this.containers.reduce(function(result, container){
+				result[container.id] = container.val();
+				return result;
+			}, {});
+		},
 		/**
 		 * @summary Listens for the small screen MediaQueryList changed event.
 		 * @memberof FooFields.Instance#

@@ -75,6 +75,9 @@
 			if (self.api instanceof Selectize){
 				self.api.disable();
 			}
+		},
+		val: function(){
+			return this.$select.val();
 		}
 	});
 

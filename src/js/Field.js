@@ -16,7 +16,7 @@
 		init: function(){
 			var self = this;
 			self.setup();
-			self.$change.on("change.foofields", {self: self}, self.onValueChanged);
+			self.$change.on("change", {self: self}, self.onValueChanged);
 			self._super();
 			self.trigger("init", [self]);
 		},
@@ -24,7 +24,7 @@
 		destroy: function(){
 			var self = this;
 			self.trigger("destroy", [self]);
-			self.$change.off("change.foofields", self.onValueChanged);
+			self.$change.off("change", self.onValueChanged);
 			self.teardown();
 			self._super();
 		},
@@ -44,18 +44,25 @@
 			this.$el.find(":input").removeAttr("disabled");
 		},
 		val: function(){
-			var self = this, $inputs = self.$value;
+			var self = this, $inputs = self.$value, single = $inputs.is(":radio") || $inputs.length === 1;
 			if (_is.string(self.opt.valueFilter)){
 				$inputs = $inputs.filter(self.opt.valueFilter);
 			}
-			return $inputs.map(function(){
+			var result = $inputs.map(function(){
 				var $el = $(this);
-				return self.opt.valueAttribute !== null ? $el.attr(self.opt.valueAttribute) : $el.val();
-			}).get().join(',');
+				return self.opt.valueAttribute !== null ?
+					$el.attr(self.opt.valueAttribute) :
+					($el.is(":checkbox") && single ? $el.is(":checked") : $el.val());
+			}).get();
+			return single && result.length > 0 ? (result.length === 0 ? null : result[0]) : result;
+		},
+		doValueChanged: function(){
+			const self = this, value = self.val();
+			self.trigger("change", [value, self]);
+			self.instance.trigger("change", [self, value]);
 		},
 		onValueChanged: function(e){
-			var self = e.data.self;
-			self.trigger("change", [self.val(), self]);
+			e.data.self.doValueChanged();
 		}
 	});
 

@@ -11,10 +11,10 @@
 		setup: function(){
 			this.updateSelected();
 		},
-		onValueChanged: function(e){
-			var self = e.data.self;
+		doValueChanged: function(){
+			const self = this;
 			self.updateSelected();
-			self.trigger("change", [self.val(), self]);
+			self._super();
 		}
 	});
 
