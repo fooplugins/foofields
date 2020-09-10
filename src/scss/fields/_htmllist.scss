@@ -10,10 +10,19 @@
 	flex-wrap: wrap;
 
 	label {
-	  display: inline-block;
+	  display: inline-flex;
 	  margin-right: $m-sm;
 	  padding: 5px;
 	  line-height: 1;
+	  min-height: 30px;
+	  align-items: center;
+
+	  input[type=checkbox], input[type=radio] {
+		margin: 0 $m-0;
+	  }
+	  input[type=checkbox] {
+		margin-top: 1px;
+	  }
 	}
   }
   &.foofields-stacked {
@@ -22,7 +31,7 @@
 	  align-items: flex-start;
 
 	  label {
-		display: block;
+		display: flex;
 		margin-right: 0;
 	  }
 	}

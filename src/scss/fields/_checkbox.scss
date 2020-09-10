@@ -1,4 +1,12 @@
 .foofields-type-checkbox {
+  .foofields-field-input {
+	display: inline-flex;
+	align-items: center;
+	min-height: 30px;
+	input[type=checkbox], input[type=radio] {
+	  margin: 0;
+	}
+  }
   &.foofields-layout-inline {
 	.foofields-field-description {
 	  display: inline;

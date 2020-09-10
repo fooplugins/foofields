@@ -15,6 +15,15 @@
 	flex: 1;
 	font-weight: 600;
 	padding: $padded;
+
+	label {
+	  display: inline-flex;
+	  align-items: center;
+	  min-height: 30px;
+	}
+	[data-balloon] {
+	  display: inline-block;
+	}
   }
 
   .foofields-field-input {
