@@ -268,7 +268,7 @@ if ( ! class_exists( __NAMESPACE__ . '\Field' ) ) {
 			if ( ! empty( $this->description ) ) {
 				self::render_html_tag( 'span', array(
 					'class' => 'foofields-field-description'
-				), $this->description );
+				), $this->description, true, false );
 			}
 		}
 

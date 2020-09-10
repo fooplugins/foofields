@@ -51,6 +51,9 @@ if ( ! class_exists( __NAMESPACE__ . '\InputList' ) ) {
 					if ( isset( $item['html'] ) ) {
 						$inner = wp_kses_post( $item['html'] );
 					}
+					if ( isset( $item['attributes'] ) ) {
+						$label_attributes = array_merge( $label_attributes, $item['attributes'] );
+					}
 				} else {
 					$inner = '<span>' . esc_html( $item ) . '</span>';
 				}

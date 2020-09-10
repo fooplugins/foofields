@@ -29,7 +29,7 @@ if ( ! class_exists( __NAMESPACE__ . '\Metabox' ) ) {
 		function validate_config() {
 			parent::validate_config();
 
-			if ( !isset( $this->config['meta_key'] ) ) {
+			if ( ! isset( $this->config['meta_key'] ) ) {
 				if ( isset( $this->config['surpress_metakey_error'] ) && $this->config['surpress_metakey_error'] ) {
 					//Do nothing. Suppress the error message for the missing meta_key
 				} else {
@@ -54,17 +54,17 @@ if ( ! class_exists( __NAMESPACE__ . '\Metabox' ) ) {
 		function add_meta_boxes( $post ) {
 			$this->post = $post;
 
-			if ( !isset( $this->config['metabox_render_function'] ) ) {
+			if ( ! isset( $this->config['metabox_render_function'] ) ) {
 				$this->config['metabox_render_function'] = array( $this, 'render_metabox' );
 			}
 
 			add_meta_box(
-				$this->container_id(),
-				$this->config['metabox_title'],
-				$this->config['metabox_render_function'],
-				$this->config['post_type'],
-				isset( $this->config['context'] ) ? $this->config['context'] : 'normal',
-				isset( $this->config['priority'] ) ? $this->config['priority'] : 'default'
+					$this->container_id(),
+					$this->config['metabox_title'],
+					$this->config['metabox_render_function'],
+					$this->config['post_type'],
+					isset( $this->config['context'] ) ? $this->config['context'] : 'normal',
+					isset( $this->config['priority'] ) ? $this->config['priority'] : 'default'
 			);
 		}
 
@@ -78,8 +78,8 @@ if ( ! class_exists( __NAMESPACE__ . '\Metabox' ) ) {
 
 			//render the nonce used to validate when saving the metabox fields
 			?><input type="hidden" name="<?php echo $full_id; ?>_nonce"
-			         id="<?php echo $full_id; ?>_nonce"
-			         value="<?php echo wp_create_nonce( $full_id ); ?>"/><?php
+					 id="<?php echo $full_id; ?>_nonce"
+					 value="<?php echo wp_create_nonce( $full_id ); ?>"/><?php
 
 			//allow custom metabox rendering
 			$this->do_action( 'render', $post );
@@ -94,7 +94,7 @@ if ( ! class_exists( __NAMESPACE__ . '\Metabox' ) ) {
 		 * @return array|mixed
 		 */
 		function get_state() {
-			if ( !isset( $this->state ) ) {
+			if ( ! isset( $this->state ) ) {
 
 				$state = array();
 
@@ -107,7 +107,7 @@ if ( ! class_exists( __NAMESPACE__ . '\Metabox' ) ) {
 					$state = array();
 				}
 
-				$state = $this->apply_filters( 'GetState', $state, $this->post );
+				$state = $this->apply_filters( 'get_state', $state, $this->post );
 
 				$this->state = $state;
 			}
@@ -134,7 +134,7 @@ if ( ! class_exists( __NAMESPACE__ . '\Metabox' ) ) {
 
 			// verify nonce
 			if ( array_key_exists( $full_id . '_nonce', $_POST ) &&
-			     wp_verify_nonce( $_POST[ $full_id . '_nonce' ], $full_id ) ) {
+				 wp_verify_nonce( $_POST[ $full_id . '_nonce' ], $full_id ) ) {
 
 				//if we get here, we are dealing with the correct metabox
 
@@ -145,18 +145,18 @@ if ( ! class_exists( __NAMESPACE__ . '\Metabox' ) ) {
 				$this->do_action( 'save', $post_id );
 
 				//if we have fields, then we can save that data
-				if ( $this->has_fields() ) {
+				if ( $this->has_fields() && $this->apply_filters( 'can_save', true, $this ) ) {
 
 					//get the current state of the posted form
 					$state = $this->get_posted_data();
 
-					$this->do_action( 'beforesavepostmeta', $post_id, $state );
+					$this->do_action( 'before_save_post_meta', $post_id, $state );
 
 					if ( isset( $this->config['meta_key'] ) ) {
 						update_post_meta( $post_id, $this->config['meta_key'], $state );
 					}
 
-					$this->do_action( 'aftersavepostmeta', $post_id, $state );
+					$this->do_action( 'after_save_post_meta', $post_id, $state );
 				}
 
 				// re-hook this function
@@ -185,15 +185,9 @@ if ( ! class_exists( __NAMESPACE__ . '\Metabox' ) ) {
 		 * @param $hook_suffix
 		 */
 		function enqueue_assets( $hook_suffix ) {
-			if ( in_array( $hook_suffix, array( 'post.php', 'post-new.php' ) ) ) {
-				$screen = get_current_screen();
-
-				//make sure we are on the correct post type page
-				if ( is_object( $screen ) && $this->config['post_type'] == $screen->post_type ) {
-					// Register, enqueue scripts and styles here
-
-					$this->enqueue_all();
-				}
+			if ( $this->is_admin_edit_mode() && $this->is_current_post_type() ) {
+				// Register, enqueue scripts and styles here
+				$this->enqueue_all();
 			}
 		}
 
@@ -206,6 +200,7 @@ if ( ! class_exists( __NAMESPACE__ . '\Metabox' ) ) {
 			$classes = parent::get_container_classes();
 
 			$classes[] = 'foofields-style-metabox';
+
 			return $classes;
 		}
 
@@ -215,12 +210,74 @@ if ( ! class_exists( __NAMESPACE__ . '\Metabox' ) ) {
 		function render_fields_before() {
 			?>
 			<style>
-				#<?php echo $this->container_id(); ?> .inside {
+				<?php echo '#' . $this->container_id() . ' .inside' ?> {
 					margin: 0;
 					padding: 0;
 				}
 			</style>
 			<?php
+		}
+
+		/**
+		 * Returns the admin post type currently being viewed/edited
+		 *
+		 * @return string|null
+		 */
+		function get_admin_post_type() {
+			global $post, $typenow, $current_screen, $pagenow;
+
+			$post_type = null;
+
+			if ( $post && ( property_exists( $post, 'post_type' ) || method_exists( $post, 'post_type' ) ) ) {
+				$post_type = $post->post_type;
+			}
+
+			if ( empty( $post_type ) && ! empty( $current_screen ) && ( property_exists( $current_screen, 'post_type' ) || method_exists( $current_screen, 'post_type' ) ) && ! empty( $current_screen->post_type ) ) {
+				$post_type = $current_screen->post_type;
+			}
+
+			if ( empty( $post_type ) && ! empty( $typenow ) ) {
+				$post_type = $typenow;
+			}
+
+			if ( empty( $post_type ) && function_exists( 'get_current_screen' ) ) {
+				$get_current_screen = get_current_screen();
+				if ( property_exists( $get_current_screen, 'post_type' ) && ! empty( $get_current_screen->post_type ) ) {
+					$post_type = $get_current_screen->post_type;
+				}
+			}
+
+			if ( empty( $post_type ) && isset( $_REQUEST['post'] ) && ! empty( $_REQUEST['post'] ) && function_exists( 'get_post_type' ) && $get_post_type = get_post_type( (int) $_REQUEST['post'] ) ) {
+				$post_type = $get_post_type;
+			}
+
+			if ( empty( $post_type ) && isset( $_REQUEST['post_type'] ) && ! empty( $_REQUEST['post_type'] ) ) {
+				$post_type = sanitize_key( $_REQUEST['post_type'] );
+			}
+
+			if ( empty( $post_type ) && 'edit.php' == $pagenow ) {
+				$post_type = 'post';
+			}
+
+			return $post_type;
+		}
+
+		/**
+		 * Returns true if current admin page is an edit page
+		 * @return bool
+		 */
+		function is_admin_edit_mode() {
+			global $pagenow;
+
+			return in_array( $pagenow, array( 'post.php', 'post-new.php' ) );
+		}
+
+		/**
+		 * Returns true if the current post type is the post type for the metabox
+		 * @return bool
+		 */
+		function is_current_post_type() {
+			return $this->get_admin_post_type() === $this->config['post_type'];
 		}
 	}
 }

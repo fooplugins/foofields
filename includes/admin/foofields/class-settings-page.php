@@ -63,7 +63,7 @@ if ( ! class_exists( __NAMESPACE__ . '\SettingsPage' ) ) {
 					$state = array();
 				}
 
-				$state = $this->apply_filters( 'GetState', $state );
+				$state = $this->apply_filters( 'get_state', $state );
 
 				$this->state = $state;
 			}

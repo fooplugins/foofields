@@ -238,8 +238,10 @@ if ( ! class_exists( __NAMESPACE__ . '\Container' ) ) {
 				$field_id = $this->get_unique_id( $field_config );
 			}
 
-			if ( array_key_exists( $field_type, self::field_type_mappings ) ) {
-				$field_instance_type = self::field_type_mappings[ $field_type ];
+			$mappings = $this->get_field_type_mappings();
+
+			if ( array_key_exists( $field_type, $mappings ) ) {
+				$field_instance_type = $mappings[ $field_type ];
 				$field_instance      = new $field_instance_type( $this, $field_type, $field_config );
 			} else {
 				$field_instance = new Field( $this, $field_type, $field_config );
@@ -248,6 +250,15 @@ if ( ! class_exists( __NAMESPACE__ . '\Container' ) ) {
 			$this->fields[ $field_id ] = $field_instance;
 
 			return $field_instance;
+		}
+
+		/**
+		 * Returns a filterable list of field type mappings. This will allow new custom mappings to be added within plugins
+		 *
+		 * @return mixed|void
+		 */
+		function get_field_type_mappings() {
+			return $this->apply_filters( 'field_type_mappings', self::field_type_mappings );
 		}
 
 		/**
@@ -280,6 +291,8 @@ if ( ! class_exists( __NAMESPACE__ . '\Container' ) ) {
 		 * @return bool
 		 */
 		protected function has_fields() {
+			$this->load_fields();
+
 			return count( $this->fields ) > 0;
 		}
 
@@ -314,6 +327,30 @@ if ( ! class_exists( __NAMESPACE__ . '\Container' ) ) {
 				array( $this->build_hook_tag( $tag ) ),
 				array_slice( $args, 1 )
 			) );
+		}
+
+		/**
+		 * Shortcut function to add an action
+		 *
+		 * @param $tag
+		 * @param $function_to_add
+		 * @param int $priority
+		 * @param int $accepted_args
+		 */
+		public function add_action( $tag, $function_to_add, $priority = 10, $accepted_args = 1 ) {
+			add_action( $this->build_hook_tag( $tag ), $function_to_add, $priority, $accepted_args );
+		}
+
+		/**
+		 * Shortcut function to add a filter
+		 *
+		 * @param $tag
+		 * @param $function_to_add
+		 * @param int $priority
+		 * @param int $accepted_args
+		 */
+		public function add_filter( $tag, $function_to_add, $priority = 10, $accepted_args = 1 ) {
+			add_filter( $this->build_hook_tag( $tag ), $function_to_add, $priority, $accepted_args );
 		}
 
 		/**
@@ -376,7 +413,7 @@ if ( ! class_exists( __NAMESPACE__ . '\Container' ) ) {
 				), $this->config['plugin_version'] );
 			}
 
-			$this->do_action( 'enqueueassets' );
+			$this->do_action( 'enqueue_assets' );
 
 			//enqueue any scripts provided from config
 			if ( isset( $this->config['scripts'] ) ) {
@@ -409,6 +446,31 @@ if ( ! class_exists( __NAMESPACE__ . '\Container' ) ) {
 			}
 
 			return $classes;
+		}
+
+		/**
+		 * merges fields passed into the constructor with merges from get_fields()
+		 */
+		protected function load_fields() {
+			$fields = $this->get_fields();
+
+			if ( !empty( $fields ) ) {
+				//clear any fields we had before
+				$this->fields = array();
+
+				$this->config['fields'] = $fields;
+
+				$this->parse_config( $fields );
+			}
+		}
+
+		/**
+		 * Allows the fields to be specified in a function, rather than being passed into the constructor
+		 *
+		 * @return array
+		 */
+		protected function get_fields() {
+			return array();
 		}
 
 		/**
@@ -726,7 +788,7 @@ if ( ! class_exists( __NAMESPACE__ . '\Container' ) ) {
 				$posted_data[self::STATE_KEY] = $sanitized_data[self::STATE_KEY];
 			}
 
-			return $this->apply_filters( 'GetPostedData', $posted_data, $this );
+			return $this->apply_filters( 'get_posted_data', $posted_data, $this );
 		}
 
 		/**
