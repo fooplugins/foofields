@@ -79,10 +79,14 @@
 		},
 		setupVisibilityRules: function(){
 			var self = this;
-			self.toggle(self.visible);
 			if (self.opt.showWhen.field !== null){
 				var field = self.instance.field(self.opt.showWhen.field);
 				if (field instanceof _.Field){
+					if (field.visible){
+						self.visible = self.checkVisibilityRules(field.val());
+					} else {
+						self.visible = false;
+					}
 					self._showWhenField = field;
 					self._showWhenField.on({
 						"change": self.onShowWhenFieldChanged,
@@ -90,6 +94,7 @@
 					}, self);
 				}
 			}
+			self.toggle(self.visible);
 		},
 		teardownVisibilityRules: function(){
 			var self = this;
@@ -118,8 +123,12 @@
 			}
 			return visible;
 		},
-		onShowWhenFieldChanged: function(e, value){
-			this.toggle(this.checkVisibilityRules(value));
+		onShowWhenFieldChanged: function(e, value, field){
+			if (field.visible){
+				this.toggle(this.checkVisibilityRules(value));
+			} else {
+				this.toggle(false);
+			}
 		},
 		onShowWhenFieldToggled: function(e, visible, field){
 			if (visible){

@@ -190,6 +190,11 @@ if ( ! class_exists( __NAMESPACE__ . '\Container' ) ) {
 				$show_rule_value = $show_rule['value'];
 				$show_rule_operator = isset( $show_rule['operator'] ) ? $show_rule['operator'] : '===';
 				$show_rule_field_id = $this->get_unique_id( array( 'id' => $show_rule['field'] ) );
+				$show_rule_field_visible = $this->show_rule_is_visible( $show_rule_field_id, 'fields' );
+
+				// if the target field is not visible then hide this field
+				if ( false === $show_rule_field_visible ) return false;
+
 				$show_rule_field = $this->fields[$show_rule_field_id];
 				$show_rule_field_value = $show_rule_field->value();
 

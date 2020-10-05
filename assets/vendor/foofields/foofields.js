@@ -4868,12 +4868,17 @@ FooFields.utils, FooFields.utils.fn, FooFields.utils.str);
     },
     setupVisibilityRules: function setupVisibilityRules() {
       var self = this;
-      self.toggle(self.visible);
 
       if (self.opt.showWhen.field !== null) {
         var field = self.instance.field(self.opt.showWhen.field);
 
         if (field instanceof _.Field) {
+          if (field.visible) {
+            self.visible = self.checkVisibilityRules(field.val());
+          } else {
+            self.visible = false;
+          }
+
           self._showWhenField = field;
 
           self._showWhenField.on({
@@ -4882,6 +4887,8 @@ FooFields.utils, FooFields.utils.fn, FooFields.utils.str);
           }, self);
         }
       }
+
+      self.toggle(self.visible);
     },
     teardownVisibilityRules: function teardownVisibilityRules() {
       var self = this;
@@ -4918,8 +4925,12 @@ FooFields.utils, FooFields.utils.fn, FooFields.utils.str);
 
       return visible;
     },
-    onShowWhenFieldChanged: function onShowWhenFieldChanged(e, value) {
-      this.toggle(this.checkVisibilityRules(value));
+    onShowWhenFieldChanged: function onShowWhenFieldChanged(e, value, field) {
+      if (field.visible) {
+        this.toggle(this.checkVisibilityRules(value));
+      } else {
+        this.toggle(false);
+      }
     },
     onShowWhenFieldToggled: function onShowWhenFieldToggled(e, visible, field) {
       if (visible) {
@@ -6309,4 +6320,3 @@ FooFields.utils, FooFields.utils.fn, FooFields.utils.str);
     _.__instance__.init(window.FOOFIELDS);
   });
 })(FooFields.$, FooFields, FooFields.utils, FooFields.utils.is, FooFields.utils.obj);
-"use strict";
