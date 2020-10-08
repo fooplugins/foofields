@@ -1,8 +1,10 @@
-.foofields-content.foofields-active.foofields-cols-4 {
+.foofields-content.foofields-active.foofields-cols-4,
+.foofields-type-field-group.foofields-cols-4 {
   display: flex;
   flex-wrap: wrap;
+  flex-direction: row;
   >.foofields-field {
-	padding: 0 $m-sm 0 0;
+	padding: 0;
 	align-self: flex-start;
 	width: 25%;
   }
@@ -21,7 +23,8 @@
 // Small Screen CSS
 // ----------------------------------------------------------------------------
 @media only screen and (max-width: $small-screen) {
-  .foofields-content.foofields-active.foofields-cols-4 {
+  .foofields-content.foofields-active.foofields-cols-4,
+  .foofields-type-field-group.foofields-cols-4 {
 	>.foofields-field,
 	>.foofields-field.foofields-colspan-2,
 	>.foofields-field.foofields-colspan-3 {
