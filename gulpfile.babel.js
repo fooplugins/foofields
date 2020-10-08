@@ -217,20 +217,21 @@ gulp.task( "scss", (done) => {
 gulp.task( "js", (done) => {
 	return filesTask("js", {
 		allowEmpty: true,
+		babel: {
+			presets: [
+				[
+					'@babel/preset-env', // Preset to compile your modern JS to ES5.
+					{
+						targets: {browsers: config.BROWSERS_LIST} // Target browser list to support.
+					}
+				]
+			],
+			ignore: ["./src/polyfills"]
+		},
 		process: (src, file, opt) => {
 			let basename = path.basename(file.path, ".js");
-			return src.pipe(
-				babel({
-					presets: [
-						[
-							'@babel/preset-env', // Preset to compile your modern JS to ES5.
-							{
-								targets: {browsers: config.BROWSERS_LIST} // Target browser list to support.
-							}
-						]
-					]
-				})
-			)
+			return src
+				.pipe(babel(opt.babel))
 				.pipe(remember(basename)) // Bring all files back to stream.
 				.pipe(concat(file.name))
 				.pipe(lineec()) // Consistent Line Endings for non UNIX systems.
