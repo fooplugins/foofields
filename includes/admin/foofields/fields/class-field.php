@@ -181,8 +181,9 @@ if ( ! class_exists( __NAMESPACE__ . '\Field' ) ) {
 				if ( isset( $this->required ) && $this->required === true ) {
 					$label .= ' *';
 				}
-				self::render_html_tag( 'label', array( 'for' => $this->unique_id ), $label );
+				self::render_html_tag( 'label', array( 'for' => $this->unique_id ), $label, false );
 				$this->render_tooltip();
+				echo '</label>';
 				echo '</div>';
 			}
 		}
