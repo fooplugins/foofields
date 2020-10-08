@@ -47,15 +47,15 @@
 	}
   }
 
-  &.foofields-field-indent {
+  &.foofields-indent {
 	margin-left: 1em;
   }
 
-  &.foofields-parent-field {
+  &.foofields-parent {
 	margin-bottom: 0;
   }
 
-  &.foofields-child-field {
+  &.foofields-child {
 	.foofields-label {
 	  padding-left: 2em;
 	  font-weight: 400;
