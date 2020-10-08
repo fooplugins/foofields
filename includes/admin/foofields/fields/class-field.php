@@ -108,7 +108,7 @@ if ( ! class_exists( __NAMESPACE__ . '\Field' ) ) {
 
 			$this->classes[] = 'foofields-field';
 			if ( isset( $field_config['class'] ) ) {
-				$this->classes[] = $field_config['class'];
+				$this->classes = array_merge( $this->classes, explode( ' ', $field_config['class'] ) );
 			}
 		}
 
