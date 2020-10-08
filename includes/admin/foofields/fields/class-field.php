@@ -357,7 +357,9 @@ if ( ! class_exists( __NAMESPACE__ . '\Field' ) ) {
 				case 'colorpicker':
 					$attributes['type'] = 'text';
 					$attributes['value'] = $field_value;
-					$attributes[] = 'data-wp-color-picker';
+					if ( isset( $this->config['alpha'] ) ){
+						$attributes['data-alpha-enabled'] = 'true';
+					}
 					self::render_html_tag( 'input', $attributes );
 
 					break;
