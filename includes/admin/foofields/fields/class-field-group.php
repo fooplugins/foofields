@@ -80,17 +80,17 @@ if ( ! class_exists( __NAMESPACE__ . '\FieldGroup' ) ) {
 		function render_input( $override_attributes = false ) {
 			if ( is_array( $this->fields ) ) {
 				foreach ( $this->fields as $field_config ) {
-					// only add the indent class if the option is enabled and the field being rendered is not a field group itself
-					if ( $this->indent === true && $field_config['type'] !== 'field-group' ) {
-						if ( array_key_exists( 'class', $field_config ) && is_string( $field_config['class'] ) && strlen( $field_config['class'] ) > 0 ) {
-							$field_config['class'] .= ' foofields-field-indent';
-						} else {
-							$field_config['class'] = 'foofields-field-indent';
-						}
+					// child fields inherit this fields layout value unless they explicitly define there own
+					if ( !isset( $field_config['layout'] ) ){
+						$field_config['layout'] = $this->layout;
 					}
 					$field_object                          = $this->container->create_field_instance( $field_config['type'], $field_config );
 					$field_object->override_value_function = array( $this, 'get_field_value' );
 					$field_object->pre_render();
+					// only add the indent class if the option is enabled, the field is not a field group and the field doesn't already have the class set
+					if ( $this->indent === true && $field_object->type !== 'field-group' && !in_array( 'foofields-indent', $field_object->classes ) ) {
+						$field_object->classes[] = 'foofields-indent';
+					}
 					$field_object->render();
 				}
 			}
