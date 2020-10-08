@@ -42,4 +42,4 @@ $m-md  : map-get($spacers, 4);
 $m-lg  : map-get($spacers, 5);
 
 $padded: $m-0 $m-xs;
-$content-padding: $m-sm $m-xs;
+$content-padding: $m-sm $m-xs 0;
