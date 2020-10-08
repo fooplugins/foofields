@@ -47,6 +47,21 @@
 	}
   }
 
+  &.foofields-field-indent {
+	margin-left: 1em;
+  }
+
+  &.foofields-parent-field {
+	margin-bottom: 0;
+  }
+
+  &.foofields-child-field {
+	.foofields-label {
+	  padding-left: 2em;
+	  font-weight: 400;
+	}
+  }
+
   &.foofields-error {
 	background-color: #fde6e6;
   }
