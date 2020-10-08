@@ -61,7 +61,7 @@
 			alphaEnabled: false,
 			alphaCustomWidth: 91,
 			alphaReset: false,
-			alphaColorType: 'rgb',
+			alphaColorType: 'hex',
 			isDeprecated: false,
 		},
 		/**
@@ -384,7 +384,7 @@
 				alphaEnabled: false,
 				alphaCustomWidth: 91,
 				alphaReset: false,
-				alphaColorType: 'rgb',
+				alphaColorType: 'hex',
 				isDeprecated: false,
 			};
 
@@ -463,16 +463,7 @@
 
 			self.colorAlpha = self.toggler.find( 'span.color-alpha' );
 
-			self.colorAlpha.css( {
-				'width'                     : '30px',
-				'height'                    : '100%',
-				'position'                  : 'absolute',
-				'top'                       : 0,
-				'left'                      : 0,
-				'border-top-left-radius'    : '2px',
-				'border-bottom-left-radius' : '2px',
-				'background-color'          : el.val()
-			} );
+			self.colorAlpha.css( { 'background-color': el.val() } );
 
 			el.iris( {
 				alphaOptions: self._alphaOptions,

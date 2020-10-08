@@ -1,5 +1,43 @@
 .foofields-type-colorpicker {
-  .wp-picker-container .wp-color-result.button {
-	margin-bottom: 0;
+  .foofields-field-input {
+	> input[type="text"] {
+	  visibility: hidden;
+	  opacity: 0;
+	}
+  }
+  .wp-picker-container {
+	white-space: nowrap;
+	.wp-color-result.button {
+	  margin-bottom: 0;
+	  .color-alpha {
+		width: 30px;
+		height: 100%;
+		position: absolute;
+		top: 0;
+		left: 0;
+		border-top-left-radius: 3px;
+		border-bottom-left-radius: 3px;
+	  }
+	}
+	.wp-picker-input-wrap {
+	  .button {
+		vertical-align: top;
+	  }
+	  input[type=text].wp-color-picker {
+		font-size: 12px;
+	  }
+	}
+  }
+}
+
+@media only screen and (max-width: $screen-3) {
+  .foofields-type-colorpicker {
+	.wp-picker-container {
+	  .wp-color-result.button {
+		.color-alpha {
+		  width: 40px;
+		}
+	  }
+	}
   }
 }
