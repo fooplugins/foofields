@@ -194,7 +194,7 @@ if ( ! class_exists( __NAMESPACE__ . '\Field' ) ) {
 		function render_tooltip() {
 			if ( isset( $this->tooltip ) ) {
 				$icon = 'dashicons-editor-help';
-				$tooltip_attributes = $this->get_tooltip_attributes( $this->tooltip, 'right', 'large' );
+				$tooltip_attributes = $this->get_tooltip_attributes( $this->tooltip );
 				if ( is_array( $this->tooltip ) ) {
 					if ( isset( $this->tooltip['icon'] ) ) {
 						$icon = $this->tooltip['icon'];
@@ -215,7 +215,7 @@ if ( ! class_exists( __NAMESPACE__ . '\Field' ) ) {
 		 *
 		 * @return array
 		 */
-		function get_tooltip_attributes( $tooltip_config, $default_position = 'down', $default_length = 'small' ) {
+		function get_tooltip_attributes( $tooltip_config, $default_position = 'down', $default_length = 'medium' ) {
 			$tooltip = $tooltip_config;
 			$position = $default_position;
 			$length = $default_length;
