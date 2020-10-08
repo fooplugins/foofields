@@ -8,7 +8,8 @@
 	 */
 	_.config = {
 		opt: {
-			small: 960,
+			smallScreen: 960,
+			smallField: 320,
 			on: {},
 			fields: {}
 		},
