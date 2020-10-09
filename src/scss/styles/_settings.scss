@@ -125,8 +125,6 @@
 		vertical-align: top;
 	  }
 
-	  .foofields-tab-text,
-	  .foofields-tab-icon,
 	  .foofields-tab-menu-item:not(.foofields-first):before {
 		position: relative;
 		top: 50%;
@@ -172,7 +170,7 @@
 }
 // Small Screen CSS
 // ----------------------------------------------------------------------------
-@media only screen and (max-width: $small-screen) {
+@media only screen and (max-width: $screen-3) {
   .foofields-tabs-vertical.foofields-style-settings {
 	.foofields-tab.foofields-show-menu {
 	  .foofields-tab-link {

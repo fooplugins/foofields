@@ -3,20 +3,30 @@
 .foofields-tab-menu-item {
   position: relative;
   list-style-type: none;
+  line-height: 1;
   margin: 0;
   padding: 0;
   color: inherit;
 }
 .foofields-tab-menu-header {
   display: none;
+  justify-content: flex-start;
+  align-content: center;
+  align-items: center;
   list-style-type: none;
+  line-height: 1;
   position: relative;
-  padding: 8px 12px;
+  margin: 0;
+  padding: 8px 12px 8px 2px;
   font-size: 14px;
   font-weight: 600;
   color: inherit;
 }
 .foofields-tab-menu-link {
+  display: flex;
+  justify-content: center;
+  align-content: center;
+  align-items: center;
   position: relative;
   font-size: 13px;
   font-weight: 400;
@@ -45,18 +55,9 @@
 	display: block;
   }
   .foofields-tab-menu-link {
-	display: block;
-	padding: 4px 12px;
-  }
-  .foofields-tab-menu-item.foofields-first {
-	.foofields-tab-menu-link {
-	  padding: 8px 12px 4px;
-	}
-  }
-  .foofields-tab-menu-item.foofields-last {
-	.foofields-tab-menu-link {
-	  padding: 4px 12px 8px;
-	}
+	display: flex;
+	justify-content: flex-start;
+	padding: $tab-v-link-padding;
   }
 }
 // Horizontal CSS
@@ -67,22 +68,30 @@
 	&:not(.foofields-first) {
 	  &:before {
 		display: inline-block;
-		content: "|";
+		content: "";
 		margin: 0;
+		width: 1px;
+		height: 1.2em;
+		background-color: currentColor;
+		vertical-align: middle;
 	  }
 	}
   }
   .foofields-tab-menu-link {
-	display: inline-block;
+	display: inline-flex;
 	padding: 4px;
   }
 }
 // Small Screen CSS
 // ----------------------------------------------------------------------------
-@media only screen and (max-width: $small-screen) {
+@media only screen and (max-width: $screen-3) {
   .foofields-tabs-vertical {
-	.foofields-tab-menu-header {
-	  display: block;
+	.foofields-tab-menu {
+	  padding: 0 0 $m-xs 0;
+	  .foofields-tab-menu-header {
+		display: flex;
+		margin-bottom: $m-xs;
+	  }
 	}
   }
 }

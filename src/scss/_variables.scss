@@ -10,7 +10,15 @@ $yellow: #fffce4;
 // General Settings
 // ----------------------------------------------------------------------------
 $font-size: 13px;
-$small-screen: 960px;
+$screen-7: 1800px;
+$screen-6: 1440px;
+$screen-5: 1200px;
+$screen-4: 1024px;
+$screen-3: 960px;
+$screen-2: 782px;
+$screen-1: 600px;
+$screen-0: 480px;
+$label-width: 150px;
 
 // Tabs Settings
 // ----------------------------------------------------------------------------
@@ -43,3 +51,5 @@ $m-lg  : map-get($spacers, 5);
 
 $padded: $m-0 $m-xs;
 $content-padding: $m-sm $m-xs 0;
+$tab-v-link-padding: $m-xs;
+$tab-v-menu-padding: $m-xs 0;
