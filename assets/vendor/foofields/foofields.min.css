@@ -17,7 +17,7 @@
 .foofields-tab-link:focus{outline:0;-webkit-box-shadow:none;box-shadow:none;text-decoration:none}
 .foofields-tab.foofields-active .foofields-tab-link:after{visibility:visible;opacity:1}
 .foofields-tab.foofields-show-menu .foofields-tab-link:after{visibility:visible;opacity:1}
-.foofields-tab-icon{display:inline-block;font-weight:400;font-variant:normal;text-transform:none;line-height:1;-webkit-font-smoothing:antialiased;font-size:1em;width:1em;height:1em;vertical-align:middle}
+.foofields-tab-icon{display:inline-block;font-weight:400;font-variant:normal;text-transform:none;line-height:1;-webkit-font-smoothing:antialiased;font-size:20px;width:1em;height:1em;vertical-align:middle}
 .foofields-tab-text{display:inline-block;padding:0 3px}
 .foofields-tab-error{display:inline-block;vertical-align:top;-webkit-box-sizing:border-box;box-sizing:border-box;margin:1px 0 -1px 2px;padding:0 5px;min-width:18px;height:18px;border-radius:9px;background-color:#ca4a1f;color:#fff;font-size:11px;line-height:1.6;text-align:center;z-index:26}
 .foofields-tabs-vertical .foofields-tab{position:relative}
@@ -131,13 +131,13 @@ span[data-balloon]{display:inline-block;width:20px;height:20px;vertical-align:te
 .foofields-type-selectize .foofields-field-input .selectize-control .selectize-input{-webkit-box-shadow:none;box-shadow:none;border-radius:4px;border:1px solid #7e8993;background-color:#fff;color:#32373c;line-height:2;padding:2px 27px 2px 8px;min-height:30px;font-size:14px}
 .foofields-type-selectize .foofields-field-input .selectize-control .selectize-input.focus{border-color:#007cba;-webkit-box-shadow:0 0 0 1px #007cba;box-shadow:0 0 0 1px #007cba;outline:2px solid transparent}
 .foofields-type-selectize .foofields-field-input .selectize-control .selectize-input:after{right:8px}
-.foofields-type-selectize .foofields-field-input .selectize-control .selectize-input>input{font-size:inherit;vertical-align:initial}
+.foofields-type-selectize .foofields-field-input .selectize-control .selectize-input>input{font-size:inherit;vertical-align:initial;width:100% !important}
 .foofields-type-selectize-multi .foofields-field-input .selectize-control.loading .selectize-input:after{background:url(/wp-admin/images/spinner.gif) no-repeat;background-size:20px 20px;display:inline-block;opacity:.7;filter:alpha(opacity=70);width:20px;height:20px;top:50%;margin-top:-10px;border:0;position:absolute}
 .foofields-type-selectize-multi .foofields-field-input .selectize-control.multi .selectize-input:after{content:' ';display:block;position:absolute;top:50%;right:8px;margin-top:-3px;width:0;height:0;border-style:solid;border-width:5px 5px 0 5px;border-color:#808080 transparent transparent transparent}
 .foofields-type-selectize-multi .foofields-field-input .selectize-control.multi .selectize-input:after.dropdown-active{margin-top:-4px;border-width:0 5px 5px 5px;border-color:transparent transparent #808080 transparent}
 .foofields-type-selectize-multi .foofields-field-input .selectize-control .selectize-input{-webkit-box-shadow:none;box-shadow:none;border-radius:4px;border:1px solid #7e8993;background-color:#fff;color:#32373c;line-height:2;padding:2px 8px;min-height:30px;font-size:14px}
 .foofields-type-selectize-multi .foofields-field-input .selectize-control .selectize-input.focus{border-color:#007cba;-webkit-box-shadow:0 0 0 1px #007cba;box-shadow:0 0 0 1px #007cba;outline:2px solid transparent}
-.foofields-type-selectize-multi .foofields-field-input .selectize-control .selectize-input>input{font-size:inherit;vertical-align:initial}
+.foofields-type-selectize-multi .foofields-field-input .selectize-control .selectize-input>input{font-size:inherit;vertical-align:initial;width:100% !important}
 .foofields-type-selectize-multi .foofields-field-input .selectize-control .selectize-input>div{border:0;line-height:1.5;margin:2px 7px 2px 0;-webkit-box-shadow:inset 0 0 0 1px #d0d0d0;box-shadow:inset 0 0 0 1px #d0d0d0;padding:2px 6px 2px;border-radius:3px}
 .foofields-type-selectize-multi .foofields-field-input .selectize-control.plugin-remove_button [data-value] .remove{line-height:100%;font-weight:400;font-size:17px;padding:2px 1px 0 0;width:18px}
 .foofields-type-selectize-multi .foofields-field-input .selectize-control.single.plugin-remove_button .selectize-input{padding:2px 27px 2px 8px}
@@ -210,7 +210,7 @@ span[data-balloon]{display:inline-block;width:20px;height:20px;vertical-align:te
 .foofields-tabs-horizontal.foofields-style-settings .foofields-content{padding:1em 0}
 .foofields-tabs-horizontal.foofields-style-settings .foofields-tab .foofields-tab-link{margin:0 .25em}
 .foofields-tabs-horizontal.foofields-style-settings .foofields-tab.foofields-has-menu.foofields-active,.foofields-tabs-horizontal.foofields-style-settings .foofields-tab.foofields-has-menu.foofields-show-menu{margin-bottom:40px}
-.foofields-tabs-horizontal.foofields-style-settings .foofields-tab .foofields-tab-menu{height:41px}
+.foofields-tabs-horizontal.foofields-style-settings .foofields-tab .foofields-tab-menu{height:41px;white-space:nowrap}
 .foofields-tabs-horizontal.foofields-style-settings .foofields-tab .foofields-tab-menu .foofields-tab-menu-item,.foofields-tabs-horizontal.foofields-style-settings .foofields-tab .foofields-tab-menu .foofields-tab-menu-link{height:100%;vertical-align:top}
 .foofields-tabs-horizontal.foofields-style-settings .foofields-tab .foofields-tab-menu .foofields-tab-menu-item:not(.foofields-first):before{position:relative;top:50%;-webkit-transform:translateY(-50%);transform:translateY(-50%)}
 .foofields-tabs-horizontal.foofields-style-settings .foofields-tab.foofields-active .foofields-tab-link{z-index:13;border-bottom-color:#f1f1f1}
@@ -249,7 +249,7 @@ span[data-balloon]{display:inline-block;width:20px;height:20px;vertical-align:te
 .foofields-tabs-vertical.foofields-style-settings .foofields-tab.foofields-show-menu .foofields-tab-link:after{border-right-color:#ddd}
 .foofields-tabs-vertical.foofields-style-settings .foofields-tab.foofields-show-menu:not(.foofields-active) .foofields-tab-link{color:#555;background-color:#ddd}
 .foofields-tabs-vertical.foofields-style-settings .foofields-tab.foofields-active .foofields-tab-menu-header{color:#FFF;background-color:#0073aa}
-}@media only screen and (max-width:782px){.foofields-tabs-horizontal .foofields-tab-link .foofields-tab-icon{font-size:20px}
+}@media only screen and (max-width:782px){.foofields-tabs-horizontal .foofields-tab-link .foofields-tab-icon{font-size:32px}
 .foofields-tabs-horizontal .foofields-tab-link .foofields-tab-text{display:none}
 .foofields-field .foofields-label label{min-height:40px}
 .foofields-field input[type="text"],.foofields-field input[type="password"],.foofields-field input[type="number"],.foofields-field input[type="search"],.foofields-field input[type="email"],.foofields-field input[type="url"],.foofields-field select,.foofields-field textarea{padding:3px 10px}
