@@ -141,9 +141,6 @@
 	&:after {
 	  border-width: 4px;
 	}
-	.foofields-tab-text {
-	  display: none;
-	}
   }
   .foofields-tab.foofields-active.foofields-show-menu {
 	.foofields-tab-link {
@@ -156,6 +153,22 @@
   .foofields-tabs-vertical {
 	.foofields-tab-link {
 	  justify-content: center;
+	  .foofields-tab-text {
+		display: none;
+	  }
+	}
+  }
+}
+
+@media only screen and (max-width: $screen-2) {
+  .foofields-tabs-horizontal {
+	.foofields-tab-link {
+	  .foofields-tab-icon {
+		font-size: 20px;
+	  }
+	  .foofields-tab-text {
+		display: none;
+	  }
 	}
   }
 }
