@@ -41,3 +41,12 @@
 	}
   }
 }
+
+@media only screen and (max-width: $screen-2) {
+  // at this screen size inputs switch their min-height from 30px to 40px so adjust what is needed
+  .foofields-type-colorpicker {
+	.wp-picker-container {
+	  margin-top: 4px; /* The picker at this width has a height of 32px so; 40 - 32 = 8 / 2 = 4px */
+	}
+  }
+}
