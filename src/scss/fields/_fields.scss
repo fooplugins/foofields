@@ -43,7 +43,21 @@
 	flex-direction: row;
 
 	.foofields-label {
-	  max-width: 150px;
+	  max-width: $label-width;
+	}
+  }
+
+  // Auto layout
+  &.foofields-layout-auto {
+	flex-direction: row;
+	.foofields-label {
+	  max-width: $label-width;
+	}
+	&.foofields-small {
+	  flex-direction: column;
+	  .foofields-label {
+		max-width: none;
+	  }
 	}
   }
 
