@@ -16,13 +16,16 @@
 	width: 100%;
   }
 }
-// Small Screen CSS
+
+// Better Column Handling Inside a Metabox Container
 // ----------------------------------------------------------------------------
-@media only screen and (max-width: $small-screen) {
-  .foofields-content.foofields-active.foofields-cols-2,
-  .foofields-type-field-group.foofields-cols-2 {
-	>.foofields-field {
-	  width: 100%;
+@media only screen and (max-width: $screen-5) {
+  .foofields-style-metabox {
+	.foofields-content.foofields-active.foofields-cols-2,
+	.foofields-type-field-group.foofields-cols-2 {
+	  >.foofields-field {
+		width: 100%;
+	  }
 	}
   }
 }
