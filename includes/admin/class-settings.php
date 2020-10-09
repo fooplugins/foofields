@@ -27,13 +27,11 @@ if ( !class_exists( 'FooPlugins\FooFields\Admin\Settings' ) ) {
 								'label'    => __( 'Simple Fields', 'foofields' ),
 								'desc'     => __( 'This tab shows all the simple informational fields, which include headers and icons', 'foofields' ),
 								'type'     => 'heading',
-//											'data'     => array(
-//												'show-when' => array (
-//													'field' => 'text',
-//													'value' => '',
-//													'operator' => '!=='
-//												)
-//											)
+								'tooltip'  => array(
+									'text' => __( 'A tooltip to help the user', 'foofields' ),
+									'length' => 'small',
+									'position' => 'top'
+								)
 							),
 							array(
 								'id'       => 'help',
@@ -100,6 +98,10 @@ if ( !class_exists( 'FooPlugins\FooFields\Admin\Settings' ) ) {
 								'label'    => __( 'Number Field', 'foofields' ),
 								'desc'     => __( 'A number field', 'foofields' ),
 								'type'     => 'number',
+								'class'    => 'foofields-field-short',
+								'before_input_render' => function( $field ) {
+									echo '$ ';
+								}
 							),
 							array(
 								'id'       => 'textarea',
@@ -123,7 +125,6 @@ if ( !class_exists( 'FooPlugins\FooFields\Admin\Settings' ) ) {
 								'id'       => 'checkbox',
 								'label'    => __( 'Checkbox Field', 'foofields' ),
 								'desc'     => __( 'A checkbox field', 'foofields' ),
-								'layout'   => 'inline',
 								'type'     => 'checkbox',
 							),
 							array(
@@ -137,7 +138,28 @@ if ( !class_exists( 'FooPlugins\FooFields\Admin\Settings' ) ) {
 								'label'    => __( 'Colorpicker Field', 'foofields' ),
 								'desc'     => __( 'A colorpicker field using the colorpicker built into WP', 'foofields' ),
 								'type'     => 'colorpicker',
+								'alpha'    => true
 							),
+							array(
+								'id'       => 'datejoined',
+								'label'    => __( 'Joined Date', 'foofields' ),
+								'desc'     => __( 'This date feild has a custom after_input_function function to show lenght of service basd on the date selected.', 'foopeople' ),
+								'type'     => 'date',
+								'min'     => '1970-01-01',
+								'max'     => date("Y-m-d"),
+								'default'  => '',
+								'after_input_render' => function( $field ) {
+									$datejoined = $field->value();
+
+									if ( $datejoined !== '' ) {
+										$diff = abs(time() - strtotime( $datejoined ) );
+										$years = floor($diff / (365*60*60*24));
+										$months = floor(($diff - $years * 365*60*60*24) / (30*60*60*24));
+
+										echo sprintf( '%d years, %d months', $years, $months );
+									}
+								}
+							), //datejoined
 						)
 					),
 					array(
@@ -195,6 +217,74 @@ if ( !class_exists( 'FooPlugins\FooFields\Admin\Settings' ) ) {
 								)
 							),
 						)
+					),
+					array(
+						'id'     => 'validation',
+						'label'  => __( 'Validation', 'foofields' ),
+						'fields' => array(
+							array(
+								'id'       => 'required',
+								'label'    => __( 'Required Field', 'foofields' ),
+								'desc'     => __( 'This field is required. To test how the validation works, save the post without entering anything.', 'foofields' ),
+								'type'     => 'text',
+								'required' => true
+							),
+							array(
+								'id'       => 'checkboxlistvalidation',
+								'label'    => __( 'Checkbox List Min Validation', 'foofields' ),
+								'desc'     => __( 'You need to select at least 2 options', 'foofields' ),
+								'required' => array(
+									'minimum' => 2,
+								),
+								'type'     => 'checkboxlist',
+								'choices' => array(
+									'option1' => __( 'Option 1', 'foofields' ),
+									'option2' => __( 'Option 2', 'foofields' ),
+									'option3' => __( 'Option 3', 'foofields' ),
+									'option4' => __( 'Option 4', 'foofields' ),
+								)
+							),
+							array(
+								'id'       => 'checkboxlistvalidation2',
+								'label'    => __( 'Checkbox List Max Validation', 'foofields' ),
+								'desc'     => __( 'You need to select at most 3 options', 'foofields' ),
+								'required' => array(
+									'maximum' => 3,
+								),
+								'type'     => 'checkboxlist',
+								'choices' => array(
+									'option1' => __( 'Option 1', 'foofields' ),
+									'option2' => __( 'Option 2', 'foofields' ),
+									'option3' => __( 'Option 3', 'foofields' ),
+									'option4' => __( 'Option 4', 'foofields' ),
+								)
+							),
+							array(
+								'id'       => 'checkboxlistvalidation3',
+								'label'    => __( 'Checkbox List Exact Validation', 'foofields' ),
+								'desc'     => __( 'You need to select exactly 1 option', 'foofields' ),
+								'required' => array(
+									'exact' => 1,
+								),
+								'type'     => 'checkboxlist',
+								'choices' => array(
+									'option1' => __( 'Option 1', 'foofields' ),
+									'option2' => __( 'Option 2', 'foofields' ),
+									'option3' => __( 'Option 3', 'foofields' ),
+									'option4' => __( 'Option 4', 'foofields' ),
+								)
+							),
+							array(
+								'id'       => 'customvalidation',
+								'label'    => __( 'Custom Validation', 'foofields' ),
+								'desc'     => __( 'This field has custom validation. You have to enter exactly "bob"', 'foofields' ),
+								'type'     => 'text',
+								'required' => array(
+									'validation_function' => array( $this, 'validate_custom' ),
+									'message' => __( 'Custom field validation failed for %s! You have to enter exactly "bob"', 'foofields' )
+								)
+							),
+						)
 					)
 				)
 			);
@@ -212,6 +302,12 @@ if ( !class_exists( 'FooPlugins\FooFields\Admin\Settings' ) ) {
 								'label'    => __( 'Field Layout', 'foofields' ),
 								'desc'     => __( 'This tab shows how fields can have different layouts, including not displaying a label at all', 'foofields' ),
 								'type'     => 'heading'
+							),
+							array(
+								'id'       => 'fieldlayoutauto',
+								'label'    => __( 'Auto Field', 'foofields' ),
+								'desc'     => __( 'This field automatically switches between "inline" and "block" layouts depending on available space.', 'foofields' ),
+								'type'     => 'text'
 							),
 							array(
 								'id'       => 'fieldlayouttext',
@@ -248,9 +344,159 @@ if ( !class_exists( 'FooPlugins\FooFields\Admin\Settings' ) ) {
 						)
 					),
 					array(
+						'id'    => 'fieldgroups',
+						'label' => __( 'Field Groups', 'foofields' ),
+						'fields' => array(
+							array(
+								'id'       => 'fieldgroupsheading',
+								'label'    => __( 'Field Groups', 'foofields' ),
+								'desc'     => __( 'This tab shows how fields can be grouped together allowing for more advanced field layouts. Groups support the column CSS classes which allows you to have more than one type of column layout within a single content area. As an example this content area has no columns specified however further down there are groups specifying there own column layout. You can see another example of this in the "Columns" examples where it is used to provide a 3 column layout within a 4 column layout content area. Groups also support the Show Rules just like other fields so you can set a single rule to toggle the visibility of the entire group. You can see an example of this under the "Show Rules" tab when selecting "Option 4".', 'foofields' ),
+								'type'     => 'heading'
+							),
+							array(
+								'id' => 'fieldgroupsgroup',
+								'label' => __( 'Field Group', 'foofields' ),
+								'desc' => __( 'This is a field group. The "label" creates the above header while the "desc" creates this paragraph. Child fields are then rendered directly after this heading.', 'foofields' ),
+								'type' => 'field-group',
+								'fields' => array(
+									array(
+										'id' => 'fieldgroupsgroupinput1',
+										'label' => __( 'Text Input', 'foofields' ),
+										'desc' => __( 'This text input is grouped with the above header and the below text area.', 'foofields' ),
+										'type' => 'text'
+									),
+									array(
+										'id' => 'fieldgroupsgroupinput2',
+										'label' => __( 'Text Area' ),
+										'desc' => __( 'This text area is grouped with the above text input and header.', 'foofields' ),
+										'type' => 'textarea'
+									)
+								)
+							),
+							array(
+								'id' => 'fieldgroupsgroupblock',
+								'label' => __( 'Field Group - Block', 'foofields' ),
+								'desc' => __( 'This is another field group identical to the above except the "layout" option has been set to "block". Child fields will inherit the layout value of the field group as there own default layout value.', 'foofields' ),
+								'type' => 'field-group',
+								'layout' => 'block',
+								'fields' => array(
+									array(
+										'id' => 'fieldgroupsgroupblockinput1',
+										'label' => __( 'Text Input', 'foofields' ),
+										'desc' => __( 'This text input is grouped with the above header and the below text area.', 'foofields' ),
+										'type' => 'text'
+									),
+									array(
+										'id' => 'fieldgroupsgroupblockinput2',
+										'label' => __( 'Text Area' ),
+										'desc' => __( 'This text area is grouped with the above text input and header.', 'foofields' ),
+										'type' => 'textarea'
+									)
+								)
+							),
+							array(
+								'id' => 'fieldgroupsgroupindent',
+								'label' => __( 'Field Group - Indent', 'foofields' ),
+								'desc' => __( 'This is another field group with the "indent" option set to "true". This will add the "foofields-field-indent" class to each child field.', 'foofields' ),
+								'type' => 'field-group',
+								'indent' => true,
+								'fields' => array(
+									array(
+										'id' => 'fieldgroupsgroupindentinput1',
+										'label' => __( 'Text Input', 'foofields' ),
+										'desc' => __( 'This text input is grouped with the above header and the below text area.', 'foofields' ),
+										'type' => 'text'
+									),
+									array(
+										'id' => 'fieldgroupsgroupindentinput2',
+										'label' => __( 'Text Area' ),
+										'desc' => __( 'This text area is grouped with the above text input and header.', 'foofields' ),
+										'type' => 'textarea'
+									)
+								)
+							),
+							array(
+								'id' => 'fieldgroupstwocolumns',
+								'label' => __( 'Field Groups + Columns' ),
+								'desc' => __( 'The above examples simply demonstrate the basic properties of a group. The real power of groups comes into play when combined with columns. This field group has the class "foofields-cols-2" on it and has nested field groups within it which could in turn specify there own column layout. Being able to group fields together prevents them being jumbled when switching to a small screen layout like they would if you were just using the column classes to position them.' ),
+								'class' => 'foofields-cols-4',
+								'type' => 'field-group',
+								'fields' => array(
+									array(
+										'id' => 'fieldgroupstwocolumnsgroup1',
+										'label' => __( 'Group 1', 'foofields' ),
+										'type' => 'field-group',
+										'fields' => array(
+											array(
+												'id' => 'fieldgroupstwocolumnsgroup1input1',
+												'label' => __( 'Group 1 - Input 1' ),
+												'type' => 'text'
+											),
+											array(
+												'id' => 'fieldgroupstwocolumnsgroup1input2',
+												'label' => __( 'Group 1 - Input 2' ),
+												'type' => 'textarea'
+											)
+										)
+									),
+									array(
+										'id' => 'fieldgroupstwocolumnsgroup2',
+										'label' => __( 'Group 2', 'foofields' ),
+										'type' => 'field-group',
+										'fields' => array(
+											array(
+												'id' => 'fieldgroupstwocolumnsgroup2input1',
+												'label' => __( 'Group 2 - Input 1' ),
+												'type' => 'text'
+											),
+											array(
+												'id' => 'fieldgroupstwocolumnsgroup2input2',
+												'label' => __( 'Group 2 - Input 2' ),
+												'type' => 'textarea'
+											)
+										)
+									),
+									array(
+										'id' => 'fieldgroupstwocolumnsgroup3',
+										'label' => __( 'Group 3', 'foofields' ),
+										'type' => 'field-group',
+										'fields' => array(
+											array(
+												'id' => 'fieldgroupstwocolumnsgroup3input1',
+												'label' => __( 'Group 3 - Input 1' ),
+												'type' => 'text'
+											),
+											array(
+												'id' => 'fieldgroupstwocolumnsgroup3input2',
+												'label' => __( 'Group 3 - Input 2' ),
+												'type' => 'textarea'
+											)
+										)
+									),
+									array(
+										'id' => 'fieldgroupstwocolumnsgroup4',
+										'label' => __( 'Group 4', 'foofields' ),
+										'type' => 'field-group',
+										'fields' => array(
+											array(
+												'id' => 'fieldgroupstwocolumnsgroup4input1',
+												'label' => __( 'Group 4 - Input 1' ),
+												'type' => 'text'
+											),
+											array(
+												'id' => 'fieldgroupstwocolumnsgroup4input2',
+												'label' => __( 'Group 4 - Input 2' ),
+												'type' => 'textarea'
+											)
+										)
+									)
+								)
+							)
+						)
+					),
+					array(
 						'id'     => 'columns',
 						'label'  => __( 'Columns', 'foofields' ),
-						'icon'   => 'dashicons-editor-table',
 						'class'  => 'foofields-cols-4',
 						'fields' => array(
 							array(
@@ -324,6 +570,33 @@ if ( !class_exists( 'FooPlugins\FooFields\Admin\Settings' ) ) {
 								'tooltip'  => __( 'This field has a class of "foofields-colspan-2"', 'foofields' ),
 							),
 							array(
+								'id'       => 'colheadinggroup3',
+								'label'     => __( '3 Columns - Field Group', 'foofields' ),
+								'desc'      => __( 'This field group has a class of "foofields-full-width foofields-cols-3". "foofields-full-width" makes it use all 4 columns of the parent tab and then "foofields-cols-3" divides its contents into 3 columns.', 'foofields' ),
+								'type'     => 'field-group',
+								'class'    => 'foofields-full-width foofields-cols-3',
+								'fields'    => array(
+									array(
+										'id'       => '3colgroupcell1',
+										'label'    => __( 'Firstname', 'foofields' ),
+										'type'     => 'text',
+										'tooltip'  => __( 'This field has no class set', 'foofields' ),
+									),
+									array(
+										'id'       => '3colgroupcell2',
+										'label'    => __( 'Middle', 'foofields' ),
+										'type'     => 'text',
+										'tooltip'  => __( 'This field has no class set', 'foofields' ),
+									),
+									array(
+										'id'       => '3colgroupcell3',
+										'label'    => __( 'Last Name', 'foofields' ),
+										'type'     => 'text',
+										'tooltip'  => __( 'This field has no class set', 'foofields' ),
+									)
+								)
+							),
+							array(
 								'id'       => 'colheading4',
 								'label'     => __( '4 Columns', 'foofields' ),
 								'type'     => 'heading',
@@ -354,6 +627,135 @@ if ( !class_exists( 'FooPlugins\FooFields\Admin\Settings' ) ) {
 								'tooltip'  => __( 'This field has no class set', 'foofields' ),
 							),
 						)
+					),
+					array(
+						'id'     => 'showrules',
+						'label'  => __( 'Show Rules', 'foofields' ),
+						'fields' => array(
+							array(
+								'id'       => 'showrulesheading',
+								'label'     => __( 'This tab shows how the field show rules work', 'foofields' ),
+								'type'     => 'heading',
+							),
+							array(
+								'id'       => 'showrulelist',
+								'label'    => __( 'Show Rules List', 'foofields' ),
+								'desc'     => __( 'Choose different options to see show the show rules will apply', 'foofields' ),
+								'type'     => 'radiolist',
+								'default'  => 'default',
+								'choices' => array(
+									'default' => __( 'Default', 'foofields' ),
+									'option1' => __( 'Option 1', 'foofields' ),
+									'option2' => __( 'Option 2', 'foofields' ),
+									'option3' => __( 'Option 3', 'foofields' ),
+									'option4' => __( 'Option 4', 'foofields' ),
+								)
+							),
+							array(
+								'id'       => 'showrulestext',
+								'label'    => __( 'Text Field', 'foofields' ),
+								'desc'     => __( 'This is shown when the "Option 1" is selected', 'foofields' ),
+								'type'     => 'text',
+								'data'     => array(
+									'show-when' => array(
+										'field' => 'showrulelist',
+										'value' => 'option1',
+									)
+								)
+							),
+							array(
+								'id'       => 'showrulestext2',
+								'label'    => __( 'Text Field 2', 'foofields' ),
+								'desc'     => __( 'This is shown when the "Default" option is NOT selected', 'foofields' ),
+								'type'     => 'text',
+								'data'     => array(
+									'show-when' => array(
+										'field' => 'showrulelist',
+										'operator' => '!==',
+										'value' => 'default',
+									)
+								)
+							),
+							array(
+								'id'       => 'showrulestext3',
+								'label'    => __( 'Text Field 3', 'foofields' ),
+								'desc'     => __( 'This is shown when "Option 2" OR "Option 3" is selected', 'foofields' ),
+								'type'     => 'text',
+								'data'     => array(
+									'show-when' => array(
+										'field' => 'showrulelist',
+										'operator' => 'regex',
+										'value' => 'option2|option3',
+									)
+								)
+							),
+							array(
+								'id'       => 'showrulelist2',
+								'label'    => __( 'Some More Options', 'foofields' ),
+								'desc'     => __( 'This will test nested show rules.', 'foofields' ),
+								'type'     => 'radiolist',
+								'default'  => 'none',
+								'choices' => array(
+									'none' => __( 'Show no new fields', 'foofields' ),
+									'show' => __( 'Show another field', 'foofields' ),
+								),
+								'data'     => array(
+									'show-when' => array(
+										'field' => 'showrulelist',
+										'value' => 'option3',
+									)
+								)
+							),
+							array(
+								'id'       => 'showrulestext4',
+								'label'    => __( 'Text Field 4', 'foofields' ),
+								'desc'     => __( 'This is shown when "Option 3" AND "Show another field" is selected', 'foofields' ),
+								'type'     => 'text',
+								'data'     => array(
+									'show-when' => array(
+										'field' => 'showrulelist2',
+										'value' => 'show',
+									)
+								)
+							),
+							array(
+								'id'    => 'showrulesfieldgroup',
+								'label' => __( 'Field Group', 'foofields' ),
+								'desc'  => __( 'This field group is shown when "Option 4" is selected', 'foofields' ),
+								'type'  => 'field-group',
+								'fields'=> array(
+									array(
+										'id'       => 'showrulesfieldgrouptext',
+										'label'    => __( 'Text Field', 'foofields' ),
+										'desc'     => __( 'This is shown as part of the field group when the "Option 4" is selected', 'foofields' ),
+										'type'     => 'text'
+									)
+								),
+								'data'     => array(
+									'show-when' => array(
+										'field' => 'showrulelist',
+										'value' => 'option4',
+									)
+								)
+							)
+						)
+					),
+					array(
+						'id'     => 'showrules2',
+						'label'  => __( 'Hidden', 'foofields' ),
+						'fields' => array(
+							array(
+								'id'       => 'showrules2heading',
+								'label'     => __( 'This tab is only shown if "Option 4" is selected under the first Show Rules tab', 'foofields' ),
+								'type'     => 'heading',
+							)
+						),
+						'data'     => array(
+							'show-when' => array(
+								'field' => 'showrulelist',
+								'value' => 'option4',
+							)
+						)
 					)
 				)
 			);
@@ -368,7 +770,8 @@ if ( !class_exists( 'FooPlugins\FooFields\Admin\Settings' ) ) {
 						'fields' => array(
 							array(
 								'id'       => 'suggest',
-								'label'    => __( 'Suggest Field (autocomplete using movies)', 'foofields' ),
+								'label'    => __( 'Suggest (Post)', 'foofields' ),
+								'desc'     => __( 'Autosuggest field using the movie custom post type as the data source', 'foofields' ),
 								'type'     => 'suggest',
 								'placeholder' => __( 'Start typing to search for movies', 'foofields' ),
 								'query' => array(
@@ -378,7 +781,8 @@ if ( !class_exists( 'FooPlugins\FooFields\Admin\Settings' ) ) {
 							),
 							array(
 								'id'       => 'suggest2',
-								'label'    => __( 'Suggest Field (autocomplete using taxonomy actor)', 'foofields' ),
+								'label'    => __( 'Suggest (Taxonomy)', 'foofields' ),
+								'desc'     => __( 'Autosuggest field using the actor taxonomy as the data source', 'foofields' ),
 								'type'     => 'suggest',
 								'placeholder' => __( 'Start typing to search for actors', 'foofields' ),
 								'query' => array(
@@ -388,7 +792,8 @@ if ( !class_exists( 'FooPlugins\FooFields\Admin\Settings' ) ) {
 							),
 							array(
 								'id'       => 'selectize',
-								'label'    => __( 'Selectize Field (autocomplete with a key)', 'foofields' ),
+								'label'    => __( 'Selectize Field', 'foofields' ),
+								'desc'     => __( 'Selectize field using the actor taxonomy as the data source. This fields stores both the id and value of the chosen item', 'foofields' ),
 								'type'     => 'selectize',
 								'placeholder' => __( 'Start typing to search for actors', 'foofields' ),
 								'query' => array(
@@ -398,7 +803,7 @@ if ( !class_exists( 'FooPlugins\FooFields\Admin\Settings' ) ) {
 							),
 							array(
 								'id'       => 'selectize-multi',
-								'label'    => __( 'Selectize Multi Select Field', 'foofields' ),
+								'label'    => __( 'Multi Select Field', 'foofields' ),
 								'type'     => 'selectize-multi',
 								'placeholder' => __( 'Choose from a pre-defined set of choices', 'foofields' ),
 								'choices' => array(
@@ -411,15 +816,31 @@ if ( !class_exists( 'FooPlugins\FooFields\Admin\Settings' ) ) {
 							),
 							array(
 								'id'       => 'selectize-multi-taxonomy',
-								'label'    => __( 'Selectize Multi Select Field (Taxonomy)', 'foofields' ),
+								'label'    => __( 'Multi Select Field (Taxonomy)', 'foofields' ),
 								'type'     => 'selectize-multi',
-								'placeholder' => __( 'Choose from the actor taxonomy', 'foofields' ),
+								'desc'     => __( 'Seletize mult-select field using the actor taxonomy as the data source. Only 1 item can be selected.', 'foofields' ),
+								'placeholder' => __( 'Choose an actor', 'foofields' ),
+								'create' => true,
+								'close_after_select' => false,
+								'max_items' => 1,
+								'binding' => array(
+									'type' => 'taxonomy',
+									'taxonomy' => FOOFIELDS_CT_ACTOR,
+									'sync_with_post' => true
+								)
+							),
+							array(
+								'id'       => 'selectize-multi-taxonomy2',
+								'label'    => __( 'Multi Select Field (Taxonomy 2)', 'foofields' ),
+								'type'     => 'selectize-multi',
+								'desc'     => __( 'Seletize mult-select field using the genre taxonomy as the data source', 'foofields' ),
+								'placeholder' => __( 'Choose from the genre taxonomy', 'foofields' ),
 								'create' => true,
 //									'close_after_select' => false,
 //									'max_items' => 2,
 								'binding' => array(
 									'type' => 'taxonomy',
-									'taxonomy' => FOOFIELDS_CT_ACTOR,
+									'taxonomy' => FOOFIELDS_CT_GENRE,
 									'sync_with_post' => true
 								)
 							),

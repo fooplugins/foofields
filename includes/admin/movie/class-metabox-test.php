@@ -24,13 +24,11 @@ if ( ! class_exists( 'FooPlugins\FooFields\Admin\Movie\MetaboxTest' ) ) {
 								'label'    => __( 'Simple Fields', 'foofields' ),
 								'desc'     => __( 'This tab shows all the simple informational fields, which include headers and icons', 'foofields' ),
 								'type'     => 'heading',
-//											'data'     => array(
-//												'show-when' => array (
-//													'field' => 'text',
-//													'value' => '',
-//													'operator' => '!=='
-//												)
-//											)
+								'tooltip'  => array(
+									'text' => __( 'A tooltip to help the user', 'foofields' ),
+									'length' => 'small',
+									'position' => 'top'
+								)
 							),
 							array(
 								'id'       => 'help',
@@ -124,7 +122,6 @@ if ( ! class_exists( 'FooPlugins\FooFields\Admin\Movie\MetaboxTest' ) ) {
 								'id'       => 'checkbox',
 								'label'    => __( 'Checkbox Field', 'foofields' ),
 								'desc'     => __( 'A checkbox field', 'foofields' ),
-								'layout'   => 'inline',
 								'type'     => 'checkbox',
 							),
 							array(
@@ -138,6 +135,7 @@ if ( ! class_exists( 'FooPlugins\FooFields\Admin\Movie\MetaboxTest' ) ) {
 								'label'    => __( 'Colorpicker Field', 'foofields' ),
 								'desc'     => __( 'A colorpicker field using the colorpicker built into WP', 'foofields' ),
 								'type'     => 'colorpicker',
+								'alpha'    => true
 							),
 							array(
 								'id'       => 'datejoined',
@@ -303,6 +301,12 @@ if ( ! class_exists( 'FooPlugins\FooFields\Admin\Movie\MetaboxTest' ) ) {
 								'type'     => 'heading'
 							),
 							array(
+								'id'       => 'fieldlayoutauto',
+								'label'    => __( 'Auto Field', 'foofields' ),
+								'desc'     => __( 'This field automatically switches between "inline" and "block" layouts depending on available space.', 'foofields' ),
+								'type'     => 'text'
+							),
+							array(
 								'id'       => 'fieldlayouttext',
 								'label'    => __( 'Block Field', 'foofields' ),
 								'desc'     => __( 'This field should have the label above the input', 'foofields' ),
@@ -334,6 +338,157 @@ if ( ! class_exists( 'FooPlugins\FooFields\Admin\Movie\MetaboxTest' ) ) {
 									'option4' => __( 'Option 4', 'foofields' ),
 								)
 							),
+						)
+					),
+					array(
+						'id'    => 'fieldgroups',
+						'label' => __( 'Field Groups', 'foofields' ),
+						'fields' => array(
+							array(
+								'id'       => 'fieldgroupsheading',
+								'label'    => __( 'Field Groups', 'foofields' ),
+								'desc'     => __( 'This tab shows how fields can be grouped together allowing for more advanced field layouts. Groups support the column CSS classes which allows you to have more than one type of column layout within a single content area. As an example this content area has no columns specified however further down there are groups specifying there own column layout. You can see another example of this in the "Columns" examples where it is used to provide a 3 column layout within a 4 column layout content area. Groups also support the Show Rules just like other fields so you can set a single rule to toggle the visibility of the entire group. You can see an example of this under the "Show Rules" tab when selecting "Option 4".', 'foofields' ),
+								'type'     => 'heading'
+							),
+							array(
+								'id' => 'fieldgroupsgroup',
+								'label' => __( 'Field Group', 'foofields' ),
+								'desc' => __( 'This is a field group. The "label" creates the above header while the "desc" creates this paragraph. Child fields are then rendered directly after this heading.', 'foofields' ),
+								'type' => 'field-group',
+								'fields' => array(
+									array(
+										'id' => 'fieldgroupsgroupinput1',
+										'label' => __( 'Text Input', 'foofields' ),
+										'desc' => __( 'This text input is grouped with the above header and the below text area.', 'foofields' ),
+										'type' => 'text'
+									),
+									array(
+										'id' => 'fieldgroupsgroupinput2',
+										'label' => __( 'Text Area' ),
+										'desc' => __( 'This text area is grouped with the above text input and header.', 'foofields' ),
+										'type' => 'textarea'
+									)
+								)
+							),
+							array(
+								'id' => 'fieldgroupsgroupblock',
+								'label' => __( 'Field Group - Block', 'foofields' ),
+								'desc' => __( 'This is another field group identical to the above except the "layout" option has been set to "block". Child fields will inherit the layout value of the field group as there own default layout value.', 'foofields' ),
+								'type' => 'field-group',
+								'layout' => 'block',
+								'fields' => array(
+									array(
+										'id' => 'fieldgroupsgroupblockinput1',
+										'label' => __( 'Text Input', 'foofields' ),
+										'desc' => __( 'This text input is grouped with the above header and the below text area.', 'foofields' ),
+										'type' => 'text'
+									),
+									array(
+										'id' => 'fieldgroupsgroupblockinput2',
+										'label' => __( 'Text Area' ),
+										'desc' => __( 'This text area is grouped with the above text input and header.', 'foofields' ),
+										'type' => 'textarea'
+									)
+								)
+							),
+							array(
+								'id' => 'fieldgroupsgroupindent',
+								'label' => __( 'Field Group - Indent', 'foofields' ),
+								'desc' => __( 'This is another field group with the "indent" option set to "true". This will add the "foofields-field-indent" class to each child field.', 'foofields' ),
+								'type' => 'field-group',
+								'indent' => true,
+								'fields' => array(
+									array(
+										'id' => 'fieldgroupsgroupindentinput1',
+										'label' => __( 'Text Input', 'foofields' ),
+										'desc' => __( 'This text input is grouped with the above header and the below text area.', 'foofields' ),
+										'type' => 'text'
+									),
+									array(
+										'id' => 'fieldgroupsgroupindentinput2',
+										'label' => __( 'Text Area' ),
+										'desc' => __( 'This text area is grouped with the above text input and header.', 'foofields' ),
+										'type' => 'textarea'
+									)
+								)
+							),
+							array(
+								'id' => 'fieldgroupstwocolumns',
+								'label' => __( 'Field Groups + Columns' ),
+								'desc' => __( 'The above examples simply demonstrate the basic properties of a group. The real power of groups comes into play when combined with columns. This field group has the class "foofields-cols-4" on it and has nested field groups within it which could in turn specify there own column layout. Being able to group fields together prevents them being jumbled when switching to a small screen layout like they would if you were just using the column classes to position them.' ),
+								'class' => 'foofields-cols-4',
+								'type' => 'field-group',
+								'fields' => array(
+									array(
+										'id' => 'fieldgroupstwocolumnsgroup1',
+										'label' => __( 'Group 1', 'foofields' ),
+										'type' => 'field-group',
+										'fields' => array(
+											array(
+												'id' => 'fieldgroupstwocolumnsgroup1input1',
+												'label' => __( 'Group 1 - Input 1' ),
+												'type' => 'text'
+											),
+											array(
+												'id' => 'fieldgroupstwocolumnsgroup1input2',
+												'label' => __( 'Group 1 - Input 2' ),
+												'type' => 'textarea'
+											)
+										)
+									),
+									array(
+										'id' => 'fieldgroupstwocolumnsgroup2',
+										'label' => __( 'Group 2', 'foofields' ),
+										'type' => 'field-group',
+										'fields' => array(
+											array(
+												'id' => 'fieldgroupstwocolumnsgroup2input1',
+												'label' => __( 'Group 2 - Input 1' ),
+												'type' => 'text'
+											),
+											array(
+												'id' => 'fieldgroupstwocolumnsgroup2input2',
+												'label' => __( 'Group 2 - Input 2' ),
+												'type' => 'textarea'
+											)
+										)
+									),
+									array(
+										'id' => 'fieldgroupstwocolumnsgroup3',
+										'label' => __( 'Group 3', 'foofields' ),
+										'type' => 'field-group',
+										'fields' => array(
+											array(
+												'id' => 'fieldgroupstwocolumnsgroup3input1',
+												'label' => __( 'Group 3 - Input 1' ),
+												'type' => 'text'
+											),
+											array(
+												'id' => 'fieldgroupstwocolumnsgroup3input2',
+												'label' => __( 'Group 3 - Input 2' ),
+												'type' => 'textarea'
+											)
+										)
+									),
+									array(
+										'id' => 'fieldgroupstwocolumnsgroup4',
+										'label' => __( 'Group 4', 'foofields' ),
+										'type' => 'field-group',
+										'fields' => array(
+											array(
+												'id' => 'fieldgroupstwocolumnsgroup4input1',
+												'label' => __( 'Group 4 - Input 1' ),
+												'type' => 'text'
+											),
+											array(
+												'id' => 'fieldgroupstwocolumnsgroup4input2',
+												'label' => __( 'Group 4 - Input 2' ),
+												'type' => 'textarea'
+											)
+										)
+									)
+								)
+							)
 						)
 					),
 					array(
@@ -410,6 +565,33 @@ if ( ! class_exists( 'FooPlugins\FooFields\Admin\Movie\MetaboxTest' ) ) {
 								'type'     => 'text',
 								'class'    => 'foofields-colspan-2',
 								'tooltip'  => __( 'This field has a class of "foofields-colspan-2"', 'foofields' ),
+							),
+							array(
+								'id'       => 'colheadinggroup3',
+								'label'     => __( '3 Columns - Field Group', 'foofields' ),
+								'desc'      => __( 'This field group has a class of "foofields-full-width foofields-cols-3". "foofields-full-width" makes it use all 4 columns of the parent tab and then "foofields-cols-3" divides its contents into 3 columns.', 'foofields' ),
+								'type'     => 'field-group',
+								'class'    => 'foofields-full-width foofields-cols-3',
+								'fields'    => array(
+									array(
+										'id'       => '3colgroupcell1',
+										'label'    => __( 'Firstname', 'foofields' ),
+										'type'     => 'text',
+										'tooltip'  => __( 'This field has no class set', 'foofields' ),
+									),
+									array(
+										'id'       => '3colgroupcell2',
+										'label'    => __( 'Middle', 'foofields' ),
+										'type'     => 'text',
+										'tooltip'  => __( 'This field has no class set', 'foofields' ),
+									),
+									array(
+										'id'       => '3colgroupcell3',
+										'label'    => __( 'Last Name', 'foofields' ),
+										'type'     => 'text',
+										'tooltip'  => __( 'This field has no class set', 'foofields' ),
+									)
+								)
 							),
 							array(
 								'id'       => 'colheading4',
@@ -533,6 +715,26 @@ if ( ! class_exists( 'FooPlugins\FooFields\Admin\Movie\MetaboxTest' ) ) {
 									)
 								)
 							),
+							array(
+								'id'    => 'showrulesfieldgroup',
+								'label' => __( 'Field Group', 'foofields' ),
+								'desc'  => __( 'This field group is shown when "Option 4" is selected', 'foofields' ),
+								'type'  => 'field-group',
+								'fields'=> array(
+									array(
+										'id'       => 'showrulesfieldgrouptext',
+										'label'    => __( 'Text Field', 'foofields' ),
+										'desc'     => __( 'This is shown as part of the field group when the "Option 4" is selected', 'foofields' ),
+										'type'     => 'text'
+									)
+								),
+								'data'     => array(
+									'show-when' => array(
+										'field' => 'showrulelist',
+										'value' => 'option4',
+									)
+								)
+							)
 						)
 					),
 					array(
