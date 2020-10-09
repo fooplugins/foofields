@@ -17,10 +17,23 @@
   }
 }
 
-// Better Column Handling Inside a Metabox Container
+// Metabox Container
 // ----------------------------------------------------------------------------
 @media only screen and (max-width: $screen-5) {
   .foofields-style-metabox {
+	.foofields-content.foofields-active.foofields-cols-2,
+	.foofields-type-field-group.foofields-cols-2 {
+	  >.foofields-field {
+		width: 100%;
+	  }
+	}
+  }
+}
+
+// Settings Container
+// ----------------------------------------------------------------------------
+@media only screen and (max-width: $screen-1) {
+  .foofields-style-settings {
 	.foofields-content.foofields-active.foofields-cols-2,
 	.foofields-type-field-group.foofields-cols-2 {
 	  >.foofields-field {
