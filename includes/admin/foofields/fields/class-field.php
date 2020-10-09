@@ -97,7 +97,7 @@ if ( ! class_exists( __NAMESPACE__ . '\Field' ) ) {
 			$this->id          = $field_config['id'];
 			$this->unique_id   = $container->get_unique_id( $field_config );
 			$this->name        = $container->get_field_name( $field_config );
-			$this->layout      = isset( $field_config['layout'] ) ? $field_config['layout'] : 'inline';
+			$this->layout      = isset( $field_config['layout'] ) ? $field_config['layout'] : 'auto';
 			$this->label       = isset( $field_config['label'] ) ? $field_config['label'] : null;
 			$this->description = isset( $field_config['desc'] ) ? $field_config['desc'] : null;
 			$this->required    = isset( $field_config['required'] ) ? $field_config['required'] : null;
