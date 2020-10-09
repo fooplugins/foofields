@@ -117,6 +117,7 @@
 	}
 	.foofields-tab-menu {
 	  height: $tab-h-settings-menu-height + 1px;
+	  white-space: nowrap;
 
 	  .foofields-tab-menu-item,
 	  .foofields-tab-menu-link {
