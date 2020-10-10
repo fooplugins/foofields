@@ -7,9 +7,24 @@
 	  margin: 0;
 	}
   }
+  &.foofields-layout-auto,
   &.foofields-layout-inline {
 	.foofields-field-description {
 	  display: inline;
+	  margin: 0;
+	}
+  }
+}
+
+@media only screen and (max-width: $screen-2) {
+  // at this screen size inputs switch their min-height from 30px to 40px so adjust what is needed
+  .foofields-type-checkbox {
+	.foofields-field-input {
+	  min-height: 40px;
+	  input[type=checkbox], input[type=radio] {
+		margin: 0 $m-xs 0 0;
+		min-width: 1.5625rem; /* adjust to to match width */
+	  }
 	}
   }
 }

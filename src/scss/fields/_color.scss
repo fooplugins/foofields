@@ -5,3 +5,14 @@
 	}
   }
 }
+
+@media only screen and (max-width: $screen-2) {
+  // at this screen size inputs switch their min-height from 30px to 40px so adjust what is needed
+  .foofields-type-color {
+	.foofields-field-input {
+	  input[type=color] {
+		min-height: 40px;
+	  }
+	}
+  }
+}

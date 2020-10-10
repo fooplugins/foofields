@@ -1,8 +1,10 @@
-.foofields-content.foofields-active.foofields-cols-3 {
+.foofields-content.foofields-active.foofields-cols-3,
+.foofields-type-field-group.foofields-cols-3 {
   display: flex;
   flex-wrap: wrap;
+  flex-direction: row;
   >.foofields-field {
-	padding: 0 $m-sm 0 0;
+	padding: 0;
 	align-self: flex-start;
 	width: 33.33%;
   }
@@ -16,13 +18,65 @@
 	width: 100%;
   }
 }
-// Small Screen CSS
+
+// Metabox Container
 // ----------------------------------------------------------------------------
-@media only screen and (max-width: $small-screen) {
-  .foofields-content.foofields-active.foofields-cols-3 {
-	>.foofields-field,
-	>.foofields-field.foofields-colspan-2 {
-	  width: 100%;
+@media only screen and (max-width: $screen-6) {
+  .foofields-style-metabox {
+	.foofields-content.foofields-active.foofields-cols-3,
+	.foofields-type-field-group.foofields-cols-3 {
+	  >.foofields-field {
+		width: 50%;
+	  }
+	  >.foofields-field.foofields-colspan-2,
+	  >.foofields-field.foofields-colspan-3,
+	  >.foofields-field.foofields-colspan-4,
+	  >.foofields-field.foofields-colspan-5,
+	  >.foofields-field.foofields-full-width {
+		width: 100%;
+	  }
+	}
+  }
+}
+
+@media only screen and (max-width: $screen-5) {
+  .foofields-style-metabox {
+	.foofields-content.foofields-active.foofields-cols-3,
+	.foofields-type-field-group.foofields-cols-3 {
+	  >.foofields-field {
+		width: 100%;
+	  }
+	}
+  }
+}
+
+// Settings Container
+// ----------------------------------------------------------------------------
+@media only screen and (max-width: $screen-5) {
+  .foofields-style-settings {
+	.foofields-content.foofields-active.foofields-cols-3,
+	.foofields-type-field-group.foofields-cols-3 {
+	  >.foofields-field {
+		width: 50%;
+	  }
+	  >.foofields-field.foofields-colspan-2,
+	  >.foofields-field.foofields-colspan-3,
+	  >.foofields-field.foofields-colspan-4,
+	  >.foofields-field.foofields-colspan-5,
+	  >.foofields-field.foofields-full-width {
+		width: 100%;
+	  }
+	}
+  }
+}
+
+@media only screen and (max-width: $screen-1) {
+  .foofields-style-settings {
+	.foofields-content.foofields-active.foofields-cols-3,
+	.foofields-type-field-group.foofields-cols-3 {
+	  >.foofields-field {
+		width: 100%;
+	  }
 	}
   }
 }

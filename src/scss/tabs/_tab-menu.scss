@@ -10,6 +10,11 @@
   list-style: none;
   z-index: 11;
 }
+.foofields-tabs-vertical {
+  .foofields-tab-menu {
+	padding: $tab-v-menu-padding;
+  }
+}
 // Horizontal CSS
 // ----------------------------------------------------------------------------
 .foofields-tabs-horizontal {
@@ -42,7 +47,7 @@
 }
 // Large Screens CSS
 // ----------------------------------------------------------------------------
-@media only screen and (min-width: $small-screen + 1px) {
+@media only screen and (min-width: $screen-3 + 1px) {
   .foofields-tab.foofields-active {
 	.foofields-tab-menu {
 	  display: block;
@@ -66,7 +71,7 @@
 }
 // Small Screens CSS
 // ----------------------------------------------------------------------------
-@media only screen and (max-width: $small-screen) {
+@media only screen and (max-width: $screen-3) {
   .foofields-tabs-vertical {
 	.foofields-tab.foofields-show-menu {
 	  .foofields-tab-menu {

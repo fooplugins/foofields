@@ -5,10 +5,6 @@
   padding: 0;
   margin-bottom: $m-md;
 
-  &:last-child {
-	margin-bottom: 0;
-  }
-
   // Generics
   // ------------------------------------
   .foofields-label {
@@ -47,7 +43,36 @@
 	flex-direction: row;
 
 	.foofields-label {
-	  max-width: 150px;
+	  max-width: $label-width;
+	}
+  }
+
+  // Auto layout
+  &.foofields-layout-auto {
+	flex-direction: row;
+	.foofields-label {
+	  max-width: $label-width;
+	}
+	&.foofields-small {
+	  flex-direction: column;
+	  .foofields-label {
+		max-width: none;
+	  }
+	}
+  }
+
+  &.foofields-indent {
+	margin-left: 1em;
+  }
+
+  &.foofields-parent {
+	margin-bottom: 0;
+  }
+
+  &.foofields-child {
+	.foofields-label {
+	  padding-left: 2em;
+	  font-weight: 400;
 	}
   }
 
@@ -90,35 +115,28 @@
 	display: block;
 	flex: 1;
 	min-width: 100%;
+	margin: $m-xs 0 0 0;
   }
+}
 
-  .foofields-repeater {
-	.foofields-repeater-no-data-message {
-	  display: none;
-	}
-
-	table {
-	  display: table;
-	  width: 100%;
-	  margin: 10px 0;
-
-	  td {
-		box-shadow: inset 0 -1px 0 rgba(0, 0, 0, 0.1);
-	  }
-
-	  tfoot {
-		display: none;
+@media only screen and (max-width: $screen-2) {
+  // at this screen size inputs switch their min-height from 30px to 40px so adjust what is needed
+  // TODO: Go through the other fields and update various values to account for this change. Find in Path... 30px
+  .foofields-field {
+	.foofields-label {
+	  label {
+		min-height: 40px;
 	  }
 	}
-
-	&.foofields-repeater-empty {
-	  .foofields-repeater-no-data-message {
-		display: block;
-	  }
-
-	  table {
-		display: none;
-	  }
+	input[type="text"],
+	input[type="password"],
+	input[type="number"],
+	input[type="search"],
+	input[type="email"],
+	input[type="url"],
+	select,
+	textarea {
+	  padding: 3px 10px;
 	}
   }
 }

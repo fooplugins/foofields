@@ -14,11 +14,17 @@
 				clear: self.onColorPickerClear.bind(self)
 			});
 		},
+		doValueChanging: function(value){
+			const self = this;
+			self.trigger("changing", [value, self]);
+			self.instance.trigger("changing", [self, value]);
+		},
 		onColorPickerClear: function(){
 			this.doValueChanged();
 		},
-		onColorPickerChange: function(e, ui){
+		onColorPickerChange: function(e, ui, color){
 			const self = this;
+			self.doValueChanging(_is.string(color) ? color : ui.color.toString());
 			if (self.debouncedId !== null) clearTimeout(self.debouncedId);
 			self.debouncedId = setTimeout(function(){
 				self.debouncedId = null;

@@ -19,10 +19,12 @@
 			self.$change.on("change", {self: self}, self.onValueChanged);
 			self._super();
 			self.trigger("init", [self]);
+			self.instance.fieldObserver.observe(self.$el.get(0));
 		},
 		setup: function(){},
 		destroy: function(){
 			var self = this;
+			self.instance.fieldObserver.unobserve(self.$el.get(0));
 			self.trigger("destroy", [self]);
 			self.$change.off("change", self.onValueChanged);
 			self.teardown();

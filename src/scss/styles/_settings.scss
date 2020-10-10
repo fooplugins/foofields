@@ -1,9 +1,8 @@
 // Settings Style CSS
 // ----------------------------------------------------------------------------
 .foofields-style-settings {
-  .foofields-tabs {
-	//background-color: #f5f5f5;
-  }
+  margin-top: 2em;
+
   .foofields-tab-link {
 	color: #555;
 	background-color: #e5e5e5;
@@ -118,6 +117,7 @@
 	}
 	.foofields-tab-menu {
 	  height: $tab-h-settings-menu-height + 1px;
+	  white-space: nowrap;
 
 	  .foofields-tab-menu-item,
 	  .foofields-tab-menu-link {
@@ -125,8 +125,6 @@
 		vertical-align: top;
 	  }
 
-	  .foofields-tab-text,
-	  .foofields-tab-icon,
 	  .foofields-tab-menu-item:not(.foofields-first):before {
 		position: relative;
 		top: 50%;
@@ -172,7 +170,7 @@
 }
 // Small Screen CSS
 // ----------------------------------------------------------------------------
-@media only screen and (max-width: $small-screen) {
+@media only screen and (max-width: $screen-3) {
   .foofields-tabs-vertical.foofields-style-settings {
 	.foofields-tab.foofields-show-menu {
 	  .foofields-tab-link {

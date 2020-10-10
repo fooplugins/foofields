@@ -97,7 +97,7 @@ if ( ! class_exists( __NAMESPACE__ . '\Field' ) ) {
 			$this->id          = $field_config['id'];
 			$this->unique_id   = $container->get_unique_id( $field_config );
 			$this->name        = $container->get_field_name( $field_config );
-			$this->layout      = isset( $field_config['layout'] ) ? $field_config['layout'] : 'inline';
+			$this->layout      = isset( $field_config['layout'] ) ? $field_config['layout'] : 'auto';
 			$this->label       = isset( $field_config['label'] ) ? $field_config['label'] : null;
 			$this->description = isset( $field_config['desc'] ) ? $field_config['desc'] : null;
 			$this->required    = isset( $field_config['required'] ) ? $field_config['required'] : null;
@@ -108,7 +108,7 @@ if ( ! class_exists( __NAMESPACE__ . '\Field' ) ) {
 
 			$this->classes[] = 'foofields-field';
 			if ( isset( $field_config['class'] ) ) {
-				$this->classes[] = $field_config['class'];
+				$this->classes = array_merge( $this->classes, explode( ' ', $field_config['class'] ) );
 			}
 		}
 
@@ -181,8 +181,9 @@ if ( ! class_exists( __NAMESPACE__ . '\Field' ) ) {
 				if ( isset( $this->required ) && $this->required === true ) {
 					$label .= ' *';
 				}
-				self::render_html_tag( 'label', array( 'for' => $this->unique_id ), $label );
+				self::render_html_tag( 'label', array( 'for' => $this->unique_id ), $label, false );
 				$this->render_tooltip();
+				echo '</label>';
 				echo '</div>';
 			}
 		}
@@ -193,7 +194,7 @@ if ( ! class_exists( __NAMESPACE__ . '\Field' ) ) {
 		function render_tooltip() {
 			if ( isset( $this->tooltip ) ) {
 				$icon = 'dashicons-editor-help';
-				$tooltip_attributes = $this->get_tooltip_attributes( $this->tooltip, 'right', 'large' );
+				$tooltip_attributes = $this->get_tooltip_attributes( $this->tooltip );
 				if ( is_array( $this->tooltip ) ) {
 					if ( isset( $this->tooltip['icon'] ) ) {
 						$icon = $this->tooltip['icon'];
@@ -214,7 +215,7 @@ if ( ! class_exists( __NAMESPACE__ . '\Field' ) ) {
 		 *
 		 * @return array
 		 */
-		function get_tooltip_attributes( $tooltip_config, $default_position = 'down', $default_length = 'small' ) {
+		function get_tooltip_attributes( $tooltip_config, $default_position = 'down', $default_length = 'medium' ) {
 			$tooltip = $tooltip_config;
 			$position = $default_position;
 			$length = $default_length;
@@ -356,7 +357,9 @@ if ( ! class_exists( __NAMESPACE__ . '\Field' ) ) {
 				case 'colorpicker':
 					$attributes['type'] = 'text';
 					$attributes['value'] = $field_value;
-					$attributes[] = 'data-wp-color-picker';
+					if ( isset( $this->config['alpha'] ) ){
+						$attributes['data-alpha-enabled'] = 'true';
+					}
 					self::render_html_tag( 'input', $attributes );
 
 					break;

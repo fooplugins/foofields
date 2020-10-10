@@ -26,6 +26,7 @@
 		line-height: 2;
 		padding: 2px 27px 2px 8px;
 		min-height: 30px;
+		font-size: 14px;
 
 		&.focus {
 		  border-color: #007cba;
@@ -37,8 +38,27 @@
 		}
 
 		> input {
-		  font-size: 14px;
+		  font-size: inherit;
 		  vertical-align: initial;
+		  width: 100% !important;
+		}
+	  }
+	}
+  }
+}
+
+@media only screen and (max-width: $screen-2) {
+  // at this screen size inputs switch their min-height from 30px to 40px so adjust what is needed
+  .foofields-type-selectize {
+	.foofields-field-input {
+	  .selectize-control {
+		.selectize-input {
+		  padding: 3px 29px 3px 10px;
+		  min-height: 40px;
+		  font-size: 16px;
+		}
+		.selectize-dropdown {
+		  font-size: 16px;
 		}
 	  }
 	}

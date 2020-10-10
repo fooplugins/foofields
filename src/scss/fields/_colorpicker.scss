@@ -1,0 +1,52 @@
+.foofields-type-colorpicker {
+  .foofields-field-input {
+	> input[type="text"] {
+	  visibility: hidden;
+	  opacity: 0;
+	}
+  }
+  .wp-picker-container {
+	white-space: nowrap;
+	.wp-color-result.button {
+	  margin-bottom: 0;
+	  .color-alpha {
+		width: 30px;
+		height: 100%;
+		position: absolute;
+		top: 0;
+		left: 0;
+		border-top-left-radius: 3px;
+		border-bottom-left-radius: 3px;
+	  }
+	}
+	.wp-picker-input-wrap {
+	  .button {
+		vertical-align: top;
+	  }
+	  input[type=text].wp-color-picker {
+		font-size: 12px;
+	  }
+	}
+  }
+}
+
+@media only screen and (max-width: $screen-3) {
+  .foofields-type-colorpicker {
+	.wp-picker-container {
+	  .wp-color-result.button {
+		.color-alpha {
+		  width: 40px;
+		}
+	  }
+	}
+  }
+}
+
+@media only screen and (max-width: $screen-2) {
+  // at this screen size inputs switch their min-height from 30px to 40px so adjust what is needed
+  .foofields-type-colorpicker {
+	.wp-picker-container {
+	  margin-top: 4px; /* The picker at this width has a height of 32px so; 40 - 32 = 8 / 2 = 4px */
+	}
+  }
+}

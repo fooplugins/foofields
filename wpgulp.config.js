@@ -117,6 +117,8 @@ module.exports = {
 
 	js: {
 		"./assets/vendor/foofields/foofields.js": [
+			"./src/polyfills/ResizeObserver.js",
+			"./src/vendor/wpColorPickerAlpha.js",
 			"./src/js/__config.js",
 			"./src/js/__utils.js",
 			"./src/js/__static.js",

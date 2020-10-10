@@ -15,6 +15,7 @@
 	  padding: 5px;
 	  line-height: 1;
 	  min-height: 30px;
+	  min-width: 30px;
 	  align-items: center;
 
 	  input[type=checkbox], input[type=radio] {
@@ -44,6 +45,7 @@
 	  border: solid 3px transparent;
 	  background: #aaa;
 	  border-radius: 3px;
+	  margin-bottom: 1em;
 	  > input {
 		display: none;
 	  }
@@ -56,6 +58,28 @@
 
 	.foofields-selected:hover {
 	  border: solid 3px #444;
+	}
+
+	.foofields-field-description {
+	  margin-top: -0.75em;
+	}
+  }
+}
+
+
+@media only screen and (max-width: $screen-2) {
+  // at this screen size inputs switch their min-height from 30px to 40px so adjust what is needed
+  .foofields-type-radiolist,
+  .foofields-type-checkboxlist,
+  .foofields-type-htmllist {
+	.foofields-field-input {
+	  label {
+		min-height: 40px;
+		min-width: 40px;
+		input[type=checkbox], input[type=radio] {
+		  margin: 0 $m-xs 0 0;
+		}
+	  }
 	}
   }
 }
