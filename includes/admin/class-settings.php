@@ -616,7 +616,7 @@ if ( !class_exists( 'FooPlugins\FooFields\Admin\Settings' ) ) {
 
 			parent::__construct(
 				array(
-					'settings_id'     => 'foofields',
+					'settings_id'     => 'foofields', //foofields-settings
 					'page_title'  => __( 'FooField Settings', 'foofields' ),
 					'menu_title' => __('Settings', 'foofields'),
 					'menu_parent_slug' => 'edit.php?post_type=' . FOOFIELDS_CPT_MOVIE,
