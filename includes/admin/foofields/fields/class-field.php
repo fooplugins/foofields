@@ -403,11 +403,19 @@ if ( ! class_exists( __NAMESPACE__ . '\Field' ) ) {
 		 * @return mixed|string
 		 */
 		function value() {
+			$return_value = null;
+
 			if ( isset( $this->override_value_function ) && is_callable( $this->override_value_function ) ) {
-				return call_user_func( $this->override_value_function, $this->config );
+				$return_value = call_user_func( $this->override_value_function, $this->config );
+			} else {
+				$return_value = $this->container->get_state_value( $this->config );
 			}
 
-			return $this->container->get_state_value( $this->config );
+			if ( isset( $this->config['value_decoder'] ) && is_callable( $this->config['value_decoder'] ) ) {
+				$return_value = call_user_func( $this->config['value_decoder'], $return_value );
+			}
+
+			return $return_value;
 		}
 
 		/**
@@ -440,18 +448,24 @@ if ( ! class_exists( __NAMESPACE__ . '\Field' ) ) {
 		 * @return mixed
 		 */
 		public function get_posted_value( $sanitized_form_data ) {
+			$return_value = null;
 			if ( isset( $sanitized_form_data ) && is_array( $sanitized_form_data ) ) {
 
 				if ( ! array_key_exists( $this->id, $sanitized_form_data ) ) {
 					//the field had no posted value, check for a default
 					if ( isset( $this->default ) ) {
-						return $this->default;
+						$return_value = $this->default;
 					}
 				} else {
-					return $this->process_posted_value( $sanitized_form_data[ $this->id ] );
+					$return_value = $this->process_posted_value( $sanitized_form_data[ $this->id ] );
 				}
 			}
-			return null;
+
+			if ( isset( $this->config['value_encoder'] ) && is_callable( $this->config['value_encoder'] ) ) {
+				$return_value = call_user_func( $this->config['value_encoder'], $return_value );
+			}
+
+			return $return_value;
 		}
 
 		/**

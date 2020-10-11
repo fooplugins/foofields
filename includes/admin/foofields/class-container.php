@@ -603,7 +603,11 @@ if ( ! class_exists( __NAMESPACE__ . '\Container' ) ) {
 			self::render_html_tag( 'li', $tab_attributes, null, false );
 			self::render_html_tag( 'a', array( 'class' => $anchor_class, 'href' => '#' . $content_id ), null, false );
 			if ( isset( $tab['icon'] ) ) {
-				self::render_html_tag( 'span', array( 'class' => 'foofields-tab-icon dashicons ' . $tab['icon'] ) );
+				if ( strpos( $tab['icon'], 'dashicons' ) === 0 ) {
+					self::render_html_tag( 'span', array( 'class' => 'foofields-tab-icon dashicons ' . $tab['icon'] ) );
+				} else {
+					self::render_html_tag( 'span', array( 'class' => 'foofields-tab-icon' ), $tab['icon'] );
+				}
 			}
 			self::render_html_tag( 'span', array( 'class' => 'foofields-tab-text' ), $tab['label'] );
 
