@@ -726,6 +726,37 @@ if ( ! class_exists( 'FooPlugins\FooFields\Admin\Movie\MetaboxTest' ) ) {
 										'label'    => __( 'Text Field', 'foofields' ),
 										'desc'     => __( 'This is shown as part of the field group when the "Option 4" is selected', 'foofields' ),
 										'type'     => 'text'
+									),
+									array(
+										'id'       => 'showrulesfieldgroupradio',
+										'label'    => __( 'Nested Rules', 'foofields' ),
+										'desc'     => __( 'Show nested field group?', 'foofields' ),
+										'type'     => 'radiolist',
+										'default'  => 'no',
+										'choices' => array(
+											'no' => __( 'No', 'foofields' ),
+											'yes' => __( 'Yes', 'foofields' ),
+										)
+									),
+									array(
+										'id' => 'showrulesfieldgroupnested',
+										'label' => __( 'A Nested Field Group', 'foofields' ),
+										'desc'  => __( 'This field group is shown when "Option 1" is selected', 'foofields' ),
+										'type'  => 'field-group',
+										'fields' => array(
+											array(
+												'id'       => 'showrulesfieldgroupnestedtext',
+												'label'    => __( 'Nested Text Field', 'foofields' ),
+												'desc'     => __( 'This is shown as part of the nested field group', 'foofields' ),
+												'type'     => 'text'
+											)
+										),
+										'data'     => array(
+											'show-when' => array(
+												'field' => 'showrulesfieldgroupradio',
+												'value' => 'yes',
+											)
+										)
 									)
 								),
 								'data'     => array(

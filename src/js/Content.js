@@ -30,9 +30,18 @@
 			self.$el.toggleClass(self.instance.cls.active, (self.active = self.id === id));
 		},
 		field: function(id){
-			return _utils.find(this.fields, function(field){
+			const groups = [];
+			let result = _utils.find(this.fields, function(field){
+				if (field instanceof _.FieldGroup) groups.push(field);
 				return field.id === id;
 			});
+			if (!(result instanceof _.Field)){
+				for (let i = 0, l = groups.length; i < l; i++){
+					result = groups[i].field(id);
+					if (result instanceof _.Field) return result;
+				}
+			}
+			return result;
 		},
 		onShowWhenFieldChanged: function(e, value){
 			this.ctnr.toggle(this.id, this.checkVisibilityRules(value));
