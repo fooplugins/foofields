@@ -7076,9 +7076,21 @@ FooFields.utils, FooFields.utils.fn, FooFields.utils.str);
       self.$el.toggleClass(self.instance.cls.active, self.active = self.id === id);
     },
     field: function field(id) {
-      return _utils.find(this.fields, function (field) {
+      var groups = [];
+
+      var result = _utils.find(this.fields, function (field) {
+        if (field instanceof _.FieldGroup) groups.push(field);
         return field.id === id;
       });
+
+      if (!(result instanceof _.Field)) {
+        for (var i = 0, l = groups.length; i < l; i++) {
+          result = groups[i].field(id);
+          if (result instanceof _.Field) return result;
+        }
+      }
+
+      return result;
     },
     onShowWhenFieldChanged: function onShowWhenFieldChanged(e, value) {
       this.ctnr.toggle(this.id, this.checkVisibilityRules(value));
@@ -7302,20 +7314,65 @@ FooFields.utils, FooFields.utils.fn, FooFields.utils.str);
     enable: function enable() {
       this.$el.find(":input").removeAttr("disabled");
     },
-    val: function val() {
+    val: function val(value) {
       var self = this,
           $inputs = self.$value,
-          single = $inputs.is(":radio") || $inputs.length === 1;
+          isRadio = $inputs.is(":radio"),
+          single = $inputs.length === 1;
 
-      if (_is.string(self.opt.valueFilter)) {
-        $inputs = $inputs.filter(self.opt.valueFilter);
+      if (_is.undef(value)) {
+        if (_is.string(self.opt.valueFilter)) {
+          $inputs = $inputs.filter(self.opt.valueFilter);
+        }
+
+        var result = $inputs.map(function () {
+          var $el = $(this);
+          return self.opt.valueAttribute !== null ? $el.attr(self.opt.valueAttribute) : $el.is(":checkbox") && single ? $el.is(":checked") : $el.val();
+        }).get();
+        return (single || isRadio) && result.length > 0 ? result.length === 0 ? null : result[0] : isRadio ? "" : result;
       }
 
-      var result = $inputs.map(function () {
-        var $el = $(this);
-        return self.opt.valueAttribute !== null ? $el.attr(self.opt.valueAttribute) : $el.is(":checkbox") && single ? $el.is(":checked") : $el.val();
-      }).get();
-      return single && result.length > 0 ? result.length === 0 ? null : result[0] : result;
+      var changed = false;
+      $inputs.each(function (i) {
+        var $el = $(this),
+            oldValue = null,
+            newValue = null;
+
+        if (self.opt.valueAttribute !== null) {
+          newValue = _is.string(value) ? value : JSON.stringify(value);
+          oldValue = $el.attr(self.opt.valueAttribute);
+          $el.attr(self.opt.valueAttribute, newValue);
+        } else if ($el.is(":checkbox,:radio")) {
+          if (_is.boolean(value)) {
+            newValue = value;
+          } else if (_is.array(value)) {
+            newValue = value.indexOf($el.val()) !== -1;
+          } else if (_is.string(value)) {
+            newValue = $el.val() === value;
+          }
+
+          if (newValue !== null) {
+            oldValue = $el.prop('checked');
+            $el.prop('checked', newValue);
+          }
+        } else if (_is.array(value)) {
+          newValue = i < value.length ? value[i] : "";
+          oldValue = $el.val();
+          $el.val(newValue);
+        } else {
+          newValue = value;
+          oldValue = $el.val();
+          $el.val(newValue);
+        }
+
+        if (!changed) {
+          changed = oldValue !== newValue;
+        }
+      });
+
+      if (changed) {
+        self.doValueChanged();
+      }
     },
     doValueChanged: function doValueChanged() {
       var self = this,
@@ -7415,10 +7472,21 @@ FooFields.utils, FooFields.utils.fn, FooFields.utils.str);
     setup: function setup() {
       var self = this;
       self.debouncedId = null;
-      self.$input.children('input[type=text]').wpColorPicker({
+      self.$pickers = self.$input.children('input[type=text]').wpColorPicker({
         change: self.onColorPickerChange.bind(self),
         clear: self.onColorPickerClear.bind(self)
       });
+    },
+    val: function val(value) {
+      var self = this,
+          current = self.$pickers.val();
+
+      if (!_is.undef(value)) {
+        self.$pickers.wpColorPicker('color', value);
+        return;
+      }
+
+      return current;
     },
     doValueChanging: function doValueChanging(value) {
       var self = this;
@@ -7487,9 +7555,21 @@ FooFields.utils, FooFields.utils.fn, FooFields.utils.str);
       self._super();
     },
     field: function field(id) {
-      return _utils.find(this.fields, function (field) {
+      var groups = [];
+
+      var result = _utils.find(this.fields, function (field) {
+        if (field instanceof _.FieldGroup) groups.push(field);
         return field.id === id;
       });
+
+      if (!(result instanceof _.Field)) {
+        for (var i = 0, l = groups.length; i < l; i++) {
+          result = groups[i].field(id);
+          if (result instanceof _.Field) return result;
+        }
+      }
+
+      return result;
     },
     onShowWhenFieldChanged: function onShowWhenFieldChanged(e, value, field) {
       if (field.visible) {
@@ -7498,11 +7578,19 @@ FooFields.utils, FooFields.utils.fn, FooFields.utils.str);
         this.toggle(false);
       }
     },
-    val: function val() {
-      return this.fields.reduce(function (result, field) {
-        result[field.id] = field.val();
-        return result;
-      }, {});
+    val: function val(value) {
+      if (_is.object(value)) {
+        this.fields.forEach(function (field) {
+          if (value.hasOwnProperty(field.id)) {
+            field.val(value[field.id]);
+          }
+        });
+      } else {
+        return this.fields.reduce(function (result, field) {
+          result[field.id] = field.val();
+          return result;
+        }, {});
+      }
     }
   });
 
@@ -7572,6 +7660,21 @@ FooFields.utils, FooFields.utils.fn, FooFields.utils.str);
 
         self.api = self.$select.selectize(options).get(0).selectize;
       }
+    },
+    val: function val(value) {
+      var self = this;
+
+      if (!!self.api) {
+        if (!_is.undef(value)) {
+          self.api.setValue(value);
+          self.doValueChanged();
+          return;
+        }
+
+        return self.api.getValue();
+      }
+
+      return "";
     },
     teardown: function teardown() {
       var self = this;
@@ -7692,8 +7795,20 @@ FooFields.utils, FooFields.utils.fn, FooFields.utils.str);
         self.api.disable();
       }
     },
-    val: function val() {
-      return this.$select.val();
+    val: function val(value) {
+      var self = this;
+
+      if (!!self.api) {
+        if (!_is.undef(value)) {
+          self.api.setValue(value);
+          self.doValueChanged();
+          return;
+        }
+
+        return self.api.getValue();
+      }
+
+      return "";
     }
   });
 
@@ -7827,8 +7942,16 @@ FooFields.utils, FooFields.utils.fn, FooFields.utils.str);
 
       this.$template.find(":input").attr("disabled", "disabled");
     },
-    val: function val() {
+    val: function val(value) {
       var self = this;
+
+      if (_is.array(value)) {
+        self.rows.forEach(function (row, i) {
+          row.val(i < value.length ? value[i] : []);
+        });
+        return;
+      }
+
       return self.rows.map(function (row) {
         return row.val();
       });
@@ -7993,14 +8116,22 @@ FooFields.utils, FooFields.utils.fn, FooFields.utils.str);
         field.enable();
       });
     },
-    val: function val() {
+    val: function val(value) {
       var self = this,
-          result = [];
-      self.fields.forEach(function (field) {
-        if (field instanceof _.RepeaterIndex || field instanceof _.RepeaterDelete) return;
-        result.push(field.val());
+          fields = self.fields.filter(function (field) {
+        return !(field instanceof _.RepeaterIndex) && !(field instanceof _.RepeaterDelete);
       });
-      return result;
+
+      if (_is.array(value)) {
+        fields.forEach(function (field, i) {
+          field.val(i < value.length ? value[i] : '');
+        });
+        return;
+      }
+
+      return fields.map(function (field) {
+        return field.val();
+      });
     }
   });
 })(FooFields.$, FooFields, FooFields.utils, FooFields.utils.is, FooFields.utils.obj);
