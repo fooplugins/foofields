@@ -76,8 +76,17 @@
 				self.api.disable();
 			}
 		},
-		val: function(){
-			return this.$select.val();
+		val: function(value){
+			const self = this;
+			if (!!self.api){
+				if (!_is.undef(value)){
+					self.api.setValue(value);
+					self.doValueChanged();
+					return;
+				}
+				return self.api.getValue();
+			}
+			return "";
 		}
 	});
 

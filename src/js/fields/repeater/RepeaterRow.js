@@ -82,13 +82,19 @@
 				field.enable();
 			});
 		},
-		val: function(){
-			const self = this, result = [];
-			self.fields.forEach(function(field){
-				if (field instanceof _.RepeaterIndex || field instanceof _.RepeaterDelete) return;
-				result.push(field.val());
+		val: function(value){
+			const self = this, fields = self.fields.filter(function(field){
+				return !(field instanceof _.RepeaterIndex) && !(field instanceof _.RepeaterDelete);
 			});
-			return result;
+			if (_is.array(value)){
+				fields.forEach(function(field, i){
+					field.val(i < value.length ? value[i] : '');
+				});
+				return;
+			}
+			return fields.map(function(field){
+				return field.val();
+			});
 		}
 	});
 

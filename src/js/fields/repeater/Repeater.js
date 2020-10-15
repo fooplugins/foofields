@@ -83,8 +83,14 @@
 			this._super(state);
 			this.$template.find(":input").attr("disabled", "disabled");
 		},
-		val: function(){
+		val: function(value){
 			const self = this;
+			if (_is.array(value)){
+				self.rows.forEach(function(row, i){
+					row.val(i < value.length ? value[i] : []);
+				});
+				return;
+			}
 			return self.rows.map(function(row){
 				return row.val();
 			});

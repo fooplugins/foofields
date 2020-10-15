@@ -45,18 +45,55 @@
 		enable: function() {
 			this.$el.find(":input").removeAttr("disabled");
 		},
-		val: function(){
-			var self = this, $inputs = self.$value, single = $inputs.is(":radio") || $inputs.length === 1;
-			if (_is.string(self.opt.valueFilter)){
-				$inputs = $inputs.filter(self.opt.valueFilter);
+		val: function(value){
+			var self = this, $inputs = self.$value, isRadio = $inputs.is(":radio"), single = $inputs.length === 1;
+			if (_is.undef(value)){
+				if (_is.string(self.opt.valueFilter)){
+					$inputs = $inputs.filter(self.opt.valueFilter);
+				}
+				var result = $inputs.map(function(){
+					var $el = $(this);
+					return self.opt.valueAttribute !== null ?
+						$el.attr(self.opt.valueAttribute) :
+						($el.is(":checkbox") && single ? $el.is(":checked") : $el.val());
+				}).get();
+				return (single || isRadio) && result.length > 0 ? (result.length === 0 ? null : result[0]) : isRadio ? "" : result;
 			}
-			var result = $inputs.map(function(){
-				var $el = $(this);
-				return self.opt.valueAttribute !== null ?
-					$el.attr(self.opt.valueAttribute) :
-					($el.is(":checkbox") && single ? $el.is(":checked") : $el.val());
-			}).get();
-			return single && result.length > 0 ? (result.length === 0 ? null : result[0]) : result;
+			let changed = false;
+			$inputs.each(function(i){
+				var $el = $(this), oldValue = null, newValue = null;
+				if (self.opt.valueAttribute !== null){
+					newValue = _is.string(value) ? value : JSON.stringify(value);
+					oldValue = $el.attr(self.opt.valueAttribute);
+					$el.attr(self.opt.valueAttribute, newValue);
+				} else if ($el.is(":checkbox,:radio")){
+					if (_is.boolean(value)){
+						newValue = value;
+					} else if (_is.array(value)) {
+						newValue = value.indexOf($el.val()) !== -1;
+					} else if (_is.string(value)) {
+						newValue = $el.val() === value;
+					}
+					if (newValue !== null){
+						oldValue = $el.prop('checked');
+						$el.prop('checked', newValue);
+					}
+				} else if (_is.array(value)) {
+					newValue = i < value.length ? value[i] : "";
+					oldValue = $el.val();
+					$el.val(newValue);
+				} else {
+					newValue = value;
+					oldValue = $el.val();
+					$el.val(newValue);
+				}
+				if (!changed){
+					changed = oldValue !== newValue;
+				}
+			});
+			if (changed){
+				self.doValueChanged();
+			}
 		},
 		doValueChanged: function(){
 			const self = this, value = self.val();

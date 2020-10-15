@@ -9,10 +9,18 @@
 		setup: function() {
 			var self = this;
 			self.debouncedId = null;
-			self.$input.children('input[type=text]').wpColorPicker({
+			self.$pickers = self.$input.children('input[type=text]').wpColorPicker({
 				change: self.onColorPickerChange.bind(self),
 				clear: self.onColorPickerClear.bind(self)
 			});
+		},
+		val: function(value){
+			const self = this, current = self.$pickers.val();
+			if (!_is.undef(value)){
+				self.$pickers.wpColorPicker('color', value);
+				return;
+			}
+			return current;
 		},
 		doValueChanging: function(value){
 			const self = this;

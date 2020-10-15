@@ -43,11 +43,19 @@
 				this.toggle(false);
 			}
 		},
-		val: function(){
-			return this.fields.reduce(function(result, field){
-				result[field.id] = field.val();
-				return result;
-			}, {});
+		val: function(value){
+			if (_is.object(value)){
+				this.fields.forEach(function(field){
+					if (value.hasOwnProperty(field.id)){
+						field.val(value[field.id]);
+					}
+				});
+			} else {
+				return this.fields.reduce(function(result, field){
+					result[field.id] = field.val();
+					return result;
+				}, {});
+			}
 		}
 	});
 

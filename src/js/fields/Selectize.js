@@ -31,6 +31,18 @@
 				self.api = self.$select.selectize(options).get(0).selectize;
 			}
 		},
+		val: function(value){
+			const self = this;
+			if (!!self.api){
+				if (!_is.undef(value)){
+					self.api.setValue(value);
+					self.doValueChanged();
+					return;
+				}
+				return self.api.getValue();
+			}
+			return "";
+		},
 		teardown: function(){
 			var self = this;
 			if (self.api instanceof Selectize){
