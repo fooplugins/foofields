@@ -134,6 +134,12 @@ if ( ! class_exists( 'FooPlugins\FooFields\Admin\Movie\MetaboxTest' ) ) {
 								'id'       => 'colorpicker',
 								'label'    => __( 'Colorpicker Field', 'foofields' ),
 								'desc'     => __( 'A colorpicker field using the colorpicker built into WP', 'foofields' ),
+								'type'     => 'colorpicker'
+							),
+							array(
+								'id'       => 'alpha_colorpicker',
+								'label'    => __( 'Alpha Colorpicker Field', 'foofields' ),
+								'desc'     => __( 'A colorpicker field using a modified version of the colorpicker built into WP', 'foofields' ),
 								'type'     => 'colorpicker',
 								'alpha'    => true
 							),
