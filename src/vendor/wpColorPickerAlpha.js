@@ -61,7 +61,6 @@
 			alphaEnabled: false,
 			alphaCustomWidth: 91,
 			alphaReset: false,
-			alphaColorType: 'hex',
 			isDeprecated: false,
 		},
 		/**
@@ -78,10 +77,15 @@
 			if ( color === undef ) {
 				color = this._color;
 			}
+			var result = color.toString();
 			if ( this.alphaOptions.alphaEnabled  ) {
-				return color.to_s( this.alphaOptions.alphaColorType );
+				var type = 'hex';
+				if (result && result.match(/^(rgb|hsl)/)) {
+					type = color.substring(0, 3);
+				}
+				return color.to_s( type );
 			}
-			return color.toString();
+			return result;
 		},
 		/**
 		 * Binds event listeners to the Iris.
@@ -96,8 +100,7 @@
 				debounceTimeout = 100,
 				callback = function( event ){
 					var val = input.val(),
-						color = new Color( val ),
-						type = ( self.alphaOptions.alphaColorType || 'hex' );
+						color = new Color( val );
 
 					// strip excess chars
 					val = val.replace( /^(#|(rgb|hsl)a?)/, '' );
@@ -111,12 +114,10 @@
 						}
 					} else {
 						if ( ! ( color.toString() === self._color.toString() && color._alpha === self.color._alpha ) ) {
-							if ( event.type !== 'keyup' ) {
-								// let's not do this on keyup for hex shortcodes
-								if ( 'hex' === type && val.match( /^[0-9a-fA-F]{3}$/ ) ) {
-									self._setOption( 'color', self._getCurrentColor( color ) );
-								}
+							if ( event.type === 'keyup' && val.match( /^[0-9a-fA-F]{3}$/ ) ) {
+								return;
 							}
+							self._setOption( 'color', self._getCurrentColor( color ) );
 						}
 					}
 				};
@@ -384,7 +385,6 @@
 				alphaEnabled: false,
 				alphaCustomWidth: 91,
 				alphaReset: false,
-				alphaColorType: 'hex',
 				isDeprecated: false,
 			};
 
@@ -429,20 +429,6 @@
 						value = ( value === undef ? v : value );
 						value = ( value ? parseInt( value, 10 ) : 0 );
 						value = ( isNaN( value ) ? v : value );
-						break;
-					case 'alphaColorType':
-						if ( value === undef || ! value.match( /^(hex|rgb|hsl)$/ ) ) {
-							var color = self.initialValue;
-							if ( !!color && self.options.defaultColor ) {
-								color = self.options.defaultColor;
-							}
-
-							if ( color && color.match( /^(rgb|hsl)/ ) ) {
-								value = color.substring( 0, 3 );
-							}
-						} else {
-							value = v;
-						}
 						break;
 					default:
 						value = ( value === undef ? v : !!value );
