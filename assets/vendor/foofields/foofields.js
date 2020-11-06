@@ -1645,6 +1645,7 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
               el: "foofields-tab-menu",
               exists: "foofields-has-menu",
               visible: "foofields-show-menu",
+              empty: "foofields-empty-menu",
               showing: "foofields-menu-showing",
               header: "foofields-tab-menu-header",
               item: {
@@ -6853,6 +6854,7 @@ FooFields.utils, FooFields.utils.fn, FooFields.utils.str);
       if (!self.exists) return;
       self.tab.$el.addClass(self.cls.exists);
       self.items.forEach(function (item) {
+        item.on('toggle', self.onItemToggled, self);
         item.init();
       });
       self.setSmall(self.instance.small);
@@ -6874,6 +6876,7 @@ FooFields.utils, FooFields.utils.fn, FooFields.utils.str);
       self.setHoverable(false);
       self.tab.$el.removeClass(self.cls.exists);
       self.items.forEach(function (item) {
+        item.off('toggle', self.onItemToggled, self);
         item.destroy();
       });
     },
@@ -6987,6 +6990,14 @@ FooFields.utils, FooFields.utils.fn, FooFields.utils.str);
           self._leave = null;
         }, 300);
       }
+    },
+    onItemToggled: function onItemToggled() {
+      var self = this,
+          hasVisible = self.items.some(function (item) {
+        return item.visible;
+      });
+      self.tab.$el.toggleClass(self.cls.exists, hasVisible);
+      self.$el.toggleClass(self.cls.empty, !hasVisible);
     } //endregion
 
   });
@@ -7165,13 +7176,14 @@ FooFields.utils, FooFields.utils.fn, FooFields.utils.str);
 
       return false;
     },
-    make: function make(name, content, element, options) {
+    make: function make(name, content, element, options, i18n, classes) {
       var self = this,
-          reg = self.registered[name],
-          i18n = {},
-          classes = {};
+          reg = self.registered[name];
 
       if (_is.hash(reg)) {
+        options = _is.hash(options) ? options : {};
+        i18n = _is.hash(i18n) ? i18n : {};
+        classes = _is.hash(classes) ? classes : {};
         var inst = content.instance,
             regBases = self.bases(name),
             ext_options = [{}],
@@ -7199,19 +7211,26 @@ FooFields.utils, FooFields.utils.fn, FooFields.utils.str);
 
       return null;
     },
-    create: function create(content, element, options) {
+    create: function create(content, element, options, i18n, classes) {
       var self = this,
           name;
       element = _is.jq(element) ? element : $(element); // merge the options with any supplied using data attributes
 
-      options = _obj.extend({}, options, element.data());
+      options = _obj.extend({
+        i18n: {},
+        classes: {}
+      }, options, element.data());
+      i18n = _obj.extend({}, i18n, options.i18n);
+      classes = _obj.extend({}, classes, options.classes);
+      delete options.i18n;
+      delete options.classes;
 
       for (name in self.registered) {
         if (!self.registered.hasOwnProperty(name) || name === "field" || !element.is(self.registered[name].selector)) continue;
-        return self.make(name, content, element, options);
+        return self.make(name, content, element, options, i18n, classes);
       }
 
-      return self.make("field", content, element, options);
+      return self.make("field", content, element, options, i18n, classes);
     },
 
     /**
