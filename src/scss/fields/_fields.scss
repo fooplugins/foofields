@@ -82,22 +82,45 @@
 
   input[type="text"],
   input[type="password"],
-  input[type="number"],
   input[type="search"],
   input[type="email"],
   input[type="url"],
-  select,
   textarea {
 	width: 100%;
 	padding: 2px 8px;
+  }
+  input[type="time"],
+  input[type="date"],
+  input[type="number"] {
+	padding: 2px 2px 2px 8px;
+  }
+  select {
+	padding: 2px 24px 2px 8px;
   }
 
   textarea {
 	min-height: 100px;
   }
 
+  &.foofields-field-full {
+	input[type="text"],
+	input[type="time"],
+	input[type="date"],
+	input[type="password"],
+	input[type="number"],
+	input[type="search"],
+	input[type="email"],
+	input[type="url"],
+	select,
+	textarea {
+	  width: 100%;
+	}
+  }
+
   &.foofields-field-short {
 	input[type="text"],
+	input[type="time"],
+	input[type="date"],
 	input[type="password"],
 	input[type="number"],
 	input[type="search"],
@@ -106,6 +129,21 @@
 	select,
 	textarea {
 	  width: 50%;
+	}
+  }
+
+  &.foofields-field-auto {
+	input[type="text"],
+	input[type="time"],
+	input[type="date"],
+	input[type="password"],
+	input[type="number"],
+	input[type="search"],
+	input[type="email"],
+	input[type="url"],
+	select,
+	textarea {
+	  width: auto;
 	}
   }
 
@@ -129,14 +167,21 @@
 	  }
 	}
 	input[type="text"],
+	input[type="time"],
+	input[type="date"],
 	input[type="password"],
-	input[type="number"],
 	input[type="search"],
 	input[type="email"],
 	input[type="url"],
 	select,
 	textarea {
 	  padding: 3px 10px;
+	}
+	input[type="number"] {
+	  padding: 3px 3px 3px 10px;
+	}
+	select {
+	  padding: 3px 29px 3px 10px;
 	}
   }
 }
