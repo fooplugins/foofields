@@ -9,6 +9,10 @@
   padding: 0;
   list-style: none;
   z-index: 11;
+
+  &.foofields-empty-menu {
+	display: none !important;
+  }
 }
 .foofields-tabs-vertical {
   .foofields-tab-menu {

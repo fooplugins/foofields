@@ -55,9 +55,12 @@
 			}
 			return false;
 		},
-		make: function(name, content, element, options){
-			var self = this, reg = self.registered[name], i18n = {}, classes = {};
+		make: function(name, content, element, options, i18n, classes){
+			var self = this, reg = self.registered[name];
 			if (_is.hash(reg)){
+				options = _is.hash(options) ? options : {};
+				i18n = _is.hash(i18n) ? i18n : {};
+				classes = _is.hash(classes) ? classes : {};
 
 				var inst = content.instance,
 					regBases = self.bases(name),
@@ -90,18 +93,22 @@
 			}
 			return null;
 		},
-		create: function(content, element, options){
+		create: function(content, element, options, i18n, classes){
 			var self = this, name;
 
 			element = _is.jq(element) ? element : $(element);
 			// merge the options with any supplied using data attributes
-			options = _obj.extend({}, options, element.data());
+			options = _obj.extend({ i18n:{}, classes:{} }, options, element.data());
+			i18n = _obj.extend({}, i18n, options.i18n);
+			classes = _obj.extend({}, classes, options.classes);
+			delete options.i18n;
+			delete options.classes;
 
 			for (name in self.registered){
 				if (!self.registered.hasOwnProperty(name) || name === "field" || !element.is(self.registered[name].selector)) continue;
-				return self.make(name, content, element, options);
+				return self.make(name, content, element, options, i18n, classes);
 			}
-			return self.make("field", content, element, options);
+			return self.make("field", content, element, options, i18n, classes);
 		},
 		/**
 		 * @summary Get all registered base fields for the supplied name.

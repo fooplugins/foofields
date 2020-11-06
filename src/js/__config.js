@@ -39,6 +39,7 @@
 							el: "foofields-tab-menu",
 							exists: "foofields-has-menu",
 							visible: "foofields-show-menu",
+							empty: "foofields-empty-menu",
 							showing: "foofields-menu-showing",
 							header: "foofields-tab-menu-header",
 							item: {

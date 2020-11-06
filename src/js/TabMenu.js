@@ -27,6 +27,7 @@
 			self.tab.$el.addClass(self.cls.exists);
 
 			self.items.forEach(function(item){
+				item.on('toggle', self.onItemToggled, self);
 				item.init();
 			});
 
@@ -53,6 +54,7 @@
 
 			self.tab.$el.removeClass(self.cls.exists);
 			self.items.forEach(function(item){
+				item.off('toggle', self.onItemToggled, self);
 				item.destroy();
 			});
 		},
@@ -161,6 +163,14 @@
 					self._leave = null;
 				}, 300);
 			}
+		},
+		onItemToggled: function(){
+			const self = this,
+				hasVisible = self.items.some(function(item){
+					return item.visible;
+				});
+			self.tab.$el.toggleClass(self.cls.exists, hasVisible);
+			self.$el.toggleClass(self.cls.empty, !hasVisible);
 		}
 		//endregion
 	});

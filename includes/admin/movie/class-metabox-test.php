@@ -1059,6 +1059,47 @@ if ( ! class_exists( 'FooPlugins\FooFields\Admin\Movie\MetaboxTest' ) ) {
 								'type'     => 'help',
 							)
 						)
+					),
+					array(
+						'id' => 'empty_2',
+						'label'  => __( 'Empty Menu', 'foofields' ),
+						'icon'   => 'dashicons-sos',
+						'fields' => array(
+							array(
+								'id'       => 'hidden-children',
+								'text'     => __( 'This tab exists just to test a tab with all hidden child tabs.', 'foofields' ),
+								'type'     => 'help',
+							),
+							array(
+								'id'       => 'hide-child-tab',
+								'label'    => __( 'Child Tab', 'foobar' ),
+								'type'     => 'radiolist',
+								'default'   => 'show',
+								'choices' => array(
+									'show'  => __( 'Show', 'foobar' ),
+									'hide'  => __( 'Hide', 'foobar' )
+								)
+							)
+						),
+						'tabs' => array(
+							array(
+								'id' => 'hidden-child',
+								'label'  => __( 'Empty', 'foofields' ),
+								'fields' => array(
+									array(
+										'id'       => 'hidden-child',
+										'text'     => __( 'This tab exists just to test a tab with all hidden child tabs.', 'foofields' ),
+										'type'     => 'help',
+									)
+								),
+								'data' => array(
+									'show-when' => array(
+										'field' => 'hide-child-tab',
+										'value' => 'show'
+									)
+								)
+							)
+						)
 					)
 				)
 			);
