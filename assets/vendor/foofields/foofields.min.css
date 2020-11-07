@@ -118,6 +118,7 @@ span[data-balloon]{display:inline-block;width:20px;height:20px;vertical-align:te
 .foofields-type-colorpicker .wp-picker-container .wp-color-result.button .color-alpha{width:30px;height:100%;position:absolute;top:0;left:0;border-top-left-radius:3px;border-bottom-left-radius:3px}
 .foofields-type-colorpicker .wp-picker-container .wp-picker-input-wrap .button{vertical-align:top}
 .foofields-type-colorpicker .wp-picker-container .wp-picker-input-wrap input[type=text].wp-color-picker{font-size:12px}
+.foofields-type-colorpicker .wp-picker-container .iris-picker .iris-square-value{width:0 !important;height:0 !important}
 .foofields-type-checkbox .foofields-field-input{display:-webkit-inline-box;display:-ms-inline-flexbox;display:inline-flex;-webkit-box-align:center;-ms-flex-align:center;align-items:center;min-height:30px}
 .foofields-type-checkbox .foofields-field-input input[type=checkbox],.foofields-type-checkbox .foofields-field-input input[type=radio]{margin:0}
 .foofields-type-checkbox.foofields-layout-auto .foofields-field-description,.foofields-type-checkbox.foofields-layout-inline .foofields-field-description{display:inline;margin:0}

@@ -1190,8 +1190,7 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
         var controls = self.controls,
             alpha = parseInt(self._color._alpha * 100),
             color = self._color.toRgb(),
-            gradient = ['rgb(' + color.r + ',' + color.g + ',' + color.b + ') 0%', 'rgba(' + color.r + ',' + color.g + ',' + color.b + ', 0) 100%'],
-            target = self.picker.closest('.wp-picker-container').find('.wp-color-result');
+            gradient = ['rgb(' + color.r + ',' + color.g + ',' + color.b + ') 0%', 'rgba(' + color.r + ',' + color.g + ',' + color.b + ', 0) 100%'];
 
         self.options.color = self._getCurrentColor(); // Generate background slider alpha, only for CSS3 old browser fuck!! :)
 
@@ -1207,7 +1206,7 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
           self.element.removeClass('iris-error').val(self._getCurrentColor());
         }
 
-        self.picker.find('.iris-palette-container').on('click.palette', '.iris-palette', function () {
+        self.picker.find('.iris-palette-container').off('.palette').on('click.palette', '.iris-palette', function () {
           var color = $(this).data('color');
 
           if (self.alphaOptions.alphaReset) {
@@ -6985,6 +6984,8 @@ FooFields.utils, FooFields.utils.fn, FooFields.utils.str);
       });
       self.tab.$el.toggleClass(self.cls.exists, hasVisible);
       self.$el.toggleClass(self.cls.empty, !hasVisible);
+      self.setSmall(hasVisible && self.instance.small);
+      self.setHoverable(hasVisible && self.instance.hoverable);
     } //endregion
 
   });
