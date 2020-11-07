@@ -205,8 +205,7 @@
 					gradient     = [
 						'rgb(' + color.r + ',' + color.g + ',' + color.b + ') 0%',
 						'rgba(' + color.r + ',' + color.g + ',' + color.b + ', 0) 100%'
-					],
-					target       = self.picker.closest( '.wp-picker-container' ).find( '.wp-color-result' );
+					];
 
 				self.options.color = self._getCurrentColor();
 				// Generate background slider alpha, only for CSS3 old browser fuck!! :)
@@ -220,7 +219,7 @@
 					self.element.removeClass( 'iris-error' ).val( self._getCurrentColor() );
 				}
 
-				self.picker.find( '.iris-palette-container' ).on( 'click.palette', '.iris-palette', function() {
+				self.picker.find( '.iris-palette-container' ).off('.palette').on( 'click.palette', '.iris-palette', function() {
 					var color = $( this ).data( 'color' );
 					if ( self.alphaOptions.alphaReset ) {
 						self._color._alpha = 1;
