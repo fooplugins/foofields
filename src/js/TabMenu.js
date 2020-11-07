@@ -171,6 +171,8 @@
 				});
 			self.tab.$el.toggleClass(self.cls.exists, hasVisible);
 			self.$el.toggleClass(self.cls.empty, !hasVisible);
+			self.setSmall(hasVisible && self.instance.small);
+			self.setHoverable(hasVisible && self.instance.hoverable);
 		}
 		//endregion
 	});
