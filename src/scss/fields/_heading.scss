@@ -2,10 +2,12 @@
   .foofields-field-input {
 	h3 {
 	  margin: 0;
+	  padding-bottom: $m-xs;
+	  border-bottom: solid 1px #ccd0d4;
 	}
 
 	p {
-	  margin: $m-0 0 0 0;
+	  margin: $m-xs 0 0 0;
 	}
   }
 }

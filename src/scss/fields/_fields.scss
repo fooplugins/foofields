@@ -91,6 +91,7 @@
   select,
   textarea {
 	max-width: 100%;
+	border-color: #a0a0a0;
   }
 
   input[type="text"],
@@ -288,6 +289,7 @@
 	flex: 1;
 	min-width: 100%;
 	margin: $m-0 0 0 0;
+	color: #82878c;
   }
 }
 
