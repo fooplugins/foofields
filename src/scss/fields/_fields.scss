@@ -81,6 +81,19 @@
   }
 
   input[type="text"],
+  input[type="time"],
+  input[type="date"],
+  input[type="password"],
+  input[type="number"],
+  input[type="search"],
+  input[type="email"],
+  input[type="url"],
+  select,
+  textarea {
+	max-width: 100%;
+  }
+
+  input[type="text"],
   input[type="password"],
   input[type="search"],
   input[type="email"],
@@ -99,10 +112,11 @@
   }
 
   textarea {
+	display: block;
 	min-height: 100px;
   }
 
-  &.foofields-field-full {
+  &.foofields-field-100 {
 	input[type="text"],
 	input[type="time"],
 	input[type="date"],
@@ -117,7 +131,22 @@
 	}
   }
 
-  &.foofields-field-short {
+  &.foofields-field-75 {
+	input[type="text"],
+	input[type="time"],
+	input[type="date"],
+	input[type="password"],
+	input[type="number"],
+	input[type="search"],
+	input[type="email"],
+	input[type="url"],
+	select,
+	textarea {
+	  width: 75%;
+	}
+  }
+
+  &.foofields-field-50 {
 	input[type="text"],
 	input[type="time"],
 	input[type="date"],
@@ -129,6 +158,111 @@
 	select,
 	textarea {
 	  width: 50%;
+	}
+  }
+
+  &.foofields-field-25 {
+	input[type="text"],
+	input[type="time"],
+	input[type="date"],
+	input[type="password"],
+	input[type="number"],
+	input[type="search"],
+	input[type="email"],
+	input[type="url"],
+	select,
+	textarea {
+	  width: 25%;
+	}
+  }
+
+  &.foofields-field-medium {
+	input[type="text"],
+	input[type="time"],
+	input[type="date"],
+	input[type="password"],
+	input[type="number"],
+	input[type="search"],
+	input[type="email"],
+	input[type="url"],
+	select,
+	textarea {
+	  width: 25em;
+	}
+  }
+
+  &.foofields-field-short {
+	input[type="text"],
+	input[type="time"],
+	input[type="date"],
+	input[type="password"],
+	input[type="number"],
+	input[type="search"],
+	input[type="email"],
+	input[type="url"],
+	select,
+	textarea {
+	  width: 10em;
+	}
+  }
+
+  &.foofields-field-small {
+	input[type="text"],
+	input[type="time"],
+	input[type="date"],
+	input[type="password"],
+	input[type="number"],
+	input[type="search"],
+	input[type="email"],
+	input[type="url"],
+	select,
+	textarea {
+	  width: 5em;
+	}
+  }
+
+  &.foofields-field-text-left {
+	input[type="text"],
+	input[type="time"],
+	input[type="date"],
+	input[type="password"],
+	input[type="number"],
+	input[type="search"],
+	input[type="email"],
+	input[type="url"],
+	select,
+	textarea {
+	  text-align: left;
+	}
+  }
+
+  &.foofields-field-text-center {
+	input[type="text"],
+	input[type="time"],
+	input[type="date"],
+	input[type="password"],
+	input[type="number"],
+	input[type="search"],
+	input[type="email"],
+	input[type="url"],
+	select,
+	textarea {
+	  text-align: center;
+	}
+  }
+
+  &.foofields-field-text-right {
+	input[type="text"],
+	input[type="time"],
+	input[type="date"],
+	input[type="password"],
+	input[type="number"],
+	input[type="search"],
+	input[type="email"],
+	input[type="url"],
+	select,
+	textarea {
+	  text-align: right;
 	}
   }
 
@@ -153,7 +287,7 @@
 	display: block;
 	flex: 1;
 	min-width: 100%;
-	margin: $m-xs 0 0 0;
+	margin: $m-0 0 0 0;
   }
 }
 
