@@ -6548,17 +6548,21 @@ FooFields.utils, FooFields.utils.fn, FooFields.utils.str);
       return visible;
     },
     onShowWhenFieldChanged: function onShowWhenFieldChanged(e, value, field) {
+      var self = this;
+
       if (field.visible) {
-        this.toggle(this.checkVisibilityRules(value));
+        self.toggle(self.checkVisibilityRules(value));
       } else {
-        this.toggle(false);
+        self.toggle(false);
       }
     },
     onShowWhenFieldToggled: function onShowWhenFieldToggled(e, visible, field) {
+      var self = this;
+
       if (visible) {
-        this.toggle(this.checkVisibilityRules(field.val()));
+        self.toggle(self.checkVisibilityRules(field.val()));
       } else {
-        this.toggle(false);
+        self.toggle(false);
       }
     }
   });
@@ -6758,6 +6762,7 @@ FooFields.utils, FooFields.utils.fn, FooFields.utils.str);
 
       self._super(ctnr.instance, ctnr, el, ctnr.cls.tabs.tab, ctnr.sel.tabs.tab);
 
+      self.el = self.$el.get(0);
       self.index = index;
       self.$link = self.$el.children(self.sel.link).first();
       self.$icon = self.$link.children(self.sel.icon).first();
@@ -6797,7 +6802,6 @@ FooFields.utils, FooFields.utils.fn, FooFields.utils.str);
     },
     onLinkClick: function onLinkClick(e) {
       e.preventDefault();
-      e.stopPropagation();
       var self = e.data.self;
 
       if (self.menu.exists && self.instance.small && !self.instance.hoverable) {
@@ -6806,8 +6810,23 @@ FooFields.utils, FooFields.utils.fn, FooFields.utils.str);
         self.ctnr.activate(self.target);
       }
     },
-    onShowWhenFieldChanged: function onShowWhenFieldChanged(e, value) {
-      this.ctnr.toggle(this.target, this.checkVisibilityRules(value));
+    onShowWhenFieldChanged: function onShowWhenFieldChanged(e, value, field) {
+      var self = this;
+
+      if (field.visible) {
+        self.ctnr.toggle(self.target, self.checkVisibilityRules(value));
+      } else {
+        self.ctnr.toggle(self.target, false);
+      }
+    },
+    onShowWhenFieldToggled: function onShowWhenFieldToggled(e, visible, field) {
+      var self = this;
+
+      if (visible) {
+        self.ctnr.toggle(self.target, self.checkVisibilityRules(field.val()));
+      } else {
+        self.ctnr.toggle(self.target, false);
+      }
     }
   });
 })(FooFields.$, FooFields, FooFields.utils, FooFields.utils.is, FooFields.utils.obj);
@@ -6839,6 +6858,9 @@ FooFields.utils, FooFields.utils.fn, FooFields.utils.str);
       var self = this;
       if (!self.exists) return;
       self.tab.$el.addClass(self.cls.exists);
+      self.$header.on('click', {
+        self: self
+      }, self.onHeaderClick);
       self.items.forEach(function (item) {
         item.on('toggle', self.onItemToggled, self);
         item.init();
@@ -6874,9 +6896,9 @@ FooFields.utils, FooFields.utils.fn, FooFields.utils.str);
       self.ctnr.$tabContainer.toggleClass(self.cls.showing, self.ctnr.$tabs.filter(self.sel.visible).length > 0);
 
       if (self.visible) {
-        self.instance.$doc.on("click.foofields", self.onDocumentClick);
+        self.instance.$doc.off("click.foofields-menu_" + self.tab.index).on("click.foofields-menu_" + self.tab.index, self.onDocumentClick);
       } else {
-        self.instance.$doc.off("click.foofields", self.onDocumentClick);
+        self.instance.$doc.off("click.foofields-menu_" + self.tab.index);
       }
     },
     item: function item(id) {
@@ -6908,7 +6930,10 @@ FooFields.utils, FooFields.utils.fn, FooFields.utils.str);
       var self = this;
 
       if (state) {
-        self.tab.$el.on({
+        self.tab.$el.off({
+          "mouseenter.foofields": self.onTabMouseEnter,
+          "mouseleave.foofields": self.onTabMouseLeave
+        }).on({
           "mouseenter.foofields": self.onTabMouseEnter,
           "mouseleave.foofields": self.onTabMouseLeave
         });
@@ -6950,8 +6975,17 @@ FooFields.utils, FooFields.utils.fn, FooFields.utils.str);
     },
     //endregion
     //region Listeners
-    onDocumentClick: function onDocumentClick() {
-      this.toggle(false);
+    onHeaderClick: function onHeaderClick(e) {
+      e.preventDefault();
+      var self = e.data.self;
+      self.ctnr.activate(self.tab.target);
+    },
+    onDocumentClick: function onDocumentClick(e) {
+      var self = this;
+
+      if (!$.contains(self.tab.el, e.target)) {
+        self.toggle(false);
+      }
     },
     onTabMouseEnter: function onTabMouseEnter() {
       var self = this;
@@ -6986,6 +7020,7 @@ FooFields.utils, FooFields.utils.fn, FooFields.utils.str);
       self.$el.toggleClass(self.cls.empty, !hasVisible);
       self.setSmall(hasVisible && self.instance.small);
       self.setHoverable(hasVisible && self.instance.hoverable);
+      self.exists = hasVisible;
     } //endregion
 
   });
@@ -7032,8 +7067,23 @@ FooFields.utils, FooFields.utils.fn, FooFields.utils.str);
       var self = e.data.self;
       self.ctnr.activate(self.target);
     },
-    onShowWhenFieldChanged: function onShowWhenFieldChanged(e, value) {
-      this.ctnr.toggle(this.target, this.checkVisibilityRules(value));
+    onShowWhenFieldChanged: function onShowWhenFieldChanged(e, value, field) {
+      var self = this;
+
+      if (field.visible) {
+        self.ctnr.toggle(self.target, self.checkVisibilityRules(value));
+      } else {
+        self.ctnr.toggle(self.target, false);
+      }
+    },
+    onShowWhenFieldToggled: function onShowWhenFieldToggled(e, visible, field) {
+      var self = this;
+
+      if (visible) {
+        self.ctnr.toggle(self.target, self.checkVisibilityRules(field.val()));
+      } else {
+        self.ctnr.toggle(self.target, false);
+      }
     }
   });
 })(FooFields.$, FooFields, FooFields.utils, FooFields.utils.is, FooFields.utils.obj);
@@ -7091,14 +7141,29 @@ FooFields.utils, FooFields.utils.fn, FooFields.utils.str);
 
       return result;
     },
-    onShowWhenFieldChanged: function onShowWhenFieldChanged(e, value) {
-      this.ctnr.toggle(this.id, this.checkVisibilityRules(value));
-    },
     val: function val() {
       return this.fields.reduce(function (result, field) {
         result[field.id] = field.val();
         return result;
       }, {});
+    },
+    onShowWhenFieldChanged: function onShowWhenFieldChanged(e, value, field) {
+      var self = this;
+
+      if (field.visible) {
+        self.ctnr.toggle(self.id, self.checkVisibilityRules(value));
+      } else {
+        self.ctnr.toggle(self.id, false);
+      }
+    },
+    onShowWhenFieldToggled: function onShowWhenFieldToggled(e, visible, field) {
+      var self = this;
+
+      if (visible) {
+        self.ctnr.toggle(self.id, self.checkVisibilityRules(field.val()));
+      } else {
+        self.ctnr.toggle(self.id, false);
+      }
     }
   });
 })(FooFields.$, FooFields, FooFields.utils, FooFields.utils.is, FooFields.utils.obj);
@@ -7577,13 +7642,6 @@ FooFields.utils, FooFields.utils.fn, FooFields.utils.str);
       }
 
       return result;
-    },
-    onShowWhenFieldChanged: function onShowWhenFieldChanged(e, value, field) {
-      if (field.visible) {
-        this.toggle(this.checkVisibilityRules(value));
-      } else {
-        this.toggle(false);
-      }
     },
     val: function val(value) {
       if (_is.object(value)) {
