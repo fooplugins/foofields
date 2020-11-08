@@ -25,6 +25,7 @@
 			if (!self.exists) return;
 
 			self.tab.$el.addClass(self.cls.exists);
+			self.$header.on('click', {self: self}, self.onHeaderClick);
 
 			self.items.forEach(function(item){
 				item.on('toggle', self.onItemToggled, self);
@@ -65,9 +66,10 @@
 			self.tab.$el.toggleClass(self.cls.visible, self.visible);
 			self.ctnr.$tabContainer.toggleClass(self.cls.showing, self.ctnr.$tabs.filter(self.sel.visible).length > 0);
 			if (self.visible){
-				self.instance.$doc.on("click.foofields", self.onDocumentClick);
+				self.instance.$doc.off("click.foofields-menu_" + self.tab.index)
+					.on("click.foofields-menu_" + self.tab.index, self.onDocumentClick);
 			} else {
-				self.instance.$doc.off("click.foofields", self.onDocumentClick);
+				self.instance.$doc.off("click.foofields-menu_" + self.tab.index);
 			}
 		},
 		item: function(id){
@@ -97,7 +99,10 @@
 		setHoverable: function(state){
 			var self = this;
 			if (state){
-				self.tab.$el.on({
+				self.tab.$el.off({
+					"mouseenter.foofields": self.onTabMouseEnter,
+					"mouseleave.foofields": self.onTabMouseLeave
+				}).on({
 					"mouseenter.foofields": self.onTabMouseEnter,
 					"mouseleave.foofields": self.onTabMouseLeave
 				});
@@ -139,8 +144,16 @@
 		//endregion
 
 		//region Listeners
-		onDocumentClick: function(){
-			this.toggle(false);
+		onHeaderClick: function(e){
+			e.preventDefault();
+			const self = e.data.self;
+			self.ctnr.activate(self.tab.target);
+		},
+		onDocumentClick: function(e){
+			const self = this;
+			if (!$.contains(self.tab.el, e.target)){
+				self.toggle(false);
+			}
 		},
 		onTabMouseEnter: function(){
 			var self = this;
@@ -173,6 +186,7 @@
 			self.$el.toggleClass(self.cls.empty, !hasVisible);
 			self.setSmall(hasVisible && self.instance.small);
 			self.setHoverable(hasVisible && self.instance.hoverable);
+			self.exists = hasVisible;
 		}
 		//endregion
 	});

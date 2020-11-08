@@ -124,19 +124,21 @@
 			return visible;
 		},
 		onShowWhenFieldChanged: function(e, value, field){
+			const self = this;
 			if (field.visible){
-				this.toggle(this.checkVisibilityRules(value));
+				self.toggle(self.checkVisibilityRules(value));
 			} else {
-				this.toggle(false);
+				self.toggle(false);
 			}
 		},
 		onShowWhenFieldToggled: function(e, visible, field){
+			const self = this;
 			if (visible){
-				this.toggle(this.checkVisibilityRules(field.val()));
+				self.toggle(self.checkVisibilityRules(field.val()));
 			} else {
-				this.toggle(false);
+				self.toggle(false);
 			}
-		}
+		},
 	});
 
 })(

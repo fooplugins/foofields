@@ -35,8 +35,21 @@
 			var self = e.data.self;
 			self.ctnr.activate(self.target);
 		},
-		onShowWhenFieldChanged: function(e, value){
-			this.ctnr.toggle(this.target, this.checkVisibilityRules(value));
+		onShowWhenFieldChanged: function(e, value, field){
+			const self = this;
+			if (field.visible){
+				self.ctnr.toggle(self.target, self.checkVisibilityRules(value));
+			} else {
+				self.ctnr.toggle(self.target, false);
+			}
+		},
+		onShowWhenFieldToggled: function(e, visible, field){
+			const self = this;
+			if (visible){
+				self.ctnr.toggle(self.target, self.checkVisibilityRules(field.val()));
+			} else {
+				self.ctnr.toggle(self.target, false);
+			}
 		}
 	});
 

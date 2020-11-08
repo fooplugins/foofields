@@ -36,13 +36,6 @@
 			}
 			return result;
 		},
-		onShowWhenFieldChanged: function(e, value, field){
-			if (field.visible){
-				this.toggle(this.checkVisibilityRules(value));
-			} else {
-				this.toggle(false);
-			}
-		},
 		val: function(value){
 			if (_is.object(value)){
 				this.fields.forEach(function(field){

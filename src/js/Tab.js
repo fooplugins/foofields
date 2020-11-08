@@ -4,6 +4,7 @@
 		construct: function(ctnr, el, index){
 			var self = this;
 			self._super(ctnr.instance, ctnr, el, ctnr.cls.tabs.tab, ctnr.sel.tabs.tab);
+			self.el = self.$el.get(0);
 			self.index = index;
 			self.$link = self.$el.children(self.sel.link).first();
 			self.$icon = self.$link.children(self.sel.icon).first();
@@ -41,7 +42,6 @@
 		},
 		onLinkClick: function(e){
 			e.preventDefault();
-			e.stopPropagation();
 			var self = e.data.self;
 			if (self.menu.exists && self.instance.small && !self.instance.hoverable){
 				self.menu.toggle();
@@ -49,8 +49,21 @@
 				self.ctnr.activate(self.target);
 			}
 		},
-		onShowWhenFieldChanged: function(e, value){
-			this.ctnr.toggle(this.target, this.checkVisibilityRules(value));
+		onShowWhenFieldChanged: function(e, value, field){
+			const self = this;
+			if (field.visible){
+				self.ctnr.toggle(self.target, self.checkVisibilityRules(value));
+			} else {
+				self.ctnr.toggle(self.target, false);
+			}
+		},
+		onShowWhenFieldToggled: function(e, visible, field){
+			const self = this;
+			if (visible){
+				self.ctnr.toggle(self.target, self.checkVisibilityRules(field.val()));
+			} else {
+				self.ctnr.toggle(self.target, false);
+			}
 		}
 	});
 

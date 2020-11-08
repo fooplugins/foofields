@@ -43,14 +43,27 @@
 			}
 			return result;
 		},
-		onShowWhenFieldChanged: function(e, value){
-			this.ctnr.toggle(this.id, this.checkVisibilityRules(value));
-		},
 		val: function(){
 			return this.fields.reduce(function(result, field){
 				result[field.id] = field.val();
 				return result;
 			}, {});
+		},
+		onShowWhenFieldChanged: function(e, value, field){
+			const self = this;
+			if (field.visible){
+				self.ctnr.toggle(self.id, self.checkVisibilityRules(value));
+			} else {
+				self.ctnr.toggle(self.id, false);
+			}
+		},
+		onShowWhenFieldToggled: function(e, visible, field){
+			const self = this;
+			if (visible){
+				self.ctnr.toggle(self.id, self.checkVisibilityRules(field.val()));
+			} else {
+				self.ctnr.toggle(self.id, false);
+			}
 		}
 	});
 
