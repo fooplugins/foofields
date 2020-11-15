@@ -38,7 +38,11 @@
 		onShowWhenFieldChanged: function(e, value, field){
 			const self = this;
 			if (field.visible){
-				self.ctnr.toggle(self.target, self.checkVisibilityRules(value));
+				const visible = self.checkVisibilityRules(value);
+				if (visible && !self.menu.exists){
+					self.menu.exists = true;
+				}
+				self.ctnr.toggle(self.target, visible);
 			} else {
 				self.ctnr.toggle(self.target, false);
 			}
@@ -46,7 +50,11 @@
 		onShowWhenFieldToggled: function(e, visible, field){
 			const self = this;
 			if (visible){
-				self.ctnr.toggle(self.target, self.checkVisibilityRules(field.val()));
+				const visible = self.checkVisibilityRules(field.val());
+				if (visible && !self.menu.exists){
+					self.menu.exists = true;
+				}
+				self.ctnr.toggle(self.target, visible);
 			} else {
 				self.ctnr.toggle(self.target, false);
 			}
