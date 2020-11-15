@@ -7071,7 +7071,13 @@ FooFields.utils, FooFields.utils.fn, FooFields.utils.str);
       var self = this;
 
       if (field.visible) {
-        self.ctnr.toggle(self.target, self.checkVisibilityRules(value));
+        var visible = self.checkVisibilityRules(value);
+
+        if (visible && !self.menu.exists) {
+          self.menu.exists = true;
+        }
+
+        self.ctnr.toggle(self.target, visible);
       } else {
         self.ctnr.toggle(self.target, false);
       }
@@ -7080,7 +7086,13 @@ FooFields.utils, FooFields.utils.fn, FooFields.utils.str);
       var self = this;
 
       if (visible) {
-        self.ctnr.toggle(self.target, self.checkVisibilityRules(field.val()));
+        var _visible = self.checkVisibilityRules(field.val());
+
+        if (_visible && !self.menu.exists) {
+          self.menu.exists = true;
+        }
+
+        self.ctnr.toggle(self.target, _visible);
       } else {
         self.ctnr.toggle(self.target, false);
       }
