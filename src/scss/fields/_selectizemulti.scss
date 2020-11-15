@@ -2,22 +2,6 @@
   .foofields-field-input {
 	.selectize-control {
 
-	  &.loading {
-		.selectize-input:after {
-		  background: url(/wp-admin/images/spinner.gif) no-repeat;
-		  background-size: 20px 20px;
-		  display: inline-block;
-		  opacity: 0.7;
-		  filter: alpha(opacity=70);
-		  width: 20px;
-		  height: 20px;
-		  top: 50%;
-		  margin-top: -10px;
-		  border: none;
-		  position: absolute;
-		}
-	  }
-
 	  &.multi {
 		.selectize-input:after {
 		  content: ' ';
@@ -33,7 +17,25 @@
 		}
 	  }
 
+	  &.loading,
+	  &.multi.loading {
+		.selectize-input:after {
+		  background: url(/wp-admin/images/spinner.gif) no-repeat;
+		  background-size: 20px 20px;
+		  display: inline-block;
+		  opacity: 0.7;
+		  filter: alpha(opacity=70);
+		  width: 20px;
+		  height: 20px;
+		  top: 50%;
+		  margin-top: -10px;
+		  border: none;
+		  position: absolute;
+		}
+	  }
+
 	  .selectize-input {
+		display: block;
 		box-shadow: none;
 		border-radius: 4px;
 		border: 1px solid #a0a0a0;
