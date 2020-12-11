@@ -956,8 +956,14 @@ if ( ! class_exists( 'FooPlugins\FooFields\Admin\Movie\MetaboxTest' ) ) {
 								'type'     => 'help',
 							),
 							array(
+								'id'       => 'repeater_text',
+								'label'    => __( 'Text Field', 'foofields' ),
+								'desc'     => __( 'This is a normal text input, just here to compare the repeater CSS to.', 'foofields' ),
+								'type'     => 'text'
+							),
+							array(
 								'id'       => 'repeater',
-								//'label'    => __( 'Repeater Field', 'foofields' ),
+								'label'    => __( 'Repeater Field', 'foofields' ),
 								'desc'     => __( 'A repeater field', 'foofields' ),
 								'type'     => 'repeater',
 								'add_button_text'   => __( 'Add Note', 'foofields' ),
@@ -1020,7 +1026,13 @@ if ( ! class_exists( 'FooPlugins\FooFields\Admin\Movie\MetaboxTest' ) ) {
 										'type'     => 'repeater-delete',
 									),
 								)
-							)
+							),
+							array(
+								'id'       => 'repeater_text_2',
+								'label'    => __( 'Text Field 2', 'foofields' ),
+								'desc'     => __( 'This is a normal text input, just here to compare the repeater CSS to.', 'foofields' ),
+								'type'     => 'text'
+							),
 						)
 					),
 					array(
