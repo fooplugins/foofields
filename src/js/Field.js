@@ -98,7 +98,7 @@
 		doValueChanged: function(){
 			const self = this, value = self.val();
 			self.trigger("change", [value, self]);
-			self.instance.trigger("change", [self, value]);
+			self.ctnr.trigger("change", [self, value]);
 		},
 		onValueChanged: function(e){
 			e.data.self.doValueChanged();

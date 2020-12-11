@@ -75,7 +75,7 @@
 			self.visible = _is.boolean(state) ? state : !self.visible;
 			self.$el.toggleClass(self.instance.cls.hidden, !self.visible);
 			self.trigger("toggle", [self.visible, self]);
-			self.instance.trigger("toggle", [self, self.visible]);
+			self.ctnr.trigger("toggle", [self, self.visible]);
 		},
 		setupVisibilityRules: function(){
 			var self = this;

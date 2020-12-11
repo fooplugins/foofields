@@ -7,17 +7,22 @@
 			self.fields = self.$el.children(self.sel.el).map(function(i, el){
 				return _.fields.create(self, el);
 			}).get();
+			self._changeId = null;
 		},
 		init: function(){
 			var self = this;
 			self._super();
 			self.fields.forEach(function(field){
+				field.on("change", self.onFieldChange, self);
 				field.init();
 			});
 		},
 		destroy: function(){
 			var self = this;
+			if (self._changeId !== null) clearTimeout(self._changeId);
+			self._changeId = null;
 			self.fields.forEach(function(field){
+				field.off("change", self.onFieldChange, self);
 				field.destroy();
 			});
 			self._super();
@@ -49,10 +54,26 @@
 					return result;
 				}, {});
 			}
+		},
+		doValueChanged: function(){
+			// override the base method to prevent raising duplicate events on the container
+			const self = this, value = self.val();
+			self.trigger("change", [value, self]);
+		},
+		onFieldChange: function(){
+			const self = this;
+			if (self._changeId !== null) clearTimeout(self._changeId);
+			self._changeId = setTimeout(function(){
+				self._changeId = null;
+				self.doValueChanged();
+			}, 50);
 		}
 	});
 
-	_.fields.register("field-group", _.FieldGroup, ".foofields-type-field-group", {}, {}, {});
+	_.fields.register("field-group", _.FieldGroup, ".foofields-type-field-group", {
+		changeSelector: "code.fbr-does-not-exist",
+		valueSelector: "code.fbr-does-not-exist",
+	}, {}, {});
 
 })(
 	FooFields.$,

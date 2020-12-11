@@ -25,7 +25,7 @@
 		doValueChanging: function(value){
 			const self = this;
 			self.trigger("changing", [value, self]);
-			self.instance.trigger("changing", [self, value]);
+			self.ctnr.trigger("changing", [self, value]);
 		},
 		onColorPickerClear: function(){
 			this.doValueChanged();
