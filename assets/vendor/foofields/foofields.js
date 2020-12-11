@@ -6486,7 +6486,7 @@ FooFields.utils, FooFields.utils.fn, FooFields.utils.str);
       self.visible = _is.boolean(state) ? state : !self.visible;
       self.$el.toggleClass(self.instance.cls.hidden, !self.visible);
       self.trigger("toggle", [self.visible, self]);
-      self.instance.trigger("toggle", [self, self.visible]);
+      self.ctnr.trigger("toggle", [self, self.visible]);
     },
     setupVisibilityRules: function setupVisibilityRules() {
       var self = this;
@@ -7462,7 +7462,7 @@ FooFields.utils, FooFields.utils.fn, FooFields.utils.str);
       var self = this,
           value = self.val();
       self.trigger("change", [value, self]);
-      self.instance.trigger("change", [self, value]);
+      self.ctnr.trigger("change", [self, value]);
     },
     onValueChanged: function onValueChanged(e) {
       e.data.self.doValueChanged();
@@ -7575,7 +7575,7 @@ FooFields.utils, FooFields.utils.fn, FooFields.utils.str);
     doValueChanging: function doValueChanging(value) {
       var self = this;
       self.trigger("changing", [value, self]);
-      self.instance.trigger("changing", [self, value]);
+      self.ctnr.trigger("changing", [self, value]);
     },
     onColorPickerClear: function onColorPickerClear() {
       this.doValueChanged();
@@ -7620,6 +7620,7 @@ FooFields.utils, FooFields.utils.fn, FooFields.utils.str);
       self.fields = self.$el.children(self.sel.el).map(function (i, el) {
         return _.fields.create(self, el);
       }).get();
+      self._changeId = null;
     },
     init: function init() {
       var self = this;
@@ -7627,12 +7628,16 @@ FooFields.utils, FooFields.utils.fn, FooFields.utils.str);
       self._super();
 
       self.fields.forEach(function (field) {
+        field.on("change", self.onFieldChange, self);
         field.init();
       });
     },
     destroy: function destroy() {
       var self = this;
+      if (self._changeId !== null) clearTimeout(self._changeId);
+      self._changeId = null;
       self.fields.forEach(function (field) {
+        field.off("change", self.onFieldChange, self);
         field.destroy();
       });
 
@@ -7668,10 +7673,27 @@ FooFields.utils, FooFields.utils.fn, FooFields.utils.str);
           return result;
         }, {});
       }
+    },
+    doValueChanged: function doValueChanged() {
+      // override the base method to prevent raising duplicate events on the container
+      var self = this,
+          value = self.val();
+      self.trigger("change", [value, self]);
+    },
+    onFieldChange: function onFieldChange() {
+      var self = this;
+      if (self._changeId !== null) clearTimeout(self._changeId);
+      self._changeId = setTimeout(function () {
+        self._changeId = null;
+        self.doValueChanged();
+      }, 50);
     }
   });
 
-  _.fields.register("field-group", _.FieldGroup, ".foofields-type-field-group", {}, {}, {});
+  _.fields.register("field-group", _.FieldGroup, ".foofields-type-field-group", {
+    changeSelector: "code.fbr-does-not-exist",
+    valueSelector: "code.fbr-does-not-exist"
+  }, {}, {});
 })(FooFields.$, FooFields, FooFields.utils, FooFields.utils.is, FooFields.utils.obj);
 "use strict";
 
@@ -7701,6 +7723,36 @@ FooFields.utils, FooFields.utils.fn, FooFields.utils.str);
     valueFilter: ":checked"
   }, {}, {});
 })(FooFields.$, FooFields, FooFields.utils.is, FooFields.utils.obj);
+"use strict";
+
+(function ($, _, _is, _fn, _obj) {
+  _.Input = _.Field.extend({
+    setup: function setup() {
+      var self = this;
+      self.currentValue = self.val();
+      self.debouncedId = null;
+      self.$change.off("change", self.onValueChanged).on('input.foofields', {
+        self: self
+      }, self.onInputChange);
+    },
+    teardown: function teardown() {
+      var self = this;
+      clearTimeout(self.debouncedId);
+      self.$change.off('.foofields');
+    },
+    onInputChange: function onInputChange(e) {
+      var self = e.data.self,
+          val = self.val();
+
+      if (val !== self.currentValue) {
+        self.currentValue = val;
+        self.doValueChanged();
+      }
+    }
+  });
+
+  _.fields.register("input", _.Input, ".foofields-type-text,.foofields-type-textarea", {}, {}, {});
+})(FooFields.$, FooFields, FooFields.utils.is, FooFields.utils.fn, FooFields.utils.obj);
 "use strict";
 
 (function ($, _, _is, _obj) {
