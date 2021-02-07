@@ -17,6 +17,11 @@ if ( ! class_exists( __NAMESPACE__ . '\Container' ) ) {
 		public $config;
 
 		/**
+		 * @var Manager
+		 */
+		public $manager;
+
+		/**
 		 * @var Field[]
 		 */
 		protected $fields = array();
@@ -24,25 +29,12 @@ if ( ! class_exists( __NAMESPACE__ . '\Container' ) ) {
 		/**
 		 * @var array
 		 */
+		public $unique_field_types = array();
+
+		/**
+		 * @var array
+		 */
 		protected $state = null;
-
-		/**
-		 * The textdomain of the plugin
-		 * @var string
-		 */
-		public $text_domain;
-
-		/**
-		 * The base URL of the plugin. Used for building URL's for enqueue asset calls
-		 * @var mixed
-		 */
-		public $plugin_url;
-
-		/**
-		 * The version of the plugin. Used for versioning enqueue asset calls
-		 * @var mixed
-		 */
-		public $plugin_version;
 
 		/**
 		 * Config validation errors
@@ -77,25 +69,19 @@ if ( ! class_exists( __NAMESPACE__ . '\Container' ) ) {
 			'htmllist'        => __NAMESPACE__ . '\Fields\InputList',
 			'repeater-index'  => __NAMESPACE__ . '\Fields\RepeaterIndex',
 			'repeater-delete' => __NAMESPACE__ . '\Fields\RepeaterDelete',
-			'field-group'     => __NAMESPACE__ . '\Fields\FieldGroup'
+			'field-group'     => __NAMESPACE__ . '\Fields\FieldGroup',
+			'time'            => __NAMESPACE__ . '\Fields\Time',
+			'datetime'        => __NAMESPACE__ . '\Fields\DateTime'
 		);
 
 		function __construct( $config ) {
 			$this->config = $config;
 
-			if ( isset( $config['text_domain'] ) ) {
-				$this->text_domain = $config['text_domain'];
-			}
-			if ( isset( $config['plugin_url'] ) ) {
-				$this->plugin_url = $config['plugin_url'];
-			}
-			if ( isset( $config['plugin_version'] ) ) {
-				$this->plugin_version = $config['plugin_version'];
-			}
-
 			$this->validate_config();
-			if ( isset( $this->config['fields'] ) ) {
-				$this->parse_config( $this->config['fields'] );
+
+			if ( isset( $this->config['manager'] ) ) {
+				$this->manager = namespace\Manager::get_manager( $this->config['manager'] );
+				$this->manager->register_container( $this );
 			}
 		}
 
@@ -103,14 +89,8 @@ if ( ! class_exists( __NAMESPACE__ . '\Container' ) ) {
 		 * Base validation for all containers
 		 */
 		function validate_config() {
-			if ( ! isset( $this->text_domain ) ) {
-				$this->add_config_validation_error( __( 'ERROR : There is no "text_domain" value set! Translations will not work!' ) );
-			}
-			if ( ! isset( $this->plugin_url ) ) {
-				$this->add_config_validation_error( __( 'ERROR : There is no "plugin_url" value set! Things will not work!' ) );
-			}
-			if ( ! isset( $this->plugin_version ) ) {
-				$this->add_config_validation_error( __( 'ERROR : There is no "plugin_version" value set! Things will not work!' ) );
+			if ( !isset( $this->config['manager'] ) ) {
+				$this->add_config_validation_error( __( 'ERROR : There is no "manager" value set for the container, which means nothing will work!' ) );
 			}
 		}
 
@@ -125,15 +105,15 @@ if ( ! class_exists( __NAMESPACE__ . '\Container' ) ) {
 			$error_field = array(
 				'id'   => 'validation_error_' . count( $this->config_validation_errors ),
 				'type' => 'error',
-				'desc' => $error_message
+				'text' => $error_message,
+				'order' => -1
 			);
 
-			//append the error field to the start of the fields array
 			if ( ! isset( $this->config['fields'] ) ) {
-				$this->config['fields'] = array( $error_field );
-			} else {
-				$this->config['fields'] = array_merge( array( $error_field ), $this->config['fields'] );
+				$this->config['fields'] = array();
 			}
+
+			$this->config['fields'][] = $error_field;
 		}
 
 		/**
@@ -142,7 +122,12 @@ if ( ! class_exists( __NAMESPACE__ . '\Container' ) ) {
 		 * @param $config
 		 * @param string $parent_id
 		 */
-		function parse_config( &$config, $parent_id = null ) {
+		function parse_config( &$config = null, $parent_id = null ) {
+			if ( !isset( $config ) ) {
+				$config = $this->config;
+			}
+
+			//parse any tabs
 			if ( isset( $config['tabs'] ) ) {
 				foreach ( $config['tabs'] as &$tab ) {
 					$this->parse_config( $tab, $tab['id'] );
@@ -152,13 +137,11 @@ if ( ! class_exists( __NAMESPACE__ . '\Container' ) ) {
 				}
 			}
 
+			//parse any fields
 			if ( isset( $config['fields'] ) ) {
 				foreach ( $config['fields'] as &$field ) {
 					$field_type = isset( $field['type'] ) ? $field['type'] : 'unknown';
-					$this->create_field_instance( $field_type,$field, $parent_id );
-
-					//check if the field has any data show rules
-					$this->show_rule_add( $field, 'fields' );
+					$this->create_field_instance( $field_type, $field, $parent_id );
 				}
 			}
 		}
@@ -240,8 +223,13 @@ if ( ! class_exists( __NAMESPACE__ . '\Container' ) ) {
 			if ( array_key_exists( $field_id, $this->fields ) ) {
 				$field_config['id'] = $field_config['id'] . '_duplicate';
 				$field_config['type'] = $field_type = 'error';
-				$field_config['text'] = sprintf( __( 'ERROR : Duplicate field id: %s', $this->text_domain ), $field_config['id'] );
+				$field_config['text'] = sprintf( __( 'ERROR : Duplicate field id: %s', $this->manager->text_domain ), $field_config['id'] );
 				$field_id = $this->get_unique_id( $field_config );
+			}
+
+			//if we have a parent (tab) then set it on the config
+			if ( $parent_id !== null ) {
+				$field_config['parent_id'] = $parent_id;
 			}
 
 			$mappings = $this->get_field_type_mappings();
@@ -250,10 +238,19 @@ if ( ! class_exists( __NAMESPACE__ . '\Container' ) ) {
 				$field_instance_type = $mappings[ $field_type ];
 				$field_instance      = new $field_instance_type( $this, $field_type, $field_config );
 			} else {
+				$field_instance_type = __NAMESPACE__ . '\Fields\Field';
 				$field_instance = new Field( $this, $field_type, $field_config );
 			}
-			$field_instance->parent_id = $parent_id;
+			if ( $parent_id !== null ) {
+				$field_instance->parent_id = $parent_id;
+			}
 			$this->fields[ $field_id ] = $field_instance;
+			if ( !in_array( $field_type, $this->unique_field_types ) ) {
+				$this->unique_field_types[$field_type] = $field_instance_type;
+			}
+
+			//check if the field has any data show rules
+			$this->show_rule_add( $field_config, 'fields' );
 
 			return $field_instance;
 		}
@@ -296,7 +293,7 @@ if ( ! class_exists( __NAMESPACE__ . '\Container' ) ) {
 		 * Returns true if the container has fields
 		 * @return bool
 		 */
-		protected function has_fields() {
+		public function has_fields() {
 			$this->load_fields();
 
 			return count( $this->fields ) > 0;
@@ -401,24 +398,7 @@ if ( ! class_exists( __NAMESPACE__ . '\Container' ) ) {
 		 * Enqueues all assets
 		 */
 		protected function enqueue_all() {
-			//enqueue assets if there are any fields
-			if ( $this->has_fields() ) {
-				wp_enqueue_script( 'selectize', $this->config['plugin_url'] . 'assets/vendor/selectize/selectize.min.js', array( 'jquery' ), $this->config['plugin_version'] );
-				wp_enqueue_script( 'foofields', $this->config['plugin_url'] . 'assets/vendor/foofields/foofields.min.js', array(
-					'jquery',
-					'jquery-ui-sortable',
-					'suggest',
-					'wp-color-picker',
-					'selectize'
-				), $this->config['plugin_version'] );
-
-				wp_enqueue_style( 'selectize', $this->config['plugin_url'] . 'assets/vendor/selectize/selectize.css', array(), $this->config['plugin_version'] );
-				wp_enqueue_style( 'foofields', $this->config['plugin_url'] . 'assets/vendor/foofields/foofields.min.css', array(
-					'wp-color-picker',
-					'selectize'
-				), $this->config['plugin_version'] );
-			}
-
+			$this->manager->enqueue_assets();
 			$this->do_action( 'enqueue_assets' );
 
 			//enqueue any scripts provided from config
@@ -444,7 +424,7 @@ if ( ! class_exists( __NAMESPACE__ . '\Container' ) ) {
 		function get_container_classes() {
 			$classes[] = 'foofields-container';
 			if ( ! isset( $this->config['layout'] ) ) {
-				if ( isset( $this->config['fields'] ) && isset( $this->config['fields']['tabs'] ) ) {
+				if ( isset( $this->config['tabs'] ) ) {
 					$classes[] = 'foofields-tabs-vertical';
 				}
 			} else {
@@ -458,15 +438,28 @@ if ( ! class_exists( __NAMESPACE__ . '\Container' ) ) {
 		 * merges fields passed into the constructor with merges from get_fields()
 		 */
 		protected function load_fields() {
-			$fields = $this->get_fields();
+			if ( count( $this->fields ) === 0 ) {
 
-			if ( !empty( $fields ) ) {
-				//clear any fields we had before
-				$this->fields = array();
+				$must_parse = false;
 
-				$this->config['fields'] = $fields;
+				//get any fields
+				$fields = $this->get_fields();
+				if ( !empty( $fields ) ) {
+					$this->config['fields'] = $fields;
+					$must_parse = true;
+				}
 
-				$this->parse_config( $fields );
+				//get any tabs
+				$tabs = $this->get_tabs();
+				if ( !empty( $tabs ) ) {
+					$this->config['tabs'] = $tabs;
+					$must_parse = true;
+				}
+
+				if ( $must_parse ) {
+					//parse the config again, if we need to
+					$this->parse_config();
+				}
 			}
 		}
 
@@ -476,6 +469,23 @@ if ( ! class_exists( __NAMESPACE__ . '\Container' ) ) {
 		 * @return array
 		 */
 		protected function get_fields() {
+			if ( isset( $this->config['fields'] ) ) {
+				return $this->config['fields'];
+			}
+
+			return array();
+		}
+
+		/**
+		 * Allows the tabs to be specified in a function, rather than being passed into the constructor
+		 *
+		 * @return array
+		 */
+		protected function get_tabs() {
+			if ( isset( $this->config['tabs'] ) ) {
+				return $this->config['tabs'];
+			}
+
 			return array();
 		}
 
@@ -490,7 +500,7 @@ if ( ! class_exists( __NAMESPACE__ . '\Container' ) ) {
 			$this->render_fields_before();
 
 			self::render_html_tag( 'div', array(
-				'id' => $this->container_id(),
+				'id' => $this->container_id() . '-container',
 				'class' => implode( ' ', $this->get_container_classes() )
 			), null, false );
 
@@ -501,9 +511,9 @@ if ( ! class_exists( __NAMESPACE__ . '\Container' ) ) {
 				'value' => $this->container_last_state_value()
 			) );
 
-			$this->render_tabs( $this->config['fields'] );
+			$this->render_tabs();
 
-			$this->render_contents( $this->config['fields'] );
+			$this->render_content( $this->config );
 
 			echo '</div>';
 
@@ -530,38 +540,49 @@ if ( ! class_exists( __NAMESPACE__ . '\Container' ) ) {
 
 		/**
 		 * Renders the tabs
-		 *
-		 * @param $fields
 		 */
-		function render_tabs( $fields ) {
-			if ( ! isset( $fields['tabs'] ) ) {
+		function render_tabs() {
+			if ( ! isset( $this->config['tabs'] ) ) {
 				return;
 			}
 
 			echo '<ul class="foofields-tabs">';
-			foreach ( $fields['tabs'] as $tab ) {
+			foreach ( $this->get_ordered_array( $this->config['tabs'] ) as $tab ) {
 				$this->render_tab( $tab );
 			}
 			echo '</ul>';
 		}
 
 		/**
-		 * Renders the contents
+		 * Returns a sorted array of things (tabs or fields)
 		 *
-		 * @param $fields
+		 * @param $things
+		 *
+		 * @return
 		 */
-		function render_contents( $fields ) {
-			if ( ! isset( $fields['tabs'] ) ) {
-				if ( isset( $fields['fields'] ) ) {
-					$this->render_content( $fields );
+		function get_ordered_array( $things ) {
+			uasort( $things, array( $this, 'sort_order' ) );
+
+			return $things;
+		}
+
+		/**
+		 * Used to sort things
+		 *
+		 * @param mixed $a
+		 * @param mixed $b
+		 *
+		 * @return int
+		 */
+		function sort_order( $a, $b ) {
+			if ( isset( $a['order'] ) && isset( $b['order'] ) ) {
+				if ( $a['order'] === $b['order'] ) {
+					return 0;
 				}
-
-				return;
+				return ( $a['order'] < $b['order'] ) ? -1 : 1;
 			}
 
-			foreach ( $fields['tabs'] as $tab ) {
-				$this->render_content( $tab, $tab['id'] );
-			}
+			return 0;
 		}
 
 		/**
@@ -569,18 +590,33 @@ if ( ! class_exists( __NAMESPACE__ . '\Container' ) ) {
 		 *
 		 * @param $tab
 		 * @param string $class
+		 * @param string $anchor_class
 		 */
 		function render_tab( $tab, $class = 'foofields-tab', $anchor_class = 'foofields-tab-link' ) {
 			$tab_content_id = $tab['id'];
+			$sorted_tabs = null;
 
-			if ( ! isset( $tab['fields'] ) && isset( $tab['tabs'] ) ) {
-				//set the tab_id to be the first child tab
-				$tab_content_id = $tab['tabs'][0]['id'];
+			if ( isset( $tab['tabs'] ) ) {
+				$sorted_tabs = $this->get_ordered_array( $tab['tabs'] );
 			}
-			$tab_classes = array( $class );
+
+			if ( ! isset( $tab['fields'] ) && isset( $sorted_tabs ) ) {
+				//set the tab_id to be the first child tab
+				$first_tab = reset( $sorted_tabs );
+				$tab_content_id = $first_tab['id'];
+			}
+
 			$tab_id = $this->get_unique_id( array( 'id' => $tab_content_id ) );
-			if ( !$this->show_rule_is_visible( $tab_id, 'tabs' ) ) {
+
+			$tab_classes = array( $class );
+
+			//check if the tab content is hidden, if so then hide the tab too
+			if ( isset( $tab['class'] ) && strpos( $tab['class'], 'foofields-hidden' ) !== false ) {
 				$tab_classes[] = 'foofields-hidden';
+			} else {
+				if ( !$this->show_rule_is_visible( $tab_id, 'tabs' ) ) {
+					$tab_classes[] = 'foofields-hidden';
+				}
 			}
 
 			$last_state = $this->container_last_state_value();
@@ -621,9 +657,9 @@ if ( ! class_exists( __NAMESPACE__ . '\Container' ) ) {
 			}
 
 			echo '</a>';
-			if ( isset( $tab['tabs'] ) ) {
+			if ( isset( $sorted_tabs ) ) {
 				echo '<ul class="foofields-tab-menu">';
-				foreach ( $tab['tabs'] as $child_tab ) {
+				foreach ( $sorted_tabs as $child_tab ) {
 					self::render_tab( $child_tab, 'foofields-tab-menu-item', 'foofields-tab-menu-link' );
 				}
 				echo '</ul>';
@@ -681,22 +717,24 @@ if ( ! class_exists( __NAMESPACE__ . '\Container' ) ) {
 					'id'    => $content_id
 				), null, false );
 
-				//check if there are any errors stored in the state
-				$errors = $this->get_field_errors( $parent_id );
-				if ( $errors !== false && is_array( $errors ) && count( $errors ) > 0 ) {
-					$error_message = '<strong>' . esc_html( __( 'The following errors were found:', $this->text_domain ) ) . '</strong><br />';
-					$error_message .= implode( '<br />', $errors );
+				if ( $parent_id !== null ) {
+					//check if there are any errors stored in the state, and render them
+					$errors = $this->get_field_errors( $parent_id );
+					if ( $errors !== false && is_array( $errors ) && count( $errors ) > 0 ) {
+						$error_message = '<strong>' . esc_html( __( 'The following errors were found:', $this->manager->text_domain ) ) . '</strong><br />';
+						$error_message .= implode( '<br />', $errors );
 
-					$error_field_config = array(
-						'id' => 'errors_' . $parent_id,
-						'type' => 'error',
-						'text' => $error_message,
-						'class' => 'foofields-colspan-4'
-					);
+						$error_field_config = array(
+							'id'    => 'errors_' . $parent_id,
+							'type'  => 'error',
+							'text'  => $error_message,
+							'class' => 'foofields-colspan-4'
+						);
 
-					$error_field_object = $this->create_field_instance( 'error', $error_field_config, $parent_id );
-					$error_field_object->pre_render();
-					$error_field_object->render( false );
+						$error_field_object = $this->create_field_instance( 'error', $error_field_config, $parent_id );
+						$error_field_object->pre_render();
+						$error_field_object->render( false );
+					}
 				}
 
 				$this->render_fields( $content['fields'] );
@@ -716,7 +754,7 @@ if ( ! class_exists( __NAMESPACE__ . '\Container' ) ) {
 		 * @param array $fields
 		 */
 		function render_fields( $fields ) {
-			foreach ( $fields as $field_config ) {
+			foreach ( $this->get_ordered_array( $fields ) as $field_config ) {
 				$field_id = $this->get_unique_id( $field_config );
 				if ( array_key_exists( $field_id, $this->fields ) ) {
 					$field_instance = $this->fields[ $field_id ];
@@ -735,6 +773,10 @@ if ( ! class_exists( __NAMESPACE__ . '\Container' ) ) {
 		 */
 		function get_state_value( $field_config ) {
 			$state = $this->get_state();
+
+			if ( !isset( $field_config['id'] ) ) {
+				return '';
+			}
 
 			if ( is_array( $state ) && array_key_exists( $field_config['id'], $state ) ) {
 				return $state[ $field_config['id'] ];
@@ -815,7 +857,22 @@ if ( ! class_exists( __NAMESPACE__ . '\Container' ) ) {
 			if ( 'show-when' === $key && is_array( $value ) ) {
 				$value['field'] = $this->get_unique_id( array( 'id' => $value['field'] ) ) . '-field';
 			}
-			return is_array( $value ) ? json_encode( $value ) : $value;
+			return is_array( $value ) ? $this->json_encode( $value ) : $value;
+		}
+
+		/**
+		 * JSON encodes the provides options array into a string
+		 *
+		 * @param $options
+		 *
+		 * @return array|false|string
+		 */
+		function json_encode( $options ){
+			if ( defined( 'JSON_UNESCAPED_UNICODE' ) ) {
+				return json_encode( $options, JSON_UNESCAPED_UNICODE );
+			} else {
+				return json_encode( $options );
+			}
 		}
 
 		/***

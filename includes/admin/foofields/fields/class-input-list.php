@@ -44,7 +44,9 @@ if ( ! class_exists( __NAMESPACE__ . '\InputList' ) ) {
 				$label_attributes = array();
 				$inner = null;
 				if ( is_array( $item ) ) {
-					$inner = $item['label'];
+					if ( isset( $item['label'] ) ) {
+						$inner = $item['label'];
+					}
 					if ( isset( $item['tooltip'] ) ) {
 						$label_attributes = array_merge( $label_attributes, $this->get_tooltip_attributes( $item['tooltip'] ) );
 					}

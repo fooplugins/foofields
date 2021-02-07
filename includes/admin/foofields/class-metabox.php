@@ -21,6 +21,13 @@ if ( ! class_exists( __NAMESPACE__ . '\Metabox' ) ) {
 
 			//enqueue assets needed for this metabox
 			add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_assets' ) );
+
+			if ( isset( $config['disable_close'] ) && $config['disable_close'] === true ) {
+				$filter = 'postbox_classes_' . $this->config['post_type'] . '_' . $this->container_id();
+				add_filter( $filter, array( $this, 'ensure_metabox_not_closed' ) );
+			}
+
+			add_action( 'admin_init', array( $this, 'init_fields_for_ajax' ) );
 		}
 
 		/**
@@ -58,14 +65,16 @@ if ( ! class_exists( __NAMESPACE__ . '\Metabox' ) ) {
 				$this->config['metabox_render_function'] = array( $this, 'render_metabox' );
 			}
 
-			add_meta_box(
-					$this->container_id(),
-					$this->config['metabox_title'],
-					$this->config['metabox_render_function'],
-					$this->config['post_type'],
-					isset( $this->config['context'] ) ? $this->config['context'] : 'normal',
-					isset( $this->config['priority'] ) ? $this->config['priority'] : 'default'
-			);
+			if ( $this->apply_filters( 'must_add_meta_boxes', true ) ) {
+				add_meta_box(
+						$this->container_id(),
+						$this->config['metabox_title'],
+						$this->config['metabox_render_function'],
+						$this->config['post_type'],
+						isset( $this->config['context'] ) ? $this->config['context'] : 'normal',
+						isset( $this->config['priority'] ) ? $this->config['priority'] : 'default'
+				);
+			}
 		}
 
 		/**
@@ -103,11 +112,11 @@ if ( ! class_exists( __NAMESPACE__ . '\Metabox' ) ) {
 					$state = get_post_meta( $this->post->ID, $this->config['meta_key'], true );
 				}
 
+				$state = $this->apply_filters( 'get_state', $state, $this->post );
+
 				if ( ! is_array( $state ) ) {
 					$state = array();
 				}
-
-				$state = $this->apply_filters( 'get_state', $state, $this->post );
 
 				$this->state = $state;
 			}
@@ -181,10 +190,8 @@ if ( ! class_exists( __NAMESPACE__ . '\Metabox' ) ) {
 
 		/***
 		 * Enqueue the assets needed by the metabox
-		 *
-		 * @param $hook_suffix
 		 */
-		function enqueue_assets( $hook_suffix ) {
+		function enqueue_assets() {
 			if ( $this->is_admin_edit_mode() && $this->is_current_post_type() ) {
 				// Register, enqueue scripts and styles here
 				$this->enqueue_all();
@@ -278,6 +285,48 @@ if ( ! class_exists( __NAMESPACE__ . '\Metabox' ) ) {
 		 */
 		function is_current_post_type() {
 			return $this->get_admin_post_type() === $this->config['post_type'];
+		}
+
+		/**
+		 * Returns true if an ajax call has been made from the metabox page
+		 * @return bool
+		 */
+		function is_metabox_page_ajax() {
+			if ( defined( 'DOING_AJAX' ) && DOING_AJAX ) {
+
+				$action = $this->safe_get_from_request( 'action' );
+
+				if ( $action === 'heartbeat' ) {
+					return false;
+				}
+
+				return $this->config['post_type'] === $this->manager->get_post_type_from_ajax_request();
+			}
+			return false;
+		}
+
+		/**
+		 * Ensures the metabox is not closed
+		 *
+		 * @param $classes
+		 *
+		 * @return array
+		 */
+		function ensure_metabox_not_closed( $classes ) {
+			if ( is_array( $classes ) && in_array( 'closed', $classes ) ) {
+				$classes = array_diff( $classes, array( 'closed' ) );
+			}
+			return $classes;
+		}
+
+		/**
+		 * Make sure all fields are loaded for ajax calls
+		 */
+		function init_fields_for_ajax() {
+			//ensure the fields are loaded in ajax requests
+			if ( $this->is_metabox_page_ajax() ) {
+				$this->load_fields();
+			}
 		}
 	}
 }

@@ -1037,6 +1037,7 @@ if ( !class_exists( 'FooPlugins\FooFields\Admin\Settings' ) ) {
 
 			parent::__construct(
 				array(
+					'manager'        => FOOFIELDS_SLUG,
 					'settings_id'     => 'foofields', //foofields-settings
 					'page_title'  => __( 'FooField Settings', 'foofields' ),
 					'menu_title' => __('Settings', 'foofields'),

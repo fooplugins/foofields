@@ -15,8 +15,9 @@ if ( !class_exists( 'FooPlugins\FooFields\Admin\Init' ) ) {
 		 */
 		function __construct() {
 			new namespace\Updates();
-			new namespace\Settings();
 
+			new namespace\ContainerManager();
+			new namespace\Settings();
 			new namespace\Movie\MetaboxTest();
 		}
 	}

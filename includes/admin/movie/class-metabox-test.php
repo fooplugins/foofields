@@ -10,12 +10,29 @@ if ( ! class_exists( 'FooPlugins\FooFields\Admin\Movie\MetaboxTest' ) ) {
 	class MetaboxTest extends Metabox {
 
 		function __construct() {
+			parent::__construct(
+				array(
+					'manager'        => FOOFIELDS_SLUG,
+					'post_type'      => FOOFIELDS_CPT_MOVIE,
+					'metabox_id'     => 'test',
+					'metabox_title'  => __( 'Test Metabox for Movie', 'foofields' ),
+					'priority'       => 'default', //low, default, high
+					'meta_key'       => FOOFIELDS_MOVIE_META_TEST,
+					'text_domain'    => FOOFIELDS_SLUG,
+					'plugin_url'     => FOOFIELDS_URL,
+					'plugin_version' => FOOFIELDS_VERSION,
+					//'layout'         => 'foofields-tabs-vertical'
+				)
+			);
+		}
+
+		function get_tabs() {
 			$simple_tab = array(
 				'id'     => 'simplefields',
 				'label'  => __( 'Simple', 'foofields' ),
 				'icon'   => 'dashicons-editor-kitchensink',
 				'tabs' => array(
-					array(
+					'headers_icons' => array(
 						'id'     => 'headers_icons',
 						'label'  => __( 'Informational', 'foofields' ),
 						'fields' => array(
@@ -74,7 +91,7 @@ if ( ! class_exists( 'FooPlugins\FooFields\Admin\Movie\MetaboxTest' ) ) {
 							),
 						)
 					),
-					array(
+					'inputs' => array(
 						'id'     => 'inputs',
 						'label'  => __( 'Inputs', 'foofields' ),
 						'fields' => array(
@@ -165,7 +182,7 @@ if ( ! class_exists( 'FooPlugins\FooFields\Admin\Movie\MetaboxTest' ) ) {
 							), //datejoined
 						)
 					),
-					array(
+					'lists' => array(
 						'id'    => 'lists',
 						'label'  => __( 'Lists', 'foofields' ),
 						'fields' => array(
@@ -221,7 +238,7 @@ if ( ! class_exists( 'FooPlugins\FooFields\Admin\Movie\MetaboxTest' ) ) {
 							),
 						)
 					),
-					array(
+					'validation' => array(
 						'id'     => 'validation',
 						'label'  => __( 'Validation', 'foofields' ),
 						'fields' => array(
@@ -870,8 +887,8 @@ if ( ! class_exists( 'FooPlugins\FooFields\Admin\Movie\MetaboxTest' ) ) {
 								'desc'     => __( 'Seletize mult-select field using the genre taxonomy as the data source', 'foofields' ),
 								'placeholder' => __( 'Choose from the genre taxonomy', 'foofields' ),
 								'create' => true,
-//									'close_after_select' => false,
-//									'max_items' => 2,
+								//									'close_after_select' => false,
+								//									'max_items' => 2,
 								'binding' => array(
 									'type' => 'taxonomy',
 									'taxonomy' => FOOFIELDS_CT_GENRE,
@@ -1062,59 +1079,57 @@ if ( ! class_exists( 'FooPlugins\FooFields\Admin\Movie\MetaboxTest' ) ) {
 			);
 
 			$field_group = array(
-				'tabs' => array(
-					$simple_tab,
-					$layout_tab,
-					$advanced_tab,
-					array(
-						'id' => 'empty',
-						'label'  => __( 'Empty', 'foofields' ),
-						'icon'   => 'dashicons-sos',
-						'fields' => array(
-							array(
-								'id'       => 'no-children',
-								'text'     => __( 'This tab exists just to test a tab with no child tabs.', 'foofields' ),
-								'type'     => 'help',
+				'simplefields' => $simple_tab,
+				'layoutfields' => $layout_tab,
+				'advfields' => $advanced_tab,
+				'empty' => array(
+					'id' => 'empty',
+					'label'  => __( 'Empty', 'foofields' ),
+					'icon'   => 'dashicons-sos',
+					'fields' => array(
+						array(
+							'id'       => 'no-children',
+							'text'     => __( 'This tab exists just to test a tab with no child tabs.', 'foofields' ),
+							'type'     => 'help',
+						)
+					)
+				),
+				'empty_2' => array(
+					'id' => 'empty_2',
+					'label'  => __( 'Empty Menu', 'foofields' ),
+					'icon'   => 'dashicons-sos',
+					'fields' => array(
+						array(
+							'id'       => 'hidden-children',
+							'text'     => __( 'This tab exists just to test a tab with all hidden child tabs.', 'foofields' ),
+							'type'     => 'help',
+						),
+						array(
+							'id'       => 'hide-child-tab',
+							'label'    => __( 'Child Tab', 'foofields' ),
+							'type'     => 'radiolist',
+							'default'   => 'show',
+							'choices' => array(
+								'show'  => __( 'Show', 'foofields' ),
+								'hide'  => __( 'Hide', 'foofields' )
 							)
 						)
 					),
-					array(
-						'id' => 'empty_2',
-						'label'  => __( 'Empty Menu', 'foofields' ),
-						'icon'   => 'dashicons-sos',
-						'fields' => array(
-							array(
-								'id'       => 'hidden-children',
-								'text'     => __( 'This tab exists just to test a tab with all hidden child tabs.', 'foofields' ),
-								'type'     => 'help',
-							),
-							array(
-								'id'       => 'hide-child-tab',
-								'label'    => __( 'Child Tab', 'foobar' ),
-								'type'     => 'radiolist',
-								'default'   => 'show',
-								'choices' => array(
-									'show'  => __( 'Show', 'foobar' ),
-									'hide'  => __( 'Hide', 'foobar' )
+					'tabs' => array(
+						array(
+							'id' => 'hidden-child',
+							'label'  => __( 'Empty', 'foofields' ),
+							'fields' => array(
+								array(
+									'id'       => 'hidden-child',
+									'text'     => __( 'This tab exists just to test a tab with all hidden child tabs.', 'foofields' ),
+									'type'     => 'help',
 								)
-							)
-						),
-						'tabs' => array(
-							array(
-								'id' => 'hidden-child',
-								'label'  => __( 'Empty', 'foofields' ),
-								'fields' => array(
-									array(
-										'id'       => 'hidden-child',
-										'text'     => __( 'This tab exists just to test a tab with all hidden child tabs.', 'foofields' ),
-										'type'     => 'help',
-									)
-								),
-								'data' => array(
-									'show-when' => array(
-										'field' => 'hide-child-tab',
-										'value' => 'show'
-									)
+							),
+							'data' => array(
+								'show-when' => array(
+									'field' => 'hide-child-tab',
+									'value' => 'show'
 								)
 							)
 						)
@@ -1122,20 +1137,7 @@ if ( ! class_exists( 'FooPlugins\FooFields\Admin\Movie\MetaboxTest' ) ) {
 				)
 			);
 
-			parent::__construct(
-				array(
-					'post_type'      => FOOFIELDS_CPT_MOVIE,
-					'metabox_id'     => 'test',
-					'metabox_title'  => __( 'Test Metabox for Movie', 'foofields' ),
-					'priority'       => 'default', //low, default, high
-					'meta_key'       => FOOFIELDS_MOVIE_META_TEST,
-					'text_domain'    => FOOFIELDS_SLUG,
-					'plugin_url'     => FOOFIELDS_URL,
-					'plugin_version' => FOOFIELDS_VERSION,
-					//'layout'         => 'foofields-tabs-vertical',
-					'fields'         => $field_group
-				)
-			);
+			return $field_group;
 		}
 
 		/**

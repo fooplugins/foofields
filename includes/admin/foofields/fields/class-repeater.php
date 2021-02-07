@@ -11,8 +11,9 @@ if ( ! class_exists( __NAMESPACE__ . '\Repeater' ) ) {
 
 		protected $add_button_text;
 		protected $no_data_message;
-		protected $table_clsss;
+		protected $table_class;
 		protected $fields = false;
+		protected $show_header = true;
 
 		/**
 		 * Field constructor.
@@ -24,9 +25,10 @@ if ( ! class_exists( __NAMESPACE__ . '\Repeater' ) ) {
 		function __construct( $container, $type, $field_config ) {
 			parent::__construct( $container, $type, $field_config );
 
-			$this->add_button_text = isset( $field_config['add_button_text'] ) ? $field_config['add_button_text'] : __( 'Add', $container->text_domain );
-			$this->no_data_message = isset( $field_config['no_data_message'] ) ? $field_config['no_data_message'] : __( 'Nothing found', $container->text_domain );
-			$this->table_clsss = isset( $field_config['table_clsss'] ) ? $field_config['table_clsss'] : '';
+			$this->add_button_text = isset( $field_config['add_button_text'] ) ? $field_config['add_button_text'] : __( 'Add', $container->manager->text_domain );
+			$this->no_data_message = isset( $field_config['no_data_message'] ) ? $field_config['no_data_message'] : __( 'Nothing found', $container->manager->text_domain );
+			$this->table_class = isset( $field_config['table_class'] ) ? $field_config['table_class'] : 'wp-list-table widefat striped';
+			$this->show_header = isset( $field_config['show_header'] ) ? $field_config['show_header'] : true;
 			if ( isset( $field_config['fields'] ) ) {
 				$this->fields = $field_config['fields'];
 			}
@@ -61,7 +63,7 @@ if ( ! class_exists( __NAMESPACE__ . '\Repeater' ) ) {
 		 */
 		function render_input( $override_attributes = false ) {
 			if ( false === $this->fields ) {
-				echo __( 'ERROR No fields for repeater!', $this->container->text_domain );
+				echo __( 'ERROR No fields for repeater!', $this->container->manager->text_domain );
 				return;
 			}
 
@@ -74,20 +76,23 @@ if ( ! class_exists( __NAMESPACE__ . '\Repeater' ) ) {
 			), $this->no_data_message );
 
 			self::render_html_tag('table', array(
-				'class' => 'wp-list-table widefat striped ' . $this->table_clsss
+				'class' => $this->table_class
 			), null, false );
 
-			//render the table column headers
-			echo '<thead><tr>';
-			self::render_html_tag( 'th', array() );
-			foreach ( $this->fields as $child_field ) {
-				$column_attributes = array();
-				if ( isset( $child_field['width'] ) ) {
-					$column_attributes['width'] = $child_field['width'];
+			if ( $this->show_header ) {
+
+				//render the table column headers
+				echo '<thead><tr>';
+				self::render_html_tag( 'th', array() );
+				foreach ( $this->fields as $child_field ) {
+					$column_attributes = array();
+					if ( isset( $child_field['width'] ) ) {
+						$column_attributes['width'] = $child_field['width'];
+					}
+					self::render_html_tag( 'th', $column_attributes, isset( $child_field['label'] ) ? $child_field['label'] : '' );
 				}
-				self::render_html_tag( 'th', $column_attributes, isset( $child_field['label'] ) ? $child_field['label'] : '' );
+				echo '</tr></thead>';
 			}
-			echo '</tr></thead>';
 
 			//render the repeater rows
 			echo '<tbody>';
@@ -176,11 +181,10 @@ if ( ! class_exists( __NAMESPACE__ . '\Repeater' ) ) {
 				$field_config['value'] = $row_state[ $field_config['id'] ];
 			}
 			$field_id = $field_config['id'];
-			$field_config['id'] = $this->unique_id . '_' . $field_config['id'];
-
-			$field_config['id'] .= '_' . $row_index;
+			$field_config['id'] = $this->id . '_' . $field_id . '_' . $row_index;
 			$field_config['row_index'] = $row_index;
-			$field_config['original_id'] = $field_id;
+			$field_config['original_id'] = $field_config['data']['original_id'] = $field_id;
+			$field_config['override_id_for_action_name'] = $this->container->get_unique_id( array( 'id' => $this->id . '_' . $field_id ) );
 
 			$field_object = $this->container->create_field_instance( $field_config['type'], $field_config );
 			if ( !$in_footer ) {
