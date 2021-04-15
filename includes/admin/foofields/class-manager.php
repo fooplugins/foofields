@@ -168,6 +168,10 @@ if ( ! class_exists( __NAMESPACE__ . '\Manager' ) ) {
 			$referrer = wp_get_raw_referer();
 			parse_str( parse_url( $referrer, PHP_URL_QUERY), $query );
 
+			if ( isset( $query['post_type'] ) ) {
+				return $query['post_type'];
+			}
+
 			//we know we came from an edit post page
 			if ( isset( $query['post'] ) && isset( $query['action'] ) && $query['action'] === 'edit') {
 				$post_id = intval( $query['post'] );
