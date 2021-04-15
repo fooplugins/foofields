@@ -561,9 +561,31 @@ if ( ! class_exists( __NAMESPACE__ . '\Container' ) ) {
 		 * @return
 		 */
 		function get_ordered_array( $things ) {
-			uasort( $things, array( $this, 'sort_order' ) );
+			$this->stable_uasort( $things, array( $this, 'sort_order' ) );
 
 			return $things;
+		}
+
+		/**
+		 * Do a stable sort, due to a bug in PHP : https://bugs.php.net/bug.php?id=53341
+		 * @param array $array
+		 * @param       $value_compare_func
+		 *
+		 * @return bool
+		 */
+		function stable_uasort(array &$array, $value_compare_func) {
+			$index = 0;
+			foreach ($array as &$item) {
+				$item = array($index++, $item);
+			}
+			$result = uasort($array, function($a, $b) use($value_compare_func) {
+				$result = call_user_func($value_compare_func, $a[1], $b[1]);
+				return $result == 0 ? $a[0] - $b[0] : $result;
+			});
+			foreach ($array as &$item) {
+				$item = $item[1];
+			}
+			return $result;
 		}
 
 		/**
