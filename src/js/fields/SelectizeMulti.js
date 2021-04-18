@@ -23,7 +23,7 @@
 					jQuery.ajax({
 						url: window.ajaxurl,
 						cache: false,
-						type: 'POST',
+						type: 'GET',
 						data: data,
 						complete: function() {
 							self.$input.children(".selectize-control").removeClass('loading');
