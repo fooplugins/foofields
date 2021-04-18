@@ -7866,7 +7866,7 @@ FooFields.utils, FooFields.utils.fn, FooFields.utils.str);
           jQuery.ajax({
             url: window.ajaxurl,
             cache: false,
-            type: 'POST',
+            type: 'GET',
             data: data,
             complete: function complete() {
               self.$input.children(".selectize-control").removeClass('loading');
