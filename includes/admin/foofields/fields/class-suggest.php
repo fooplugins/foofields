@@ -58,7 +58,8 @@ if ( ! class_exists( __NAMESPACE__ . '\Suggest' ) ) {
 		function ajax_handle_autosuggest() {
 			if ( $this->verify_nonce() ) {
 
-				$s = $this->sanitize_text( 'q' );
+				$s = sanitize_text_field( wp_unslash( $_REQUEST[ 'q' ] ) );
+
 				$comma = _x( ',', 'page delimiter' );
 				if ( ',' !== $comma ) {
 					$s = str_replace( $comma, ',', $s );

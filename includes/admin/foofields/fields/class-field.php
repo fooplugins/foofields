@@ -427,7 +427,7 @@ if ( ! class_exists( __NAMESPACE__ . '\Field' ) ) {
 		 * @return bool
 		 */
 		protected function verify_nonce() {
-			$nonce = $this->sanitize_key( 'nonce' );
+			$nonce = sanitize_key( $_REQUEST['nonce'] );
 
 			if ( null !== $nonce ) {
 				return wp_verify_nonce( $nonce, $this->unique_id_for_action() );
@@ -445,22 +445,23 @@ if ( ! class_exists( __NAMESPACE__ . '\Field' ) ) {
 		}
 
 		/**
-		 * Get the value of the field from an array of posted data
-		 * @param $sanitized_form_data
+		 * Safely get the value of the field from an array of posted data, and sanitize it!
+		 * @param $unsanitized_form_data
 		 *
 		 * @return mixed
 		 */
-		public function get_posted_value( $sanitized_form_data ) {
+		public function get_posted_value( $unsanitized_form_data ) {
 			$return_value = null;
-			if ( isset( $sanitized_form_data ) && is_array( $sanitized_form_data ) ) {
 
-				if ( ! array_key_exists( $this->id, $sanitized_form_data ) ) {
+			if ( isset( $unsanitized_form_data ) && is_array( $unsanitized_form_data ) ) {
+				if ( ! array_key_exists( $this->id, $unsanitized_form_data ) ) {
 					//the field had no posted value, check for a default
 					if ( isset( $this->default ) ) {
 						$return_value = $this->default;
 					}
 				} else {
-					$return_value = $this->process_posted_value( $sanitized_form_data[ $this->id ] );
+					//sanitize the value that was posted. Different fields might sanitize in slightly different ways, e.g. textarea field
+					$return_value = $this->process_posted_value( $unsanitized_form_data[ $this->id ] );
 				}
 			}
 
@@ -479,7 +480,7 @@ if ( ! class_exists( __NAMESPACE__ . '\Field' ) ) {
 		 * @return array|string
 		 */
 		public function process_posted_value( $unsanitized_value ) {
-			return $this->clean( $unsanitized_value );
+			return $this->sanitize( $unsanitized_value );
 		}
 
 		/**

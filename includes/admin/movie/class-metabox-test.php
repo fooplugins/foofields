@@ -1146,7 +1146,7 @@ if ( ! class_exists( 'FooPlugins\FooFields\Admin\Movie\MetaboxTest' ) ) {
 		 * @param $field
 		 */
 		function return_success( $field ) {
-			$post_id = $this->safe_get_from_request( 'postID' );
+			$post_id = sanitize_key( $_REQUEST['postID'] );
 
 			wp_send_json_success( array(
 				'message' => sprintf( __( 'A successful thing was run on the server. Post ID: %s', 'foofields' ), $post_id )
@@ -1159,7 +1159,7 @@ if ( ! class_exists( 'FooPlugins\FooFields\Admin\Movie\MetaboxTest' ) ) {
 		 * @param $field
 		 */
 		function return_error( $field ) {
-			$post_id = $this->safe_get_from_request( 'postID' );
+			$post_id = sanitize_key( $_REQUEST['postID'] );
 
 			wp_send_json_error( array(
 				'message' => sprintf( __( 'An error occurred on the server. Post ID: %s', 'foofields' ), $post_id )

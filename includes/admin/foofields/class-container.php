@@ -835,34 +835,41 @@ if ( ! class_exists( __NAMESPACE__ . '\Container' ) ) {
 		 */
 		protected function get_posted_data() {
 
-			$sanitized_data = $this->safe_get_from_request( $this->container_id(), array(), false );
-
 			$posted_data = array();
-			//loop through our flat list of fields and get all the data
-			foreach ( $this->fields as $field ) {
-				$posted_field_data = $field->get_posted_value( $sanitized_data );
 
-				//validate the field
-				if ( ! $field->validate( $posted_field_data ) ) {
+			$post_key = $this->container_id();
 
-					//add an error to the posted_data so that it is persisted
-					if ( ! isset( $posted_data['__errors'] ) ) {
-						$posted_data['__errors'] = array();
+			if ( isset( $_POST[ $post_key ] ) ) {
+				//get the unsanitized posted data, we will need to sanitize every field entry in the array
+				$unsanitized_data = $_POST[ $post_key ];
+
+				//loop through our flat list of fields and get all the data
+				foreach ( $this->fields as $field ) {
+					//safely get and sanitize the posted value for the field
+					$posted_field_data = $field->get_posted_value( $unsanitized_data );
+
+					//validate the field
+					if ( ! $field->validate( $posted_field_data ) ) {
+
+						//add an error to the posted_data so that it is persisted
+						if ( ! isset( $posted_data['__errors'] ) ) {
+							$posted_data['__errors'] = array();
+						}
+						$posted_data['__errors'][ $field->field_data_key() ] = array(
+							'message' => $field->error
+						);
 					}
-					$posted_data['__errors'][ $field->field_data_key() ] = array(
-						'message' => $field->error
-					);
+
+					//if we got a value then add it to our posted_data
+					if ( isset( $posted_field_data ) ) {
+						$posted_data[ $field->field_data_key() ] = $posted_field_data;
+					}
 				}
 
-				//if we got a value then add it to our posted_data
-				if ( isset( $posted_field_data ) ) {
-					$posted_data[ $field->field_data_key() ] = $posted_field_data;
+				//get the container last state
+				if ( array_key_exists( self::STATE_KEY, $unsanitized_data ) ) {
+					$posted_data[self::STATE_KEY] = self::sanitize_key( $unsanitized_data[self::STATE_KEY] );
 				}
-			}
-
-			//get the container last state
-			if ( array_key_exists( self::STATE_KEY, $sanitized_data ) ) {
-				$posted_data[self::STATE_KEY] = $sanitized_data[self::STATE_KEY];
 			}
 
 			return $this->apply_filters( 'get_posted_data', $posted_data, $this );

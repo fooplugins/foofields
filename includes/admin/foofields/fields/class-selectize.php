@@ -74,7 +74,7 @@ if ( ! class_exists( __NAMESPACE__ . '\Selectize' ) ) {
 		 */
 		function ajax_handle_selectize() {
 			if ( $this->verify_nonce() ) {
-				$s = trim( $this->safe_get_from_request( 'q' ) );
+				$s = trim( sanitize_key( $_REQUEST['q'] ) );
 				if ( !empty( $s ) ) {
 					$results = array();
 

@@ -294,7 +294,7 @@ if ( ! class_exists( __NAMESPACE__ . '\Metabox' ) ) {
 		function is_metabox_page_ajax() {
 			if ( defined( 'DOING_AJAX' ) && DOING_AJAX ) {
 
-				$action = $this->safe_get_from_request( 'action' );
+				$action = sanitize_key( $_REQUEST['action'] );
 
 				if ( $action === 'heartbeat' ) {
 					return false;
