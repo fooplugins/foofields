@@ -2,7 +2,7 @@
 /*
 Plugin Name: FooFields
 Description: A demo plugin to showcase how FooFields work
-Version:     1.0.1
+Version:     1.0.2
 Author:      Brad Vincent
 Author URI:  https://fooplugins.com
 Text Domain: foofields
@@ -26,7 +26,7 @@ if ( !defined('FOOFIELDS_SLUG' ) ) {
 	define( 'FOOFIELDS_PATH', plugin_dir_path( __FILE__ ) );
 	define( 'FOOFIELDS_URL', plugin_dir_url( __FILE__ ) );
 	define( 'FOOFIELDS_FILE', __FILE__ );
-	define( 'FOOFIELDS_VERSION', '1.0.1' );
+	define( 'FOOFIELDS_VERSION', '1.0.2' );
 	define( 'FOOFIELDS_MIN_PHP', '5.4.0' ); // Minimum of PHP 5.4 required for autoloading, namespaces, etc
 	define( 'FOOFIELDS_MIN_WP', '4.4.0' );  // Minimum of WordPress 4.4 required
 }
