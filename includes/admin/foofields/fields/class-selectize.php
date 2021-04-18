@@ -82,7 +82,7 @@ if ( ! class_exists( __NAMESPACE__ . '\Selectize' ) ) {
 
 					if ( is_array( $this->query ) ) {
 						$query_type = $this->query['type'];
-						$query_data = $this->query['data'];
+						$query_data = isset( $this->query['data'] ) ? $this->query['data'] : null;
 
 						if ( 'post' === $query_type ) {
 
@@ -101,7 +101,7 @@ if ( ! class_exists( __NAMESPACE__ . '\Selectize' ) ) {
 								);
 							}
 
-						} else if ( 'taxonomy' == $query_type ) {
+						} else if ( 'taxonomy' === $query_type ) {
 
 							$terms = get_terms(
 								array(
@@ -115,6 +115,24 @@ if ( ! class_exists( __NAMESPACE__ . '\Selectize' ) ) {
 								$results[] = array(
 									'id'   => $term->term_id,
 									'text' => $term->name
+								);
+							}
+						} else if ( 'user' === $query_type ) {
+
+							$users = new \WP_User_Query( array(
+								'search'         => '*'.esc_attr( $s ).'*',
+								'search_columns' => array(
+									'user_login',
+									'user_nicename',
+									'user_email',
+									'user_url',
+								),
+							) );
+
+							foreach ( $users->get_results() as $user ) {
+								$results[] = array(
+									'id'   => $user->ID,
+									'text' => $user->display_name
 								);
 							}
 						}

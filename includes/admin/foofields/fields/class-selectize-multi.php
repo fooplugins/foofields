@@ -69,6 +69,16 @@ if ( ! class_exists( __NAMESPACE__ . '\SelectizeMulti' ) ) {
 						'display' => $post->post_title
 					);
 				}
+			} else if ( $this->is_bound_to_user() ) {
+				$selected_user_id = intval( $this->value() );
+
+				if ( $selected_user_id > 0 ) {
+					$user = get_user_by( 'id', $selected_user_id );
+					$choices[] = array(
+						'value' => $selected_user_id,
+						'display' => $user->display_name
+					);
+				}
 			}
 
 			//build up options
@@ -200,6 +210,11 @@ if ( ! class_exists( __NAMESPACE__ . '\SelectizeMulti' ) ) {
 			}
 		}
 
+		/**
+		 * Is the field bound to a taxonomy
+		 *
+		 * @return bool
+		 */
 		function is_bound_to_taxonomy() {
 			return isset( $this->config['binding'] ) &&
 			       isset( $this->config['binding']['type'] ) &&
@@ -207,12 +222,22 @@ if ( ! class_exists( __NAMESPACE__ . '\SelectizeMulti' ) ) {
 			       isset( $this->config['binding']['taxonomy'] );
 		}
 
+		/**
+		 * Is the field bound to a taxonomy and synced
+		 *
+		 * @return bool
+		 */
 		function is_bound_to_taxonomy_and_synced() {
 			return $this->is_bound_to_taxonomy() &&
 			       isset( $this->config['binding']['sync_with_post'] ) &&
 			       $this->config['binding']['sync_with_post'];
 		}
 
+		/**
+		 * Is the field bound to a post
+		 *
+		 * @return bool
+		 */
 		function is_bound_to_post() {
 			return isset( $this->config['binding'] ) &&
 			       isset( $this->config['binding']['type'] ) &&
@@ -221,12 +246,23 @@ if ( ! class_exists( __NAMESPACE__ . '\SelectizeMulti' ) ) {
 		}
 
 		/**
+		 * Is the field bound to a user
+		 *
+		 * @return bool
+		 */
+		function is_bound_to_user() {
+			return isset( $this->config['binding'] ) &&
+			       isset( $this->config['binding']['type'] ) &&
+			       $this->config['binding']['type'] === 'user';
+		}
+
+		/**
 		 * Ajax handler for Selectize Multi fields add
 		 */
 		function ajax_handle_selectize_multi_add() {
 			if ( $this->verify_nonce() ) {
 
-				$thing_to_add = $this->sanitize_text( 'add' );
+				$thing_to_add = sanitize_text_field( wp_unslash( $_REQUEST[ 'add' ] ) );
 
 				if ( !empty( $thing_to_add ) ) {
 
