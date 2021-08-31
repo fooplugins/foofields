@@ -6264,6 +6264,19 @@ FooFields.utils, FooFields.utils.fn, FooFields.utils.str);
       self.mqlHoverable.addListener(self.onMqlHoverableChanged);
       self.trigger("ready", [self]);
     },
+    reinit: function reinit() {
+      var self = this,
+          current = self.containers.map(function (cntr) {
+        return cntr.$el.get(0);
+      });
+      var newContainers = $(self.sel.container.el).not(current).map(function (i, el) {
+        return new _.Container(self, el);
+      }).get();
+      newContainers.forEach(function (cntr) {
+        self.containers.push(cntr);
+        cntr.init();
+      });
+    },
     destroy: function destroy() {
       var self = this;
       self.trigger("destroy", [self]);
@@ -7713,7 +7726,57 @@ FooFields.utils, FooFields.utils.fn, FooFields.utils.str);
       var self = this;
       self.updateSelected();
 
+      if (self.opt.nonce) {
+        self.doCallback();
+      }
+
       self._super();
+    },
+    doCallback: function doCallback() {
+      var self = this;
+      var postData = {
+        'action': 'foofields_' + self.id,
+        'value': self.val(),
+        'nonce': self.opt.nonce
+      };
+
+      if ($('#post_ID').length) {
+        postData.postID = $('#post_ID').val();
+      }
+
+      $.ajax({
+        url: window.ajaxurl,
+        type: 'POST',
+        data: postData,
+        error: function error() {//What do we do with an error?
+        },
+        success: function success(res) {
+          if (res) {
+            if (res.success) {
+              // if ( res.data.message ) {
+              // 	alert( res.data.message );
+              // }
+              // if ( res.data.replace ) {
+              // 	$( res.data.replace.target ).html( res.data.replace.html );
+              // 	_.__instance__.reinit();
+              // }
+              // if ( res.data.show ) {
+              // 	$( res.data.show ).show();
+              // }
+              if (res.data.metabox) {
+                var $metabox = $('#' + res.data.metabox.id);
+                $metabox.find('.inside').html(res.data.metabox.html);
+                $metabox.find('.postbox-header h2').html(res.data.metabox.title);
+
+                _.__instance__.reinit();
+
+                $metabox.show();
+              }
+            }
+          }
+        },
+        complete: function complete() {}
+      });
     }
   });
 
