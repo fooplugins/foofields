@@ -81,3 +81,5 @@ assets/img/.DS_Store
 /fs-config.json
 
 dist/
+
+composer-setup.php

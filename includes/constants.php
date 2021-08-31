@@ -18,4 +18,6 @@ define( 'FOOFIELDS_CT_GENRE', 'foofields_genre' );
 define( 'FOOFIELDS_CT_ACTOR', 'foofields_actor' );
 
 //post meta
-define( 'FOOFIELDS_MOVIE_META_TEST', '_test' );
+define( 'FOOFIELDS_MOVIE_META_TYPE', '_type' );
+define( 'FOOFIELDS_MOVIE_META_SIMPLE', '_simple' );
+define( 'FOOFIELDS_MOVIE_META_ADVANCED', '_advanced' );

@@ -18,7 +18,10 @@ if ( !class_exists( 'FooPlugins\FooFields\Admin\Init' ) ) {
 
 			new namespace\ContainerManager();
 			new namespace\Settings();
-			new namespace\Movie\MetaboxTest();
+			new namespace\Movie\MetaboxType();
+			new namespace\Movie\MetaboxEmpty();
+			new namespace\Movie\MetaboxSimple();
+			new namespace\Movie\MetaboxAdvanced();
 		}
 	}
 }

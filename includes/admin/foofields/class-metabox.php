@@ -65,14 +65,32 @@ if ( ! class_exists( __NAMESPACE__ . '\Metabox' ) ) {
 				$this->config['metabox_render_function'] = array( $this, 'render_metabox' );
 			}
 
-			if ( $this->apply_filters( 'must_add_meta_boxes', true ) ) {
+			$add_metabox = $this->apply_filters( 'must_add_meta_boxes', true );
+
+			// Check conditions and only show if the condition is met
+			if ( isset( $this->config['condition'] ) ) {
+				$add_metabox = false;
+				$condition = $this->config['condition'];
+				$state = get_post_meta( $this->post->ID, $condition['meta_key'], true );
+				$field_value = '';
+				if ( isset( $state ) &&
+					 is_array( $state ) &&
+					 array_key_exists( $condition['field_id'], $state ) ) {
+					$field_value = $state[ $condition['field_id'] ];
+				}
+				if ( $field_value === $condition['field_value'] ) {
+					$add_metabox = true;
+				}
+			}
+
+			if ( $add_metabox ) {
 				add_meta_box(
-						$this->container_id(),
-						$this->config['metabox_title'],
-						$this->config['metabox_render_function'],
-						$this->config['post_type'],
-						isset( $this->config['context'] ) ? $this->config['context'] : 'normal',
-						isset( $this->config['priority'] ) ? $this->config['priority'] : 'default'
+					$this->container_id(),
+					$this->config['metabox_title'],
+					$this->config['metabox_render_function'],
+					$this->config['post_type'],
+					isset( $this->config['context'] ) ? $this->config['context'] : 'normal',
+					isset( $this->config['priority'] ) ? $this->config['priority'] : 'default'
 				);
 			}
 		}
@@ -83,6 +101,9 @@ if ( ! class_exists( __NAMESPACE__ . '\Metabox' ) ) {
 		 * @param $post
 		 */
 		public function render_metabox( $post ) {
+			if ( $this->post !== $post ) {
+				$this->post = $post;
+			}
 			$full_id = $this->container_id();
 
 			//render the nonce used to validate when saving the metabox fields
@@ -108,7 +129,7 @@ if ( ! class_exists( __NAMESPACE__ . '\Metabox' ) ) {
 				$state = array();
 
 				if ( isset( $this->config['meta_key'] ) ) {
-					//get the state from the post meta
+					// Get the state from the post meta.
 					$state = get_post_meta( $this->post->ID, $this->config['meta_key'], true );
 				}
 

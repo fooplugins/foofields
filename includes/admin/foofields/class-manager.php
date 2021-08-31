@@ -150,7 +150,12 @@ if ( ! class_exists( __NAMESPACE__ . '\Manager' ) ) {
 		}
 
 		function register_container( $container ) {
-			$this->containers[] = $container;
+			$unique_id = isset( $container->config['unique_id'] ) ? $container->config['unique_id'] : $container->container_id();
+			$this->containers[ $unique_id ] = $container;
+		}
+
+		function get_container( $unique_id ) {
+			return $this->containers[ $unique_id ];
 		}
 
 		/**

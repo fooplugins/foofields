@@ -868,7 +868,7 @@ if ( ! class_exists( __NAMESPACE__ . '\Container' ) ) {
 
 				//get the container last state
 				if ( array_key_exists( self::STATE_KEY, $unsanitized_data ) ) {
-					$posted_data[self::STATE_KEY] = self::sanitize_key( $unsanitized_data[self::STATE_KEY] );
+					$posted_data[self::STATE_KEY] = sanitize_key( $unsanitized_data[self::STATE_KEY] );
 				}
 			}
 

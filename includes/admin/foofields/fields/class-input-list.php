@@ -29,6 +29,41 @@ if ( ! class_exists( __NAMESPACE__ . '\InputList' ) ) {
 				$this->list_type = 'checkbox';
 			}
 			$this->stacked = isset( $field_config['stacked'] ) && $field_config['stacked'];
+
+			//handle field callbacks
+			add_action( $this->field_ajax_action_name(), array( $this, 'ajax_handle_callback' ) );
+		}
+
+		/**
+		 * Ajax handler for callbacks
+		 */
+		function ajax_handle_callback() {
+			if ( $this->verify_nonce() ) {
+				$this->container->do_action( 'inputlist_' . $this->unique_id, $this );
+
+				if ( isset( $this->config['callback'] ) ) {
+					if ( is_callable( $this->config['callback'] ) ) {
+						$value = self::sanitize( $_POST['value'] );
+						if ( false === call_user_func( $this->config['callback'], $this, $value ) ) {
+							wp_send_json_error( array(
+								'message' => __( 'An unexpected error occurred!', $this->container->manager->text_domain )
+							) );
+						}
+					}
+				}
+			}
+		}
+
+		/**
+		 * Override the data attributes
+		 * @return array
+		 */
+		function data_attributes() {
+			$data_attributes = parent::data_attributes();
+			if ( isset( $this->config['callback'] ) ) {
+				$data_attributes['data-nonce'] = $this->create_nonce();
+			}
+			return $data_attributes;
 		}
 
 		function pre_render(){

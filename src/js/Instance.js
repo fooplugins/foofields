@@ -120,6 +120,19 @@
 
 			self.trigger("ready", [self]);
 		},
+		reinit: function() {
+			var self = this,
+				current = self.containers.map( function(cntr){
+					return cntr.$el.get(0);
+				});
+			var newContainers = $(self.sel.container.el).not(current).map(function(i, el) {
+				return new _.Container(self, el);
+			}).get();
+			newContainers.forEach(function(cntr) {
+				self.containers.push(cntr);
+				cntr.init();
+			});
+		},
 		destroy: function(){
 			const self = this;
 			self.trigger("destroy", [self]);
