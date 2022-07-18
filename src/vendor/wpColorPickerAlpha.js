@@ -476,7 +476,7 @@
 					 */
 					self.colorAlpha.css( { 'background-color': color } );
 
-					if ( $.isFunction( self.options.change ) ) {
+					if ( typeof self.options.change === 'function' ) {
 						self.options.change.call( this, event, ui, color );
 					}
 				}
@@ -501,7 +501,7 @@
 			 *
 			 * @since 3.0.0
 			 */
-			self.toggler.click( function() {
+			self.toggler.on( 'click.wpcolorpicker', function() {
 				if ( self.toggler.hasClass( 'wp-picker-open' ) ) {
 					self.close();
 				} else {
@@ -530,7 +530,7 @@
 					self.colorAlpha.css( 'background-color', '' );
 
 					// fire clear callback if we have one
-					if ( $.isFunction( self.options.clear ) ) {
+					if ( typeof self.options.clear === 'function' ) {
 						self.options.clear.call( this, event );
 					}
 				}
@@ -554,7 +554,7 @@
 
 					el.val( '' );
 
-					if ( $.isFunction( self.options.clear ) ) {
+					if ( typeof self.options.clear === 'function' ) {
 						self.options.clear.call( this, event );
 					}
 

@@ -6,7 +6,7 @@
 			self.$spinner = self.$input.find('.spinner');
 			self.$message = self.$input.find('.response-message');
 
-			self.$button.click( function( e ) {
+			self.$button.on( "click", function( e ) {
 				e.preventDefault();
 				e.stopPropagation();
 
@@ -21,8 +21,9 @@
 					'nonce': self.opt.nonce
 				};
 
-				if ( $( '#post_ID' ).length ) {
-					postData.postID = $( '#post_ID' ).val();
+				var $postID = $( '#post_ID' );
+				if ( $postID.length ) {
+					postData.postID = $postID.val();
 				}
 
 				$.ajax({

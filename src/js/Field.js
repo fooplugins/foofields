@@ -40,10 +40,10 @@
 			}
 		},
 		disable: function() {
-			this.$el.find(":input").attr("disabled", "disabled");
+			this.$el.find(":input").prop("disabled", true);
 		},
 		enable: function() {
-			this.$el.find(":input").removeAttr("disabled");
+			this.$el.find(":input").prop("disabled", false);
 		},
 		val: function(value){
 			var self = this, $inputs = self.$value, isRadio = $inputs.is(":radio"), single = $inputs.length === 1;

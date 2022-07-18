@@ -349,7 +349,11 @@ if ( ! class_exists( __NAMESPACE__ . '\Field' ) ) {
 
 				case 'color':
 					$attributes['type'] = 'color';
-					$attributes['value'] = $field_value;
+					if ( !empty( $field_value ) ) {
+						// Check for empty otherwise Chrome reports the following warning when the value attribute is empty:
+						// The specified value "" does not conform to the required format.  The format is "#rrggbb" where rr, gg, bb are two-digit hexadecimal numbers.
+						$attributes['value'] = $field_value;
+					}
 					self::render_html_tag( 'input', $attributes );
 
 					break;

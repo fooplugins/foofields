@@ -116,10 +116,9 @@ if ( ! class_exists( __NAMESPACE__ . '\Manager' ) ) {
 			//enqueue assets if there are any fields
 			if ( $this->has_fields() ) {
 				wp_enqueue_script( 'selectize', $this->plugin_url . 'assets/vendor/selectize/selectize.min.js', array( 'jquery' ), $this->plugin_version );
-				wp_enqueue_script( 'foofields', $this->plugin_url . 'assets/vendor/foofields/foofields.min.js', array(
+				wp_enqueue_script( 'foofields', $this->plugin_url . 'assets/vendor/foofields/foofields.js', array(
 					'jquery',
 					'jquery-ui-sortable',
-					'suggest',
 					'wp-color-picker',
 					'selectize'
 				), $this->plugin_version );

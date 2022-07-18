@@ -15,13 +15,6 @@ module.exports = {
 		img: "./src/img/**/*"
 	},
 
-	browser: {
-		proxy: 'http://127.0.0.1/',
-		open: false,
-		injectChanges: true,
-		watch: "./assets/**/*"
-	},
-
 	copy: {
 		"./src/js/__utils.js": {
 			options: {
@@ -30,9 +23,7 @@ module.exports = {
 			},
 			files: ["./node_modules/foo-utils/dist/foo-utils.js"]
 		},
-		"./assets/vendor/selectize/selectize.js": "./node_modules/selectize/dist/js/standalone/selectize.js",
-		"./assets/vendor/selectize/selectize.min.js": "./node_modules/selectize/dist/js/standalone/selectize.min.js",
-		"./assets/vendor/selectize/selectize.css": "./node_modules/selectize/dist/css/selectize.css"
+		"./assets/vendor/selectize/selectize.css": "./src/vendor/selectize/selectize.css"
 	},
 
 	generator: {
@@ -116,8 +107,8 @@ module.exports = {
 	},
 
 	js: {
+		"./assets/vendor/selectize/selectize.js": [ "./src/vendor/selectize/selectize.js" ],
 		"./assets/vendor/foofields/foofields.js": [
-			"./src/polyfills/ResizeObserver.js",
 			"./src/vendor/wpColorPickerAlpha.js",
 			"./src/js/__config.js",
 			"./src/js/__utils.js",

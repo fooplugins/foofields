@@ -1,0 +1,32 @@
+.foofields-suggest-results {
+  display: none;
+  margin: -1px 0 0;
+  padding: 0;
+  list-style: none;
+  position: absolute;
+  z-index: 10000;
+  border: 1px solid #2271b1;
+  background-color: #fff;
+}
+
+.wp-customizer .foofields-suggest-results {
+  z-index: 500000;
+}
+
+.foofields-suggest-results li {
+  margin: 0;
+  padding: 5px 10px;
+  white-space: nowrap;
+  text-align: left;
+}
+
+.foofields-suggest-results .foofields-suggest-select,
+.foofields-suggest-select .foofields-suggest-match {
+  background-color: #2271b1;
+  color: #fff;
+  cursor: pointer;
+}
+
+.foofields-suggest-match {
+  text-decoration: underline;
+}
